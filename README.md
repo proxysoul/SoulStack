@@ -13,6 +13,9 @@
 </p>
 
 <p align="center">
+  <a href="https://soulstack.proxysoul.com"><b>Website</b></a>&nbsp;&nbsp;&nbsp;
+  <a href="https://soulstack.proxysoul.com/docs">Docs</a>&nbsp;&nbsp;&nbsp;
+  <a href="https://soulstack.proxysoul.com/immunity/">Immunity</a>&nbsp;&nbsp;&nbsp;
   <a href="#set-it-up">Set it up</a>&nbsp;&nbsp;&nbsp;
   <a href="#whats-inside">What's inside</a>&nbsp;&nbsp;&nbsp;
   <a href="#my-empryo-setup">My Empryo setup</a>&nbsp;&nbsp;&nbsp;
