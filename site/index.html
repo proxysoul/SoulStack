@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en" data-world="undertow" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SoulStack · Empryo × ProxySoul</title>
+    <meta name="description" content="The agent stack behind Empryo: skills, immune cells, working rules and presets for Empryo, Claude Code, Codex and Copilot. One command to set up, one to update." />
+    <link rel="icon" href="/brand/logo-undertow.webp" />
+    <link rel="alternate" type="text/markdown" href="/index.md" title="This page as Markdown" />
+    <link rel="help" href="/llms.txt" title="Docs for agents" />
+    <link rel="preload" href="/fonts/recursive-living.woff2" as="font" type="font/woff2" crossorigin />
+    <script>
+      (() => {
+        const q = new URLSearchParams(location.search);
+        const worlds = ["empryo", "soul", "coffee", "water", "crimson", "undertow"];
+        const saved = JSON.parse(localStorage.getItem("soulstack-world") || "null");
+        const world = q.get("world") || saved?.world || worlds[Math.floor(Math.random() * worlds.length)];
+        const mode = q.get("mode") || saved?.mode || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+        const r = document.documentElement;
+        r.dataset.world = worlds.includes(world) ? world : "undertow";
+        r.dataset.theme = mode === "light" ? "light" : "dark";
+        r.dataset.motion = q.get("motion") === "still" || matchMedia("(prefers-reduced-motion: reduce)").matches ? "still" : "live";
+      })();
+    </script>
+    <script type="module" src="/src/main.ts"></script>
+  </head>
+  <body>
+    <canvas class="scene" aria-hidden="true"></canvas>
+
+    <header class="bar">
+      <a class="bar-brand" href="#top" aria-label="SoulStack home">
+        <img class="bar-logo" data-logo src="/brand/logo-undertow.webp" alt="" width="28" height="28" />
+        <span class="bar-name">SoulStack</span>
+      </a>
+      <nav class="bar-nav" aria-label="Sections">
+        <a href="#stack">Stack</a>
+        <a href="#agents">Agents</a>
+        <a href="#empryo">Empryo</a>
+        <a href="#immune">Immune</a>
+        <a href="#design">Design</a>
+        <a href="#update">Update</a>
+        <a href="/docs.html">Docs</a>
+      </nav>
+      <div class="bar-tools">
+        <div class="worlds" role="radiogroup" aria-label="World">
+          <button class="world" data-world-pick="empryo" role="radio" aria-label="Empryo"></button>
+          <button class="world" data-world-pick="soul" role="radio" aria-label="proxySoul"></button>
+          <button class="world" data-world-pick="coffee" role="radio" aria-label="Coffee"></button>
+          <button class="world" data-world-pick="water" role="radio" aria-label="Water"></button>
+          <button class="world" data-world-pick="crimson" role="radio" aria-label="Crimson"></button>
+          <button class="world" data-world-pick="undertow" role="radio" aria-label="Undertow"></button>
+        </div>
+        <button class="icon-btn" data-mode-toggle aria-label="Switch light or dark" title="Light or dark">
+          <span data-icon="sun" class="only-dark"></span><span data-icon="moon" class="only-light"></span>
+        </button>
+        <a class="icon-btn" href="https://github.com/proxysoul/SoulStack" aria-label="SoulStack on GitHub" title="GitHub"><span data-icon="github"></span></a>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero wrap">
+        <div class="hero-words">
+          <p class="hero-kicker"><span class="dot"></span> Empryo × ProxySoul</p>
+          <h1 class="hero-title">The stack that<br />ensouls your agents.</h1>
+          <p class="hero-lede">Skills, immune cells, working rules and presets, lifted from how Empryo is built. One command sets it up for every agent on your machine.</p>
+
+          <div class="install" data-tabs>
+            <div class="tabs" role="tablist" aria-label="Install">
+              <button role="tab" aria-selected="true" data-tab="unix"><span data-icon="apple"></span>macOS · Linux</button>
+              <button role="tab" aria-selected="false" data-tab="win"><span data-icon="windows"></span>Windows</button>
+              <button role="tab" aria-selected="false" data-tab="copilot"><span data-icon="github"></span>Copilot</button>
+              <button role="tab" aria-selected="false" data-tab="skills"><span data-icon="package"></span>Skills only</button>
+            </div>
+            <div class="cmd" data-panel="unix"><code>curl -fsSL https://raw.githubusercontent.com/proxysoul/SoulStack/main/scripts/setup.sh | sh</code><button class="copy" aria-label="Copy command"><span data-icon="copy"></span></button></div>
+            <div class="cmd" data-panel="win" hidden><code>irm https://raw.githubusercontent.com/proxysoul/SoulStack/main/scripts/setup.ps1 | iex</code><button class="copy" aria-label="Copy command"><span data-icon="copy"></span></button></div>
+            <div class="cmd" data-panel="copilot" hidden><code>copilot plugin marketplace add proxysoul/SoulStack && copilot plugin install soulstack@soulstack</code><button class="copy" aria-label="Copy command"><span data-icon="copy"></span></button></div>
+            <div class="cmd" data-panel="skills" hidden><code>npx skills add proxysoul/SoulStack</code><button class="copy" aria-label="Copy command"><span data-icon="copy"></span></button></div>
+            <p class="install-note">Asks nothing. Backs up every file it touches. Or tell your agent: <em>“Set up SoulStack from github.com/proxysoul/SoulStack.”</em></p>
+          </div>
+        </div>
+
+        <figure class="term" aria-label="What setup prints">
+          <div class="term-bar"><span></span><span></span><span></span><em>soulstack update</em></div>
+          <div class="term-body">
+            <img class="term-mote" data-mote src="/mote-dark.gif" alt="Mote, the Empryo mascot, looking around" width="96" height="96" />
+            <pre class="term-out" data-term></pre>
+          </div>
+        </figure>
+      </section>
+
+      <section id="stack" class="wrap section">
+        <div class="section-head">
+          <h2>Five layers, one command</h2>
+          <p>Pick a layer to see what it puts where.</p>
+        </div>
+        <div class="stack">
+          <ol class="layers" role="tablist" aria-label="Layers">
+            <li><button class="layer" role="tab" data-layer="rules" aria-selected="true"><span data-icon="scroll"></span><b>Rules</b><small>takeaways every agent follows</small></button></li>
+            <li><button class="layer" role="tab" data-layer="skills" aria-selected="false"><span data-icon="sparkles"></span><b>Skills</b><small>ensoul · immune-system</small></button></li>
+            <li><button class="layer" role="tab" data-layer="agents" aria-selected="false"><span data-icon="bot"></span><b>Agents</b><small>ten immune cells</small></button></li>
+            <li><button class="layer" role="tab" data-layer="presets" aria-selected="false"><span data-icon="sliders"></span><b>Presets</b><small>Empryo models, theme, tools</small></button></li>
+            <li><button class="layer" role="tab" data-layer="setup" aria-selected="false"><span data-icon="refresh"></span><b>Setup</b><small>install, check, update, remove</small></button></li>
+          </ol>
+          <div class="layer-view" data-layer-view aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section id="agents" class="wrap section">
+        <div class="section-head">
+          <h2>Lands in every agent you use</h2>
+          <p>Setup finds the agents you have and writes only where each one reads. Paths are defaults in your home folder.</p>
+        </div>
+        <div class="matrix" role="table" aria-label="What goes where" data-matrix></div>
+        <ul class="promises">
+          <li><span data-icon="shield"></span><p><b>Your text stays.</b> SoulStack writes one marked block and never overwrites your own rules.</p></li>
+          <li><span data-icon="archive"></span><p><b>Backups first.</b> Every changed file is copied to <code>.bak-&lt;time&gt;</code> before the edit.</p></li>
+          <li><span data-icon="zap"></span><p><b>No restart in Empryo.</b> Edited rules apply on the next message.</p></li>
+        </ul>
+      </section>
+
+      <section id="empryo" class="wrap section">
+        <div class="best">
+          <div class="best-lead">
+            <img class="best-logo" data-logo src="/brand/logo-undertow.webp" alt="" width="64" height="64" />
+            <h2>Works everywhere.<br />Best in Empryo.</h2>
+            <p>SoulStack comes from the team that builds Empryo. Inside it, the stack can see your code, run in parallel, remember, and patrol on its own.</p>
+            <div class="best-actions">
+              <a class="btn btn-primary" href="https://empryo.com">Get Empryo</a>
+              <a class="btn" href="/docs.html?p=with-empryo">How they fit</a>
+            </div>
+          </div>
+          <ul class="best-grid" data-best></ul>
+        </div>
+      </section>
+
+      <section id="immune" class="wrap section">
+        <div class="section-head">
+          <h2>An immune system for your product</h2>
+          <p>Grown for your project by your agent, like its rules file. Scouts find what is missing, a skeptic kills false alarms, memory makes every real bug a permanent check. Generalised from Empryo’s own.</p>
+        </div>
+        <div class="qa">
+          <a class="btn btn-primary immune-cta" href="/immunity/">View SoulStack immunity</a>
+          <svg class="loop" viewBox="0 0 520 520" role="img" aria-label="The immune loop: sense, select, remember, patrol">
+            <circle class="loop-ring" cx="260" cy="260" r="190" />
+            <circle class="loop-runner" r="7"><animateMotion dur="9s" repeatCount="indefinite" path="M260 70 A190 190 0 1 1 259.99 70" /></circle>
+            <g class="loop-node" data-agent="dendritic" transform="translate(260 70)"><circle r="46" /><text y="-4">sense</text><text y="14" class="sub">scout + hunt</text></g>
+            <g class="loop-node" data-agent="negative-selection" transform="translate(450 260)"><circle r="46" /><text y="-4">select</text><text y="14" class="sub">kill false alarms</text></g>
+            <g class="loop-node" data-agent="memory-cell" transform="translate(260 450)"><circle r="46" /><text y="-4">remember</text><text y="14" class="sub">memory cell</text></g>
+            <g class="loop-node" data-agent="tcell-patrol" transform="translate(70 260)"><circle r="46" /><text y="-4">patrol</text><text y="14" class="sub">every release</text></g>
+            <g class="loop-core" data-agent="tcell-helper" transform="translate(260 260)"><circle r="62" /><text y="-4">helper T cell</text><text y="16" class="sub">decides who runs</text></g>
+          </svg>
+          <div class="agents" data-agents></div>
+        </div>
+      </section>
+
+      <section id="design" class="wrap section">
+        <div class="section-head">
+          <h2>ensoul: a design system that reads your vibe</h2>
+          <p>Six worlds, two modes, every logo and screenshot switching together. Try them in the top bar.</p>
+        </div>
+        <div class="design">
+          <div class="swatches" data-swatches></div>
+          <figure class="mote-card">
+            <img src="/renderings.png" alt="Example from the mascot guide: Mote, Empryo&#39;s mascot, in six styles" loading="lazy" />
+            <figcaption>Made with the mascot guide: one still body, a moving eye. Mote is Empryo&#39;s; make your own.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="wrap section">
+        <div class="section-head">
+          <h2>What every agent learns</h2>
+          <p>The takeaways, loaded into every conversation.</p>
+        </div>
+        <div class="takeaways" data-takeaways></div>
+      </section>
+
+      <section id="update" class="wrap section">
+        <div class="section-head">
+          <h2>Stays current with one word</h2>
+          <p>Setup adds a <code>soulstack</code> command. Your own changes are never overwritten.</p>
+        </div>
+        <div class="update">
+          <div class="verbs">
+            <div class="verb"><code>soulstack check</code><p>Is a new version out? Changes nothing.</p></div>
+            <div class="verb"><code>soulstack update</code><p>Gets it, sets everything up again, shows what’s new.</p></div>
+            <div class="verb"><code>soulstack remove</code><p>Takes SoulStack out. Your own rules stay.</p></div>
+          </div>
+          <figure class="term term-small" aria-label="What an update prints">
+            <div class="term-bar"><span></span><span></span><span></span><em>soulstack update</em></div>
+            <pre class="term-out is-static"><i class="c-dim">stack</i>   <i class="c-ok">updated</i>  ~/dev/SoulStack  <i class="c-dim">v1.0.0 to v1.1.0</i>
+<i class="c-dim">new</i>     feat(scripts): add soulstack update, check and remove
+<i class="c-dim">new</i>     feat(guides): get, load and unload the skills a task needs
+<i class="c-dim">skill</i>   <i class="c-dim">same</i>     ensoul, immune-system
+<i class="c-dim">rules</i>   <i class="c-acc">updated</i>  Empryo, Claude Code, Codex, Copilot
+
+<i class="c-ok">Done.</i> <i class="c-dim">Restart your agent to load SoulStack.</i></pre>
+          </figure>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot wrap">
+      <span><img data-logo src="/brand/logo-undertow.webp" alt="" width="22" height="22" />Empryo × ProxySoul</span>
+      <nav><a href="https://empryo.com">empryo.com</a><a href="https://github.com/proxysoul/SoulStack">GitHub</a></nav>
+    </footer>
+  </body>
+</html>

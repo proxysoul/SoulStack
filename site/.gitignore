@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.empryo/
+public/docs/
+public/llms.txt
+public/llms-full.txt
+public/index.md
+public/sitemap.xml
+public/robots.txt
+public/immunity/
+.wrangler/

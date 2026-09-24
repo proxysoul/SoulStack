@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en" data-world="undertow" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SoulStack docs</title>
+    <meta name="description" content="SoulStack docs: setup, updating, supported agents, the immune system, skills and immune cells. Every page is also plain Markdown for agents." />
+    <link rel="icon" href="/brand/logo-undertow.webp" />
+    <link rel="alternate" type="text/markdown" href="/llms.txt" title="Docs index for agents" />
+    <link rel="preload" href="/fonts/recursive-living.woff2" as="font" type="font/woff2" crossorigin />
+    <script>
+      (() => {
+        const q = new URLSearchParams(location.search);
+        const worlds = ["empryo", "soul", "coffee", "water", "crimson", "undertow"];
+        const saved = JSON.parse(localStorage.getItem("soulstack-world") || "null");
+        const world = q.get("world") || saved?.world || "undertow";
+        const mode = q.get("mode") || saved?.mode || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+        const r = document.documentElement;
+        r.dataset.world = worlds.includes(world) ? world : "undertow";
+        r.dataset.theme = mode === "light" ? "light" : "dark";
+        r.dataset.motion = "still";
+      })();
+    </script>
+    <script type="module" src="/src/docs.ts"></script>
+  </head>
+  <body>
+    <header class="bar">
+      <a class="bar-brand" href="/" aria-label="SoulStack home">
+        <img class="bar-logo" data-logo src="/brand/logo-undertow.webp" alt="" width="28" height="28" />
+        <span class="bar-name">SoulStack</span>
+      </a>
+      <nav class="bar-nav" aria-label="Sections">
+        <a href="/#stack">Stack</a>
+        <a href="/#immune">Immune</a>
+        <a href="/docs.html" aria-current="page">Docs</a>
+      </nav>
+      <div class="bar-tools">
+        <a class="icon-btn" href="/llms.txt" title="Docs for agents (llms.txt)" aria-label="Docs for agents"><span data-icon="bot"></span></a>
+        <a class="icon-btn" href="https://github.com/proxysoul/SoulStack" aria-label="SoulStack on GitHub" title="GitHub"><span data-icon="github"></span></a>
+      </div>
+    </header>
+
+    <main class="docs wrap">
+      <nav class="docs-nav" aria-label="Docs" data-docs-nav></nav>
+      <article class="docs-page">
+        <div class="docs-meta">
+          <a data-md-link href="/docs/getting-started.md"><span data-icon="scroll"></span>View as Markdown</a>
+        </div>
+        <div class="prose" data-docs-body></div>
+      </article>
+    </main>
+  </body>
+</html>

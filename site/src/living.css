@@ -1,0 +1,300 @@
+
+
+@font-face {
+  font-family: "Recursive";
+  src: url("/fonts/recursive-living.woff2") format("woff2");
+  font-weight: 300 1000;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Recursive Fallback";
+  src: local("Arial"), local("Helvetica Neue"), local("Helvetica");
+  size-adjust: 111%;
+  ascent-override: 85%;
+  descent-override: 22.5%;
+  line-gap-override: 0%;
+}
+
+:root {
+  --font-living: "Recursive", "Recursive Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-code: "Recursive", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 3rem;
+  --s-8: 3.5rem;
+  --s-9: 4.5rem;
+  --s-10: 6rem;
+  --s-11: 8rem;
+  --gutter: clamp(1rem, 0.4rem + 2.2vw, 2.5rem);
+  --section: clamp(2.75rem, 1.6rem + 3.4vw, 5.5rem);
+
+  --w-read: 38rem;
+  --w-text: 50rem;
+  --w-page: 68rem;
+  --w-wide: 84rem;
+  --w-max: 112rem;
+
+  --t-mega: clamp(2.1rem, 1.3rem + 2.2vw, 3.6rem);
+  --t-1: clamp(1.7rem, 1.2rem + 1.4vw, 2.6rem);
+  --t-2: clamp(1.4rem, 1.1rem + 0.8vw, 1.85rem);
+  --t-3: clamp(1.1rem, 1rem + 0.3vw, 1.28rem);
+  --t-4: clamp(1rem, 0.97rem + 0.1vw, 1.08rem);
+  --t-lede: clamp(1rem, 0.96rem + 0.2vw, 1.1rem);
+  --t-body: 1.0625rem;
+  --t-small: 0.9rem;
+  --t-micro: 0.82rem;
+  --lh-tight: 1.04;
+  --lh-snug: 1.18;
+  --lh-body: 1.6;
+
+  --r-1: 6px;
+  --r-2: 12px;
+  --r-3: 20px;
+  --r-4: 34px;
+  --r-pill: 999px;
+  --r-blob: 46% 54% 58% 42% / 44% 46% 54% 56%;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: linear(
+    0,
+    0.22 6%,
+    0.61 14%,
+    0.94 22%,
+    1.1 28%,
+    1.14 32%,
+    1.1 38%,
+    1.01 48%,
+    0.97 56%,
+    0.99 70%,
+    1
+  );
+  --d-1: 120ms;
+  --d-2: 220ms;
+  --d-3: 420ms;
+  --d-4: 820ms;
+
+  --z-scene: 0;
+  --z-content: 10;
+  --z-chrome: 50;
+  --z-overlay: 60;
+  --z-transition: 90;
+
+  --pigment-06: color-mix(in oklab, var(--pigment) 6%, transparent);
+  --pigment-12: color-mix(in oklab, var(--pigment) 12%, transparent);
+  --pigment-20: color-mix(in oklab, var(--pigment) 20%, transparent);
+  --pigment-36: color-mix(in oklab, var(--pigment) 36%, transparent);
+  --pigment-alt-12: color-mix(in oklab, var(--pigment-alt) 12%, transparent);
+  --pigment-alt-24: color-mix(in oklab, var(--pigment-alt) 24%, transparent);
+  --ink-06: color-mix(in oklab, var(--ink) 6%, transparent);
+  --ink-10: color-mix(in oklab, var(--ink) 10%, transparent);
+  --ink-16: color-mix(in oklab, var(--ink) 16%, transparent);
+  --glass: color-mix(in oklab, var(--paper-raised) 86%, transparent);
+  --glass-strong: color-mix(in oklab, var(--paper-raised) 95%, transparent);
+  --veil: color-mix(in oklab, var(--paper) 78%, transparent);
+  --rule-soft: color-mix(in oklab, var(--rule) 55%, transparent);
+  --shadow-lift: 0 1px 0 var(--ink-06) inset, 0 24px 60px -34px color-mix(in oklab, #000 72%, transparent);
+  --shadow-float: 0 1px 0 var(--ink-06) inset, 0 40px 90px -40px color-mix(in oklab, #000 80%, transparent);
+  --glow: 0 0 0 1px var(--pigment-20), 0 0 36px -6px var(--pigment-36);
+}
+
+:root[data-theme="light"] {
+  --shadow-lift: 0 1px 0 color-mix(in oklab, #fff 70%, transparent) inset, 0 22px 50px -32px color-mix(in oklab, var(--ink) 38%, transparent);
+  --shadow-float: 0 1px 0 color-mix(in oklab, #fff 70%, transparent) inset, 0 40px 80px -42px color-mix(in oklab, var(--ink) 45%, transparent);
+  --glow: 0 0 0 1px var(--pigment-20), 0 14px 34px -18px var(--pigment-36);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-living);
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-padding-top: 5.5rem;
+  scrollbar-color: var(--pigment-36) transparent;
+  hanging-punctuation: first last;
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 87.5%;
+  }
+}
+
+@media (min-width: 2560px) {
+  html {
+    font-size: 100%;
+  }
+}
+
+@media (min-width: 3400px) {
+  html {
+    font-size: 112.5%;
+  }
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  font-family: var(--font-living);
+  font-size: var(--t-body);
+  line-height: var(--lh-body);
+  font-weight: 400;
+  font-variation-settings: "CASL" 0, "MONO" 0;
+  overflow-x: clip;
+  background: var(--paper);
+  transition:
+    background-color var(--d-4) var(--ease-in-out),
+    color var(--d-3) var(--ease-in-out);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-family: inherit;
+  font-weight: var(--voice-wght, 800);
+  font-variation-settings: "CASL" var(--voice-casl, 0.5), "MONO" var(--voice-mono, 0);
+  letter-spacing: var(--voice-tracking, -0.03em);
+  line-height: var(--lh-snug);
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: 1px;
+}
+
+img,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: var(--font-code);
+  font-variation-settings: "MONO" 1, "CASL" 0;
+  font-size: 0.92em;
+}
+
+::selection {
+  background: var(--pigment);
+  color: var(--on-pigment);
+}
+
+:focus-visible {
+  outline: 2px solid var(--pigment);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.lv-main {
+  position: relative;
+  z-index: var(--z-content);
+  min-height: 100vh;
+  outline: none;
+}
+
+.lv-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.lv-skip {
+  position: fixed;
+  top: var(--s-3);
+  left: var(--s-3);
+  z-index: var(--z-transition);
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-pill);
+  background: var(--pigment);
+  color: var(--on-pigment);
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform var(--d-2) var(--ease-out);
+}
+
+.lv-skip:focus-visible {
+  transform: none;
+}
+
+.lv-voice {
+  font-weight: var(--voice-wght);
+  font-variation-settings: "CASL" var(--voice-casl), "MONO" var(--voice-mono);
+  letter-spacing: var(--voice-tracking);
+}
+
+.lv-mono {
+  font-family: var(--font-code);
+  font-variation-settings: "MONO" 1, "CASL" 0;
+}
+
+.lv-casual {
+  font-variation-settings: "CASL" 1, "MONO" 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:root[data-motion="still"] *,
+:root[data-motion="still"] *::before,
+:root[data-motion="still"] *::after,
+[data-offstage] *,
+[data-offstage] *::before,
+[data-offstage] *::after {
+  animation-play-state: paused !important;
+}
