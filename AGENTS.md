@@ -13,7 +13,7 @@ It clones SoulStack to `~/dev/SoulStack` (or updates it), links the skills, and 
 
 Presets are optional and change the user's models, theme and permissions: add them only when the user asks for ProxySoul's setup, by running the script from the clone with `--presets proxysoul,proxysoul-mcp` (`-Presets` on Windows). Add `proxysoul-trusted` only when they explicitly ask for full autonomy, and say what it turns on. `proxysoul-mcp` needs `CLOUDFLARE_API_TOKEN`.
 
-Other options: `--check` shows what is installed, `--remove` takes SoulStack out again. If the user only uses GitHub Copilot CLI, the plugin is an alternative to the script: `copilot plugin marketplace add proxysoul/SoulStack`, then `copilot plugin install soulstack@soulstack`. Use one or the other, not both, or the takeaways load twice. If the user only wants some skills, use `npx skills add proxysoul/SoulStack -s <skill> -a <agent> -y` (`-a universal` for Empryo).
+Setup adds a `soulstack` command. When the user asks to update SoulStack, run `soulstack update` (or the one-liner again) and show its output: it pulls the latest version, refreshes skills and rules, and lists what changed. `soulstack check` shows whether an update is out, `soulstack remove` takes SoulStack out again. If the user only uses GitHub Copilot CLI, the plugin is an alternative to the script: `copilot plugin marketplace add proxysoul/SoulStack`, then `copilot plugin install soulstack@soulstack`. Use one or the other, not both, or the takeaways load twice. If the user only wants some skills, use `npx skills add proxysoul/SoulStack -s <skill> -a <agent> -y` (`-a universal` for Empryo).
 
 ## Using the stack
 
@@ -31,7 +31,8 @@ Other options: `--check` shows what is installed, `--remove` takes SoulStack out
 4. Keep `SKILL.md` focused: steps and rules. Move long background into `reference/`, runnable helpers into `scripts/`.
 5. Nothing confidential: no API keys, tokens, private URLs, customer data or private screenshots.
 6. Add a row to the catalog in `README.md`. When `guides/takeaways.md` changes, copy it to `com.github.copilot/rules/soulstack.instructions.md` so the Copilot plugin matches.
-7. Commit one topic at a time with a short scoped conventional subject (`feat(skills): add <name>`, `fix(plugins): …`) and a body of short scoped one-liner bullets (`- skills/<name>: what changed`).
+7. Never rewrite published history: users update with `soulstack update`. Add commits on top and raise `version` in `plugin.json` and `.github/plugin/marketplace.json` for every release; commit subjects are what users see as "new" when they update, so write them for users.
+8. Commit one topic at a time with a short scoped conventional subject (`feat(skills): add <name>`, `fix(plugins): …`) and a body of short scoped one-liner bullets (`- skills/<name>: what changed`).
 
 ## Layout
 
@@ -47,7 +48,7 @@ assets/                           images used by the README and guides (kept out
 morphs/                           Empryo morphs
 plugin.json                       Copilot plugin manifest (Agent Plugins 1.0): skills/ plus com.github.copilot/rules/
 .github/plugin/marketplace.json   Copilot marketplace listing the plugin
-scripts/setup.sh, setup.ps1       set everything up on macOS and Linux, or Windows: links skills, adds the takeaways to each agent, --check to verify
+scripts/setup.sh, setup.ps1       set everything up on macOS and Linux, or Windows: links skills, adds the takeaways to each agent, adds the soulstack command (update, check, remove)
 scripts/install.sh                links skills into an agent's skills folder
 scripts/export-config.ts          regenerates plugins/presets from ~/.empryo/config.json
 ```

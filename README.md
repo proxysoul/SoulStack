@@ -68,7 +68,21 @@ irm https://raw.githubusercontent.com/proxysoul/SoulStack/main/scripts/setup.ps1
   </td></tr>
 </table>
 
-Every file it changes is copied to `<file>.bak-<time>` first. Run it again any time to update. From a clone you can also pass:
+Every file it changes is copied to `<file>.bak-<time>` first.
+
+### Staying up to date
+
+Setup also adds a `soulstack` command (in `~/.local/bin` on macOS and Linux, in your user apps folder on Windows):
+
+```bash
+soulstack check     # is a new version out? changes nothing
+soulstack update    # get it, set everything up again, show what changed
+soulstack remove    # take SoulStack out; your own rules stay
+```
+
+`update` pulls the latest SoulStack, refreshes the skills and the rules block in every agent, and lists what's new. If you changed files in your copy, it keeps them and tells you instead of overwriting. Without the command, running the one-liner again does the same. Copilot plugin users run `copilot plugin update soulstack`.
+
+From a clone you can also pass:
 
 | macOS, Linux | Windows | Does |
 | --- | --- | --- |

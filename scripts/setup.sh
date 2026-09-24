@@ -12,10 +12,14 @@ stamp=$(date +%Y%m%d-%H%M%S)
 
 usage() {
   cat <<'EOF'
-usage: setup.sh [options]
+usage: soulstack [update|check|remove] [options]
+       setup.sh [update|check|remove] [options]
 
-Installs SoulStack for every agent it finds. Asks nothing; backs up every file before changing it.
+Installs or updates SoulStack for every agent it finds. Asks nothing; backs up every file before changing it.
 
+  update           the default: get the latest SoulStack and set it up again
+  check            change nothing; show what is installed and whether an update is out
+  remove           take SoulStack out again (skill links, the rules block, the soulstack command)
   --check          change nothing; show what is installed
   --remove         take SoulStack out again (skill links and the rules block)
   --presets a,b    also add Empryo presets, e.g. proxysoul,proxysoul-mcp
@@ -26,8 +30,14 @@ SOULSTACK_DIR sets where SoulStack is kept (default ~/dev/SoulStack), SOULSTACK_
 EOF
 }
 
+args=""
+for a in "$@"; do args="$args '$(printf '%s' "$a" | sed "s/'/'\\\\''/g")'"; done
+
 while [ $# -gt 0 ]; do
   case "$1" in
+    update|install) mode=install; shift ;;
+    check) mode=check; shift ;;
+    remove) mode=remove; shift ;;
     --check) mode=check; shift ;;
     --remove) mode=remove; shift ;;
     --presets) presets="$2"; shift 2 ;;
@@ -93,27 +103,83 @@ backup() {
   fi
 }
 
-script_dir=$(cd "$(dirname "$0")" 2>/dev/null && pwd || echo "")
+self=$0
+while [ -L "$self" ]; do
+  link=$(readlink "$self")
+  case "$link" in /*) self=$link ;; *) self=$(dirname "$self")/$link ;; esac
+done
+script_dir=$(cd "$(dirname "$self")" 2>/dev/null && pwd || echo "")
 root=""
 if [ -n "$script_dir" ] && [ -d "$script_dir/../skills" ] && [ -f "$script_dir/../AGENTS.md" ]; then
   root=$(cd "$script_dir/.." && pwd)
 fi
 
-phase_stack() {
-  if [ -n "$root" ]; then
-    record stack "" "$(tilde "$root")" ""
-    return
+version_at() {
+  git -C "$1" show "$2:plugin.json" 2>/dev/null | sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' | head -1
+}
+
+stack_word=""
+stack_note=""
+news="$work/news"
+: > "$news"
+sync_stack() {
+  dir=${root:-$home_dir}
+  if ! command -v git >/dev/null 2>&1; then
+    if [ -n "$root" ]; then return 0; fi
+    echo "git is needed to download SoulStack." >&2
+    exit 1
   fi
-  command -v git >/dev/null 2>&1 || { echo "git is needed to download SoulStack." >&2; exit 1; }
-  if [ -d "$home_dir/.git" ]; then
-    git -C "$home_dir" pull --ff-only --quiet
-    record stack updated "$(tilde "$home_dir")" ""
+  if [ ! -d "$dir/.git" ]; then
+    if [ -n "$root" ]; then return 0; fi
+    if [ "$mode" != install ]; then echo "SoulStack is not installed. Set it up with: curl -fsSL https://raw.githubusercontent.com/proxysoul/SoulStack/main/scripts/setup.sh | sh"; exit 0; fi
+    mkdir -p "$(dirname "$dir")"
+    git clone --quiet "$repo_url" "$dir"
+    root=$dir
+    stack_word=created
+    stack_note="v$(version_at "$dir" HEAD)"
+    return 0
+  fi
+  root=$dir
+  now=$(git -C "$dir" rev-parse HEAD)
+  if [ -n "${SOULSTACK_FROM:-}" ]; then
+    from=$SOULSTACK_FROM
   else
-    mkdir -p "$(dirname "$home_dir")"
-    git clone --quiet "$repo_url" "$home_dir"
-    record stack created "$(tilde "$home_dir")" ""
+    if ! git -C "$dir" fetch --quiet 2>/dev/null; then stack_word=offline; stack_note="could not reach GitHub, kept v$(version_at "$dir" HEAD)"; return 0; fi
+    up=$(git -C "$dir" rev-parse -q --verify '@{u}' 2>/dev/null || true)
+    if [ -z "$up" ] || [ "$up" = "$now" ]; then stack_word=same; stack_note="v$(version_at "$dir" HEAD), the latest"; return 0; fi
+    if [ "$mode" != install ]; then
+      stack_word=outdated
+      stack_note="v$(version_at "$dir" "$up") is out, run: soulstack update"
+      return 0
+    fi
+    if git -C "$dir" merge-base --is-ancestor HEAD "$up"; then
+      if ! git -C "$dir" merge --ff-only --quiet "$up" 2>/dev/null; then stack_word=skipped; stack_note="your local changes clash with the update"; return 0; fi
+    elif [ -z "$(git -C "$dir" status --porcelain)" ]; then
+      git -C "$dir" branch -f "backup-$stamp" HEAD
+      git -C "$dir" reset --hard --quiet "$up"
+    else
+      stack_word=skipped
+      stack_note="you have local changes, so it was not updated"
+      return 0
+    fi
+    from=$now
+    case "$script_dir" in
+      "$dir"/scripts)
+        eval "exec env SOULSTACK_FROM=$from sh \"$dir/scripts/setup.sh\" $args"
+        ;;
+    esac
   fi
-  root="$home_dir"
+  if [ "$from" = "$(git -C "$dir" rev-parse HEAD)" ]; then stack_word=same; stack_note="v$(version_at "$dir" HEAD), the latest"; return 0; fi
+  stack_word=updated
+  v_old=$(version_at "$dir" "$from")
+  v_new=$(version_at "$dir" HEAD)
+  if [ "$v_old" = "$v_new" ]; then stack_note="v$v_new, latest changes"; else stack_note="v$v_old to v$v_new"; fi
+  git -C "$dir" log --no-merges --format='%s' "$from..HEAD" 2>/dev/null | head -5 > "$news"
+}
+
+phase_stack() {
+  record stack "$stack_word" "$(tilde "$root")" "$stack_note"
+  while IFS= read -r line; do record new "" "$line" ""; done < "$news"
 }
 
 has_empryo=0
@@ -158,6 +224,31 @@ link_skills() {
       record skill linked "$n" "$(tilde "$dest")"
     fi
   done
+}
+
+phase_command() {
+  bin="$HOME/.local/bin"
+  cmd="$bin/soulstack"
+  src="$root/scripts/setup.sh"
+  if [ "$mode" = remove ]; then
+    if [ -L "$cmd" ] && [ "$(readlink "$cmd")" = "$src" ]; then rm "$cmd"; record command removed soulstack "$(tilde "$cmd")"; fi
+    return 0
+  fi
+  case ":$PATH:" in
+    *":$bin:"*) ;;
+    *) record command skipped soulstack "$(tilde "$bin") is not on your PATH"; return 0 ;;
+  esac
+  if [ -L "$cmd" ] && [ "$(readlink "$cmd")" = "$src" ]; then
+    record command same soulstack "$(tilde "$cmd")"
+  elif [ "$mode" = check ]; then
+    record command missing soulstack "$(tilde "$cmd")"
+  elif [ -e "$cmd" ] && [ ! -L "$cmd" ]; then
+    record command skipped soulstack "$(tilde "$cmd") is not ours"
+  else
+    mkdir -p "$bin"
+    ln -sfn "$src" "$cmd"
+    record command linked soulstack "$(tilde "$cmd")"
+  fi
 }
 
 phase_skills() {
@@ -272,7 +363,7 @@ paint() {
   case "$1" in
     added|linked|created) printf '%s' "$c_ok" ;;
     updated|copied|removed) printf '%s' "$c_acc" ;;
-    missing|skipped|outdated) printf '%s' "$c_warn" ;;
+    missing|skipped|outdated|offline) printf '%s' "$c_warn" ;;
     *) printf '%s' "$c_dim" ;;
   esac
 }
@@ -458,8 +549,8 @@ draw() {
 
 summary() {
   awk -F'|' -v dim="$c_dim" -v off="$c_off" -v fg="$c_fg" -v ok="$c_ok" -v acc="$c_acc" -v warn="$c_warn" '
-    function color(s) { return (s ~ /^(added|linked|created)$/) ? ok : (s ~ /^(updated|copied|removed)$/) ? acc : (s ~ /^(missing|skipped|outdated)$/) ? warn : dim }
-    $1 == "stack" || $1 == "found" || $1 == "" { next }
+    function color(s) { return (s ~ /^(added|linked|created)$/) ? ok : (s ~ /^(updated|copied|removed)$/) ? acc : (s ~ /^(missing|skipped|outdated|offline)$/) ? warn : dim }
+    $1 == "stack" || $1 == "found" || $1 == "new" || $1 == "" { next }
     {
       if (!($1 in seen)) { order[++n] = $1; seen[$1] = 1 }
       k = $1 SUBSEP $2; if (!(k in sts)) { sts[k] = 1; st[$1] = st[$1] (st[$1] ? "/" : "") $2 }
@@ -475,12 +566,15 @@ summary() {
     }' "$results"
 }
 
+sync_stack
+
 if [ "$plain" -eq 1 ]; then
   echo "SoulStack: Empryo x ProxySoul"
   phase_stack
   phase_detect
   echo
   phase_skills
+  phase_command
   phase_rules
   phase_presets
 else
@@ -492,6 +586,7 @@ else
       2) label="getting SoulStack"; phase_stack ;;
       6) label="finding agents"; phase_detect ;;
       10) label="linking skills"; phase_skills ;;
+      12) label="adding the soulstack command"; phase_command ;;
       14) label="writing rules"; phase_rules ;;
       17) label="adding presets"; phase_presets ;;
       20) label="done" ;;
@@ -502,6 +597,10 @@ else
     i=$((i + 1))
   done
   printf '\033[?25h'
+  awk -F'|' -v dim="$c_dim" -v off="$c_off" -v fg="$c_fg" -v ok="$c_ok" -v acc="$c_acc" -v warn="$c_warn" '
+    $1 == "stack" { c = ($2 == "updated" || $2 == "created") ? ok : ($2 ~ /^(outdated|offline|skipped)$/) ? warn : dim
+      printf "  %sstack%s   %s%-8s%s %s%s%s  %s%s%s\n", dim, off, c, $2, off, fg, $3, off, dim, $4, off }
+    $1 == "new" { printf "  %snew%s     %s%s%s\n", dim, off, fg, $3, off }' "$results"
   grep '^found|' "$results" | cut -d'|' -f3 | sed "s/^/  ${c_dim}found  ${c_off} ${c_fg}/; s/\$/${c_off}/"
   summary
 fi
@@ -514,6 +613,13 @@ case "$mode" in
   remove) printf '  %sRemoved.%s\n' "$c_dim" "$c_off" ;;
   *) printf '  %sDone.%s %sRestart your agent to load SoulStack.%s\n' "$c_ok" "$c_off" "$c_dim" "$c_off" ;;
 esac
+if [ "$mode" != remove ]; then
+  if grep -Eq '^command[|](linked|same)[|]' "$results"; then
+    printf '  %sUpdate any time with%s %ssoulstack update%s\n' "$c_dim" "$c_off" "$c_fg" "$c_off"
+  else
+    printf '  %sUpdate any time by running this script again.%s\n' "$c_dim" "$c_off"
+  fi
+fi
 if [ "$backed" -eq 1 ] && [ "$mode" != check ]; then
   printf '  %sBackups end in .bak-%s next to each changed file.%s\n' "$c_dim" "$stamp" "$c_off"
 fi

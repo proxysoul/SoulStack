@@ -1,5 +1,6 @@
 [CmdletBinding()]
 param(
+  [Parameter(Position = 0)][ValidateSet("", "update", "install", "check", "remove")][string]$Command = "",
   [switch]$Check,
   [switch]$Remove,
   [string]$Presets = "",
@@ -10,6 +11,9 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$bound = @{} + $PSBoundParameters
+if ($Command -eq "check") { $Check = [switch]$true }
+if ($Command -eq "remove") { $Remove = [switch]$true }
 $UserHome = if ($env:SOULSTACK_HOME) { $env:SOULSTACK_HOME } else { $HOME }
 if (-not $Skills) { $Skills = Join-Path $UserHome ".agents\skills" }
 if (-not $Config) { $Config = Join-Path $UserHome ".empryo\config.json" }
@@ -47,7 +51,7 @@ function Paint([string]$Word, [string]$Text) {
   $color = switch -Regex ($Word) {
     '^(added|linked|created)$' { $C.ok }
     '^(updated|copied|removed)$' { $C.acc }
-    '^(missing|skipped|outdated)$' { $C.warn }
+    '^(missing|skipped|outdated|offline)$' { $C.warn }
     default { $C.dim }
   }
   return "$color$Text$($C.off)"
@@ -154,8 +158,15 @@ function Draw-Frame([int]$Index, [string]$Label) {
 }
 
 function Show-Summary {
+  foreach ($r in $script:Results) {
+    if ($r.Label -eq "stack") {
+      $word = if ($script:stackWord) { $script:stackWord } else { "" }
+      Out-Line ("  {0}stack{1}   {2} {3}{4}{5}  {6}{7}{8}" -f $C.dim, $C.off, (Paint $word ("{0,-8}" -f $word)), $C.fg, (Tilde $script:root), $C.off, $C.dim, $script:stackNote, $C.off)
+    }
+    if ($r.Label -eq "new") { Out-Line ("  {0}new{1}     {2}{3}{4}" -f $C.dim, $C.off, $C.fg, $r.Name, $C.off) }
+  }
   foreach ($r in $script:Results) { if ($r.Label -eq "found") { Out-Line ("  {0}found  {1} {2}{3}{4}" -f $C.dim, $C.off, $C.fg, $r.Name, $C.off) } }
-  foreach ($label in "skill", "rules", "preset") {
+  foreach ($label in "skill", "command", "rules", "preset") {
     $rows = @($script:Results | Where-Object { $_.Label -eq $label })
     if (-not $rows.Count) { continue }
     $words = @($rows | ForEach-Object { $_.Word } | Select-Object -Unique)
@@ -172,20 +183,98 @@ if ($PSScriptRoot) {
   if ((Test-Path (Join-Path $candidate "skills")) -and (Test-Path (Join-Path $candidate "AGENTS.md"))) { $root = $candidate }
 }
 
-function Phase-Stack {
-  if ($script:root) { Row "stack" "" (Tilde $script:root); return }
-  if (-not (Get-Command git -ErrorAction SilentlyContinue)) { throw "git is needed to download SoulStack." }
-  if (Test-Path (Join-Path $homeDir ".git")) {
-    git -C $homeDir pull --ff-only --quiet
-    if ($LASTEXITCODE -ne 0) { throw "git pull failed" }
-    Row "stack" "updated" (Tilde $homeDir)
-  } else {
-    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $homeDir) | Out-Null
-    git clone --quiet $repoUrl $homeDir
-    if ($LASTEXITCODE -ne 0) { throw "git clone failed" }
-    Row "stack" "created" (Tilde $homeDir)
+function Version-At([string]$Dir, [string]$Rev) {
+  $json = (git -C $Dir show "$($Rev):plugin.json" 2>$null) -join "`n"
+  if ($json -match '"version":\s*"([^"]+)"') { return $Matches[1] }
+  return "?"
+}
+
+$script:stackWord = ""
+$script:stackNote = ""
+$script:news = @()
+
+function Sync-Stack {
+  $ErrorActionPreference = "Continue"
+  $dir = if ($script:root) { $script:root } else { $homeDir }
+  if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+    if ($script:root) { return }
+    throw "git is needed to download SoulStack."
   }
-  $script:root = $homeDir
+  if (-not (Test-Path (Join-Path $dir ".git"))) {
+    if ($script:root) { return }
+    if ($mode -ne "install") { Out-Line "SoulStack is not installed. Set it up with: irm https://raw.githubusercontent.com/proxysoul/SoulStack/main/scripts/setup.ps1 | iex"; exit 0 }
+    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $dir) | Out-Null
+    git clone --quiet $repoUrl $dir
+    if ($LASTEXITCODE -ne 0) { throw "git clone failed" }
+    $script:root = $dir
+    $script:stackWord = "created"
+    $script:stackNote = "v$(Version-At $dir HEAD)"
+    return
+  }
+  $script:root = $dir
+  $now = (git -C $dir rev-parse HEAD)
+  if ($env:SOULSTACK_FROM) {
+    $from = $env:SOULSTACK_FROM
+    Remove-Item Env:SOULSTACK_FROM
+  } else {
+    git -C $dir fetch --quiet 2>$null
+    if ($LASTEXITCODE -ne 0) { $script:stackWord = "offline"; $script:stackNote = "could not reach GitHub, kept v$(Version-At $dir HEAD)"; return }
+    $up = (git -C $dir rev-parse -q --verify "@{u}" 2>$null)
+    if (-not $up -or $up -eq $now) { $script:stackWord = "same"; $script:stackNote = "v$(Version-At $dir HEAD), the latest"; return }
+    if ($mode -ne "install") { $script:stackWord = "outdated"; $script:stackNote = "v$(Version-At $dir $up) is out, run: soulstack update"; return }
+    git -C $dir merge-base --is-ancestor HEAD $up
+    if ($LASTEXITCODE -eq 0) {
+      git -C $dir merge --ff-only --quiet $up 2>$null
+      if ($LASTEXITCODE -ne 0) { $script:stackWord = "skipped"; $script:stackNote = "your local changes clash with the update"; return }
+    } elseif (-not (git -C $dir status --porcelain)) {
+      git -C $dir branch -f "backup-$stamp" HEAD
+      git -C $dir reset --hard --quiet $up
+    } else {
+      $script:stackWord = "skipped"; $script:stackNote = "you have local changes, so it was not updated"; return
+    }
+    $from = $now
+    if ($PSScriptRoot -and ([IO.Path]::GetFullPath($PSScriptRoot).TrimEnd('\') -ieq [IO.Path]::GetFullPath((Join-Path $dir "scripts")).TrimEnd('\'))) {
+      $pass = @()
+      foreach ($k in $bound.Keys) {
+        $v = $bound[$k]
+        if ($k -eq "Command") { $pass += $v } elseif ($v -is [switch]) { if ($v) { $pass += "-$k" } } else { $pass += "-$k"; $pass += $v }
+      }
+      $env:SOULSTACK_FROM = $from
+      & (Get-Process -Id $PID).Path -NoProfile -ExecutionPolicy Bypass -File (Join-Path $dir "scripts\setup.ps1") @pass
+      exit $LASTEXITCODE
+    }
+  }
+  if ($from -eq (git -C $dir rev-parse HEAD)) { $script:stackWord = "same"; $script:stackNote = "v$(Version-At $dir HEAD), the latest"; return }
+  $script:stackWord = "updated"
+  $old = Version-At $dir $from
+  $new = Version-At $dir HEAD
+  $script:stackNote = if ($old -eq $new) { "v$new, latest changes" } else { "v$old to v$new" }
+  $script:news = @(git -C $dir log --no-merges --format=%s "$from..HEAD" 2>$null | Select-Object -First 5)
+}
+
+function Phase-Stack {
+  Row "stack" $script:stackWord "$(Tilde $script:root) $($script:stackNote)"
+  foreach ($n in $script:news) { Row "new" "" $n }
+}
+
+function Phase-Command {
+  $bin = if ($env:SOULSTACK_BIN) { $env:SOULSTACK_BIN } elseif ($env:LOCALAPPDATA) { Join-Path $env:LOCALAPPDATA "Microsoft\WindowsApps" } else { "" }
+  if (-not $bin) { return }
+  $cmd = Join-Path $bin "soulstack.cmd"
+  $body = "@powershell -NoProfile -ExecutionPolicy Bypass -File `"$(Join-Path $script:root "scripts\setup.ps1")`" %* & (goto) 2>nul`r`n"
+  $ours = (Test-Path $cmd) -and ([IO.File]::ReadAllText($cmd) -eq $body)
+  if ($mode -eq "remove") {
+    if ($ours) { Remove-Item $cmd; Row "command" "removed" (Item "soulstack" (Tilde $cmd)) }
+    return
+  }
+  $onPath = @($env:PATH.Split(";") | ForEach-Object { $_.TrimEnd('\') }) -contains $bin.TrimEnd('\')
+  if (-not $onPath -and -not $env:SOULSTACK_BIN) { Row "command" "skipped" (Item "soulstack" "$(Tilde $bin) is not on your PATH"); return }
+  if ($ours) { Row "command" "same" (Item "soulstack" (Tilde $cmd)); return }
+  if ($mode -eq "check") { Row "command" "missing" (Item "soulstack" (Tilde $cmd)); return }
+  if (Test-Path $cmd) { Row "command" "skipped" (Item "soulstack" "$(Tilde $cmd) is not ours"); return }
+  New-Item -ItemType Directory -Force -Path $bin | Out-Null
+  [IO.File]::WriteAllText($cmd, $body)
+  Row "command" "linked" (Item "soulstack" (Tilde $cmd))
 }
 
 function Phase-Detect {
@@ -345,12 +434,15 @@ function Phase-Presets {
   Add-Presets @($files)
 }
 
+Sync-Stack
+
 if (-not $fancy) {
   Out-Line "SoulStack: Empryo x ProxySoul"
   Phase-Stack
   Phase-Detect
   Out-Line ""
   Phase-Skills
+  Phase-Command
   Phase-Rules
   Phase-Presets
 } else {
@@ -362,6 +454,7 @@ if (-not $fancy) {
         2 { $label = "getting SoulStack"; Phase-Stack }
         6 { $label = "finding agents"; Phase-Detect }
         10 { $label = "linking skills"; Phase-Skills }
+        12 { $label = "adding the soulstack command"; Phase-Command }
         14 { $label = "writing rules"; Phase-Rules }
         17 { $label = "adding presets"; Phase-Presets }
         20 { $label = "done" }
@@ -381,5 +474,12 @@ switch ($mode) {
   "check" { Out-Line "  $($C.dim)Checked. Nothing was changed.$($C.off)" }
   "remove" { Out-Line "  $($C.dim)Removed.$($C.off)" }
   default { Out-Line "  $($C.ok)Done.$($C.off) $($C.dim)Restart your agent to load SoulStack.$($C.off)" }
+}
+if ($mode -ne "remove") {
+  if (@($script:Results | Where-Object { $_.Label -eq "command" -and $_.Word -in "linked", "same" }).Count) {
+    Out-Line "  $($C.dim)Update any time with$($C.off) $($C.fg)soulstack update$($C.off)"
+  } else {
+    Out-Line "  $($C.dim)Update any time by running this script again.$($C.off)"
+  }
 }
 if ($script:backedUp -and $mode -ne "check") { Out-Line "  $($C.dim)Backups end in .bak-$stamp next to each changed file.$($C.off)" }
