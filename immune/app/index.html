@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SoulStack immune system</title>
+    <script>
+      (() => {
+        const saved = JSON.parse(localStorage.getItem("soulstack-world") || "null");
+        const r = document.documentElement;
+        r.dataset.world = saved?.world || "undertow";
+        r.dataset.theme = saved?.mode || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+      })();
+    </script>
+    <link rel="preload" href="recursive.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="theme.css" />
+    <link rel="stylesheet" href="app.css" />
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+    <header class="top">
+      <div class="brand"><span class="cell-mark" aria-hidden="true"></span><b data-name>Immune system</b></div>
+      <nav class="tabs" role="tablist" aria-label="Views">
+        <button role="tab" aria-selected="true" data-view="health">Health</button>
+        <button role="tab" aria-selected="false" data-view="runs">Runs</button>
+        <button role="tab" aria-selected="false" data-view="cells">Cells</button>
+        <button role="tab" aria-selected="false" data-view="findings">Findings</button>
+        <button role="tab" aria-selected="false" data-view="explorations">Explorations</button>
+      </nav>
+      <div class="actions" data-actions></div>
+    </header>
+    <main>
+      <section data-panel="health"></section>
+      <section data-panel="runs" hidden></section>
+      <section data-panel="cells" hidden></section>
+      <section data-panel="findings" hidden></section>
+      <section data-panel="explorations" hidden></section>
+    </main>
+    <aside class="log" data-log hidden>
+      <div class="log-head"><b data-log-title>Run</b><button class="ghost" data-log-close aria-label="Close log">Close</button></div>
+      <pre data-log-body></pre>
+    </aside>
+  </body>
+</html>

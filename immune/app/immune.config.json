@@ -1,0 +1,13 @@
+{
+  "name": "SoulStack",
+  "port": 4177,
+  "results": "immune/results",
+  "keepRuns": 50,
+  "cells": [".agents/agents", "agents"],
+  "findings": "immune/findings",
+  "explorations": "immune/explorations",
+  "commands": {
+    "smoke": "IMMUNE_IMAGES=alpine:latest sh immune/run.sh",
+    "full": "sh immune/run.sh"
+  }
+}

@@ -58,6 +58,16 @@ AGENT: this file is a template. Fill it in yourself, then delete this comment.
 - [Which parts may use which: for example, the app may use the core, the core never uses the app.]
 - [Where code that only runs on one platform or one app belongs.]
 
+## Immune system
+
+- [If the project has none yet, grow one with the `immune-system` skill and fill this in.]
+- Entry point: `[immune]` (full), `[immune:smoke]` (fast), `[immune:report]` (dashboard only).
+- App: `[immune:app]` on http://127.0.0.1:4177, styled with the project's design system; every run
+  refreshes it. `[immune:report]` exports a static snapshot. Check it before reporting a change.
+- After changing behaviour, run `[immune:smoke]`. Every confirmed bug becomes a check; every claim
+  meets `negative-selection` first.
+- Findings: `immune/findings/`. Grown cells: `.agents/agents/`.
+
 ## Commands
 
 Agents run checks through Empryo's `project` tool, so set the project up for it instead of listing shell lines here. `project` finds the tools on its own (package.json scripts, Cargo, Go, Python, Make, Gradle, Maven and more) and runs: `check` (types, lint and tests at once), `test` (one file with `file`), `build`, `lint`, `format`, `typecheck`, `run` (a named script) and `list` (the packages in a monorepo).

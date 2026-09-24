@@ -1,0 +1,27 @@
+@import "worlds.css";
+
+@font-face {
+  font-family: "Recursive";
+  src: url("recursive.woff2") format("woff2");
+  font-weight: 300 1000;
+  font-display: swap;
+}
+
+:root {
+  --font: "Recursive", ui-sans-serif, system-ui, sans-serif;
+  --font-code: "Recursive", ui-monospace, Menlo, monospace;
+  --radius: 16px;
+}
+
+code,
+pre,
+.cell b {
+  font-variation-settings: "MONO" 1;
+}
+
+h1,
+.brand b {
+  font-weight: var(--voice-wght, 700);
+  font-variation-settings: "CASL" var(--voice-casl, 0.5), "MONO" var(--voice-mono, 0);
+  letter-spacing: var(--voice-tracking, -0.02em);
+}

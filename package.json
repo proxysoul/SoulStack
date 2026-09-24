@@ -1,0 +1,16 @@
+{
+  "name": "soulstack",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "cd site && bun run dev",
+    "build": "cd site && bun run build",
+    "typecheck": "cd site && bun run typecheck",
+    "immune": "sh immune/run.sh",
+    "immune:smoke": "IMMUNE_IMAGES=alpine:latest sh immune/run.sh",
+    "immune:report": "node immune/app/server.mjs immune/app/immune.config.json --export site/public/immunity",
+    "test": "sh immune/run.sh",
+    "lint": "sh -n scripts/setup.sh && sh -n scripts/install.sh",
+    "immune:app": "node immune/app/server.mjs immune/app/immune.config.json"
+  }
+}
