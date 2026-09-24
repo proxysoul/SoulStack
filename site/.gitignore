@@ -9,3 +9,4 @@ public/sitemap.xml
 public/robots.txt
 public/immunity/
 .wrangler/
+src/generated/

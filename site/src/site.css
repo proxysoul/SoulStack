@@ -996,11 +996,15 @@ code {
 
 @media (max-width: 1100px) {
   .bar-nav {
+    margin-left: auto;
+  }
+
+  .bar-nav a:not(:last-child) {
     display: none;
   }
 
   .bar-tools {
-    margin-left: auto;
+    margin-left: 0;
   }
 
   .hero,
@@ -1303,4 +1307,21 @@ code {
 .mx-empryo-link:hover b {
   text-decoration: underline;
   text-underline-offset: 0.2em;
+}
+
+.lost {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-4);
+  min-height: 70dvh;
+  align-content: center;
+  text-align: center;
+}
+
+.lost h1 {
+  font-size: var(--t-1);
+}
+
+.lost p {
+  color: var(--ink-soft);
 }

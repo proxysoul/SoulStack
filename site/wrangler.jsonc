@@ -1,12 +1,11 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "soulstack-web",
-  "account_id": "158120acc8411ccf0d99a6875b732196",
   "compatibility_date": "2026-09-01",
   "assets": {
     "directory": "./dist",
     "html_handling": "auto-trailing-slash",
-    "not_found_handling": "none"
+    "not_found_handling": "single-page-application"
   },
   "routes": [
     { "pattern": "soulstack.proxysoul.com", "custom_domain": true },

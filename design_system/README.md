@@ -20,7 +20,7 @@ site in `site/` follows it. Read this before any visual change.
   palettes). Both come from Empryo's site so the two feel like one family; change them there first.
 - World data for scripts: `site/src/content.ts` (`WORLDS`).
 - Logos per world: `site/public/brand/logo-*.webp`. Mote per mode: `site/public/mote-{dark,light}.gif`.
-- Page components: `site/index.html`, `site/src/site.css`, `site/src/main.ts`.
+- Page components: `site/src/pages/` (React, TanStack Router), styles in `site/src/site.css`.
 
 ## Run it
 
