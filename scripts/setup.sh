@@ -86,7 +86,7 @@ record() {
   printf '%s|%s|%s|%s\n' "$1" "$2" "$3" "$4" >> "$results"
   if [ "$plain" -eq 1 ]; then
     if [ -n "$2" ]; then
-      printf '  %-7s %-8s %-12s %s\n' "$1" "$2" "$3" "$4"
+      printf '  %-7s %-8s %-14s %s\n' "$1" "$2" "$3" "$4"
     else
       printf '  %-7s %s\n' "$1" "$3"
     fi
@@ -187,16 +187,23 @@ has_claude=0
 has_codex=0
 has_copilot=0
 copilot_home="${COPILOT_HOME:-$HOME/.copilot}"
+has_pi=0
+has_opencode=0
+opencode_home="${XDG_CONFIG_HOME:-$HOME/.config}/opencode"
 phase_detect() {
   if command -v empryo >/dev/null 2>&1 || [ -f "$HOME/.empryo/config.json" ] || [ -x "$HOME/.empryo/bin/empryo" ] || [ -d "/Applications/Empryo.app" ]; then has_empryo=1; fi
   if command -v claude >/dev/null 2>&1 || [ -d "$HOME/.claude" ]; then has_claude=1; fi
   if command -v codex >/dev/null 2>&1 || [ -d "$HOME/.codex" ]; then has_codex=1; fi
   if command -v copilot >/dev/null 2>&1 || [ -d "$copilot_home" ]; then has_copilot=1; fi
+  if command -v pi >/dev/null 2>&1 || [ -d "$HOME/.pi" ]; then has_pi=1; fi
+  if command -v opencode >/dev/null 2>&1 || [ -d "$opencode_home" ]; then has_opencode=1; fi
   found=""
   [ "$has_empryo" -eq 1 ] && found="Empryo"
   [ "$has_claude" -eq 1 ] && found="${found:+$found, }Claude Code"
   [ "$has_codex" -eq 1 ] && found="${found:+$found, }Codex"
   [ "$has_copilot" -eq 1 ] && found="${found:+$found, }Copilot"
+  [ "$has_pi" -eq 1 ] && found="${found:+$found, }pi"
+  [ "$has_opencode" -eq 1 ] && found="${found:+$found, }OpenCode"
   record found "" "${found:-no agents yet}" ""
   if [ "$has_empryo" -eq 0 ]; then record "" "" "no Empryo: skipping Empryo parts (https://empryo.com)" ""; fi
   return 0
@@ -249,6 +256,55 @@ phase_command() {
     ln -sfn "$src" "$cmd"
     record command linked soulstack "$(tilde "$cmd")"
   fi
+}
+
+link_agents() {
+  target=$1
+  label=$2
+  suffix=$3
+  total=0
+  changed=0
+  missing=0
+  foreign=0
+  for f in "$root"/agents/*.md; do
+    [ -f "$f" ] || continue
+    n=$(basename "$f" .md)
+    dest="$target/$n$suffix"
+    total=$((total + 1))
+    if [ "$mode" = remove ]; then
+      if [ -L "$dest" ] && [ "$(readlink "$dest")" = "$f" ]; then rm "$dest"; changed=$((changed + 1)); fi
+      continue
+    fi
+    if [ -L "$dest" ] && [ "$(readlink "$dest")" = "$f" ]; then continue; fi
+    if [ -e "$dest" ] && [ ! -L "$dest" ]; then foreign=$((foreign + 1)); continue; fi
+    if [ "$mode" = check ]; then missing=$((missing + 1)); continue; fi
+    mkdir -p "$target"
+    ln -sfn "$f" "$dest"
+    changed=$((changed + 1))
+  done
+  [ "$total" -gt 0 ] || return 0
+  where="$(tilde "$target") ($total)"
+  if [ "$foreign" -gt 0 ]; then where="$where, $foreign kept as yours"; fi
+  if [ "$mode" = remove ]; then
+    if [ "$changed" -gt 0 ]; then record agent removed "$label" "$where"; fi
+  elif [ "$missing" -gt 0 ]; then
+    record agent missing "$label" "$where"
+  elif [ "$changed" -gt 0 ]; then
+    record agent linked "$label" "$where"
+  else
+    record agent same "$label" "$where"
+  fi
+}
+
+phase_agents() {
+  if [ "$has_empryo" -eq 1 ]; then link_agents "$HOME/.agents/agents" "Empryo" ".md"; fi
+  if [ "$has_claude" -eq 1 ]; then link_agents "$HOME/.claude/agents" "Claude Code" ".md"; fi
+  if [ "$has_copilot" -eq 1 ]; then link_agents "$copilot_home/agents" "Copilot" ".agent.md"; fi
+  if [ "$has_opencode" -eq 1 ]; then
+    link_agents "$opencode_home/agents" "OpenCode" ".md"
+    if [ -d "$opencode_home/agent" ]; then link_agents "$opencode_home/agent" "OpenCode" ".md"; fi
+  fi
+  return 0
 }
 
 phase_skills() {
@@ -305,6 +361,8 @@ phase_rules() {
   if [ "$has_claude" -eq 1 ]; then write_rules "$HOME/.claude/CLAUDE.md" "Claude Code"; fi
   if [ "$has_codex" -eq 1 ]; then write_rules "$HOME/.codex/AGENTS.md" "Codex"; fi
   if [ "$has_copilot" -eq 1 ]; then write_rules "$copilot_home/copilot-instructions.md" "Copilot"; fi
+  if [ "$has_pi" -eq 1 ]; then write_rules "$HOME/.pi/agent/AGENTS.md" "pi"; fi
+  if [ "$has_opencode" -eq 1 ]; then write_rules "$opencode_home/AGENTS.md" "OpenCode"; fi
   return 0
 }
 
@@ -574,6 +632,7 @@ if [ "$plain" -eq 1 ]; then
   phase_detect
   echo
   phase_skills
+  phase_agents
   phase_command
   phase_rules
   phase_presets
@@ -586,6 +645,7 @@ else
       2) label="getting SoulStack"; phase_stack ;;
       6) label="finding agents"; phase_detect ;;
       10) label="linking skills"; phase_skills ;;
+      11) label="linking agents"; phase_agents ;;
       12) label="adding the soulstack command"; phase_command ;;
       14) label="writing rules"; phase_rules ;;
       17) label="adding presets"; phase_presets ;;

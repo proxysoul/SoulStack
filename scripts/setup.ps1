@@ -62,7 +62,7 @@ $script:lastName = $null
 
 function Item([string]$Name, [string]$Rest) {
   $script:lastName = $Name
-  return ("{0,-12} {1}" -f $Name, $Rest)
+  return ("{0,-14} {1}" -f $Name, $Rest)
 }
 
 function Row([string]$Label, [string]$Word, [string]$Detail) {
@@ -166,7 +166,7 @@ function Show-Summary {
     if ($r.Label -eq "new") { Out-Line ("  {0}new{1}     {2}{3}{4}" -f $C.dim, $C.off, $C.fg, $r.Name, $C.off) }
   }
   foreach ($r in $script:Results) { if ($r.Label -eq "found") { Out-Line ("  {0}found  {1} {2}{3}{4}" -f $C.dim, $C.off, $C.fg, $r.Name, $C.off) } }
-  foreach ($label in "skill", "command", "rules", "preset") {
+  foreach ($label in "skill", "agent", "command", "rules", "preset") {
     $rows = @($script:Results | Where-Object { $_.Label -eq $label })
     if (-not $rows.Count) { continue }
     $words = @($rows | ForEach-Object { $_.Word } | Select-Object -Unique)
@@ -284,11 +284,17 @@ function Phase-Detect {
   $script:hasCodex = [bool](Get-Command codex -ErrorAction SilentlyContinue) -or (Test-Path (Join-Path $UserHome ".codex"))
   $script:copilotHome = if ($env:COPILOT_HOME) { $env:COPILOT_HOME } else { Join-Path $UserHome ".copilot" }
   $script:hasCopilot = [bool](Get-Command copilot -ErrorAction SilentlyContinue) -or (Test-Path $script:copilotHome)
+  $script:hasPi = [bool](Get-Command pi -ErrorAction SilentlyContinue) -or (Test-Path (Join-Path $UserHome ".pi"))
+  $configHome = if ($env:XDG_CONFIG_HOME) { $env:XDG_CONFIG_HOME } else { Join-Path $UserHome ".config" }
+  $script:opencodeHome = Join-Path $configHome "opencode"
+  $script:hasOpencode = [bool](Get-Command opencode -ErrorAction SilentlyContinue) -or (Test-Path $script:opencodeHome)
   $found = @()
   if ($script:hasEmpryo) { $found += "Empryo" }
   if ($script:hasClaude) { $found += "Claude Code" }
   if ($script:hasCodex) { $found += "Codex" }
   if ($script:hasCopilot) { $found += "Copilot" }
+  if ($script:hasPi) { $found += "pi" }
+  if ($script:hasOpencode) { $found += "OpenCode" }
   Row "found" "" $(if ($found.Count) { $found -join ", " } else { "no agents yet" })
   if (-not $script:hasEmpryo) { Row "" "" "no Empryo: skipping Empryo parts (https://empryo.com)" }
 }
@@ -410,6 +416,65 @@ function Add-Presets([string[]]$Files) {
   foreach ($f in $new) { Row "preset" "added" (Item ([IO.Path]::GetFileNameWithoutExtension($f)) "$(Tilde $Config)$note"); $note = "" }
 }
 
+function Sync-Agents([string]$Target, [string]$Label, [string]$Suffix) {
+  $files = @(Get-ChildItem -File (Join-Path $script:root "agents") -Filter "*.md" -ErrorAction SilentlyContinue)
+  if (-not $files.Count) { return }
+  $ledger = Join-Path $Target ".soulstack-agents"
+  $owned = if (Test-Path $ledger) { @([IO.File]::ReadAllLines($ledger)) } else { @() }
+  $changed = 0; $missing = 0; $foreign = 0; $mine = @()
+  foreach ($f in $files) {
+    $name = $f.BaseName + $Suffix
+    $dest = Join-Path $Target $name
+    $item = Get-Item $dest -ErrorAction SilentlyContinue
+    $isLink = $item -and $item.LinkType -and ([IO.Path]::GetFullPath(@($item.Target)[0]) -ieq $f.FullName)
+    $isOurCopy = $item -and (-not $item.LinkType) -and ($owned -contains $name)
+    if ($mode -eq "remove") {
+      if ($isLink -or $isOurCopy) { Remove-Item -Force $dest; $changed++ }
+      continue
+    }
+    if ($item -and -not $isLink -and -not $isOurCopy) { $foreign++; continue }
+    $mine += $name
+    if ($isLink) { continue }
+    if ($isOurCopy -and ([IO.File]::ReadAllText($dest) -eq [IO.File]::ReadAllText($f.FullName))) { continue }
+    if ($mode -eq "check") { $missing++; continue }
+    New-Item -ItemType Directory -Force -Path $Target | Out-Null
+    if ($item) { Remove-Item -Force $dest }
+    try {
+      New-Item -ItemType SymbolicLink -Path $dest -Target $f.FullName -ErrorAction Stop | Out-Null
+    } catch {
+      Copy-Item $f.FullName $dest
+    }
+    $changed++
+  }
+  if ($mode -eq "remove") {
+    if (Test-Path $ledger) { Remove-Item -Force $ledger }
+  } elseif ($mode -eq "install" -and $mine.Count) {
+    New-Item -ItemType Directory -Force -Path $Target | Out-Null
+    [IO.File]::WriteAllLines($ledger, [string[]]$mine)
+  }
+  $where = "$(Tilde $Target) ($($files.Count))"
+  if ($foreign) { $where += ", $foreign kept as yours" }
+  if ($mode -eq "remove") {
+    if ($changed) { Row "agent" "removed" (Item $Label $where) }
+  } elseif ($missing) {
+    Row "agent" "missing" (Item $Label $where)
+  } elseif ($changed) {
+    Row "agent" "linked" (Item $Label $where)
+  } else {
+    Row "agent" "same" (Item $Label $where)
+  }
+}
+
+function Phase-Agents {
+  if ($script:hasEmpryo) { Sync-Agents (Join-Path $UserHome ".agents\agents") "Empryo" ".md" }
+  if ($script:hasClaude) { Sync-Agents (Join-Path $UserHome ".claude\agents") "Claude Code" ".md" }
+  if ($script:hasCopilot) { Sync-Agents (Join-Path $script:copilotHome "agents") "Copilot" ".agent.md" }
+  if ($script:hasOpencode) {
+    Sync-Agents (Join-Path $script:opencodeHome "agents") "OpenCode" ".md"
+    if (Test-Path (Join-Path $script:opencodeHome "agent")) { Sync-Agents (Join-Path $script:opencodeHome "agent") "OpenCode" ".md" }
+  }
+}
+
 function Phase-Skills {
   Sync-Skills $Skills
   $claudeSkills = Join-Path $UserHome ".claude\skills"
@@ -421,6 +486,8 @@ function Phase-Rules {
   if ($script:hasClaude) { Sync-Rules (Join-Path $UserHome ".claude\CLAUDE.md") "Claude Code" }
   if ($script:hasCodex) { Sync-Rules (Join-Path $UserHome ".codex\AGENTS.md") "Codex" }
   if ($script:hasCopilot) { Sync-Rules (Join-Path $script:copilotHome "copilot-instructions.md") "Copilot" }
+  if ($script:hasPi) { Sync-Rules (Join-Path $UserHome ".pi\agent\AGENTS.md") "pi" }
+  if ($script:hasOpencode) { Sync-Rules (Join-Path $script:opencodeHome "AGENTS.md") "OpenCode" }
 }
 
 function Phase-Presets {
@@ -442,6 +509,7 @@ if (-not $fancy) {
   Phase-Detect
   Out-Line ""
   Phase-Skills
+  Phase-Agents
   Phase-Command
   Phase-Rules
   Phase-Presets
@@ -454,6 +522,7 @@ if (-not $fancy) {
         2 { $label = "getting SoulStack"; Phase-Stack }
         6 { $label = "finding agents"; Phase-Detect }
         10 { $label = "linking skills"; Phase-Skills }
+        11 { $label = "linking agents"; Phase-Agents }
         12 { $label = "adding the soulstack command"; Phase-Command }
         14 { $label = "writing rules"; Phase-Rules }
         17 { $label = "adding presets"; Phase-Presets }
