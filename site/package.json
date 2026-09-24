@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "og": "bun scripts/build-og.ts",
     "docs": "bun scripts/build-docs.ts && cd .. && node immune/app/server.mjs immune/app/immune.config.json --export site/public/immunity",
     "dev": "bun run docs && vite --port 5190",
     "build": "bun run docs && vite build",
