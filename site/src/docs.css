@@ -7,6 +7,7 @@
 }
 
 .docs-nav {
+  view-transition-name: docs-nav;
   position: sticky;
   top: 6.5rem;
   align-self: start;
@@ -54,6 +55,7 @@
 }
 
 .docs-page {
+  view-transition-name: doc;
   min-width: 0;
   max-width: 46rem;
 }
@@ -121,13 +123,32 @@
 .prose pre {
   position: relative;
   margin: 0 0 var(--s-5);
-  padding: var(--s-4) var(--s-9) var(--s-4) var(--s-4);
+  padding: var(--s-4);
   border: 1px solid var(--rule);
   border-radius: 14px;
   background: var(--paper-sunken);
-  overflow-x: auto;
   font-size: var(--t-small);
   line-height: 1.6;
+}
+
+.prose pre > code {
+  display: block;
+  margin-right: 2.4rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.docs-copy .when-done,
+.docs-copy.is-done .when-idle {
+  display: none;
+}
+
+.docs-copy.is-done .when-done {
+  display: contents;
+}
+
+.docs-copy .when-idle {
+  display: contents;
 }
 
 .docs-copy {
@@ -166,7 +187,43 @@
   border-radius: 12px;
 }
 
+.docs-picker > summary {
+  display: none;
+}
+
 @media (max-width: 900px) {
+  .docs-picker > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-3);
+    cursor: pointer;
+    list-style: none;
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .docs-picker > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .docs-picker > summary small {
+    color: var(--ink-faint);
+    font-weight: 500;
+  }
+
+  .docs-picker > summary .ic {
+    transition: rotate var(--d-2) var(--ease-out);
+  }
+
+  .docs-picker[open] > summary {
+    margin-bottom: var(--s-4);
+  }
+
+  .docs-picker[open] > summary .ic {
+    rotate: 90deg;
+  }
+
   .docs {
     grid-template-columns: minmax(0, 1fr);
     gap: var(--s-5);

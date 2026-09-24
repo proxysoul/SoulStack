@@ -11,26 +11,49 @@
 ::view-transition-old(root),
 ::view-transition-new(root) {
   mix-blend-mode: normal;
-}
-
-::view-transition-old(root) {
-  animation: page-out 140ms var(--ease-out) both;
-}
-
-::view-transition-new(root) {
-  animation: page-in 240ms var(--ease-out) both;
-}
-
-:root.is-blooming::view-transition-old(root) {
   animation: none;
+}
+
+::view-transition-group(bar),
+::view-transition-group(docs-nav) {
+  animation-duration: 0s;
+}
+
+main {
+  view-transition-name: page;
+}
+
+::view-transition-old(page),
+::view-transition-new(page) {
+  animation: none;
+}
+
+:root:active-view-transition-type(page)::view-transition-old(page) {
+  animation: page-out 120ms var(--ease-out) both;
+}
+
+:root:active-view-transition-type(page)::view-transition-new(page) {
+  animation: page-in 220ms var(--ease-out) both;
+}
+
+::view-transition-group(page) {
+  animation-duration: 0s;
+}
+
+:root:active-view-transition-type(doc)::view-transition-old(doc) {
+  animation: doc-out 120ms var(--ease-out) both;
+}
+
+:root:active-view-transition-type(doc)::view-transition-new(doc) {
+  animation: doc-in 220ms var(--ease-out) both;
+}
+
+::view-transition-image-pair(doc) {
+  isolation: isolate;
 }
 
 :root.is-blooming::view-transition-new(root) {
   animation: bloom 760ms var(--ease-out);
-}
-
-::view-transition-group(bar) {
-  animation-duration: 0s;
 }
 
 @keyframes page-out {
@@ -43,6 +66,19 @@
   from {
     opacity: 0;
     translate: 0 6px;
+  }
+}
+
+@keyframes doc-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes doc-in {
+  from {
+    opacity: 0;
+    translate: 0 4px;
   }
 }
 
@@ -127,7 +163,22 @@ code {
   margin-inline: auto;
 }
 
+.bar-nav a .ic svg {
+  width: 15px;
+  height: 15px;
+  opacity: 0.6;
+  transition: opacity var(--d-2) var(--ease-out);
+}
+
+.bar-nav a:hover .ic svg,
+.bar-nav a[aria-current="page"] .ic svg {
+  opacity: 1;
+}
+
 .bar-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: var(--s-2) var(--s-3);
   border-radius: var(--r-pill);
   color: var(--ink-soft);
@@ -996,11 +1047,15 @@ code {
 
 @media (max-width: 1100px) {
   .bar-nav {
+    margin-left: auto;
+  }
+
+  .bar-nav a:not(:last-child) {
     display: none;
   }
 
   .bar-tools {
-    margin-left: auto;
+    margin-left: 0;
   }
 
   .hero,
@@ -1303,4 +1358,21 @@ code {
 .mx-empryo-link:hover b {
   text-decoration: underline;
   text-underline-offset: 0.2em;
+}
+
+.lost {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-4);
+  min-height: 70dvh;
+  align-content: center;
+  text-align: center;
+}
+
+.lost h1 {
+  font-size: var(--t-1);
+}
+
+.lost p {
+  color: var(--ink-soft);
 }

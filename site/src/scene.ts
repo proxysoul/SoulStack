@@ -19,10 +19,10 @@ function edgeWeight(x: number, w: number): number {
   return 0.25 + 0.75 * centre * centre;
 }
 
-export function startScene(canvas: HTMLCanvasElement | null): void {
-  if (!canvas) return;
+export function startScene(canvas: HTMLCanvasElement): () => void {
   const ctx = canvas.getContext("2d");
-  if (!ctx) return;
+  if (!ctx) return () => undefined;
+  let alive = true;
   const still = document.documentElement.dataset.motion === "still";
   let w = 0;
   let h = 0;
@@ -53,11 +53,18 @@ export function startScene(canvas: HTMLCanvasElement | null): void {
 
   let colours = { pigment: css("pigment"), "pigment-alt": css("pigment-alt"), nucleus: css("nucleus") };
   let light = document.documentElement.dataset.theme === "light";
-  new MutationObserver(() => {
+  const observer = new MutationObserver(() => {
     colours = { pigment: css("pigment"), "pigment-alt": css("pigment-alt"), nucleus: css("nucleus") };
     light = document.documentElement.dataset.theme === "light";
     if (still) draw(0);
-  }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-world", "data-theme"] });
+  });
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-world", "data-theme"] });
+  const stop = () => {
+    alive = false;
+    observer.disconnect();
+    window.removeEventListener("resize", resize);
+    document.removeEventListener("visibilitychange", onVisibility);
+  };
 
   const draw = (t: number) => {
     ctx.clearRect(0, 0, w, h);
@@ -79,19 +86,20 @@ export function startScene(canvas: HTMLCanvasElement | null): void {
     ctx.globalCompositeOperation = "source-over";
   };
 
+  let visible = true;
+  function onVisibility(): void {
+    visible = document.visibilityState === "visible";
+    if (visible && !still) requestAnimationFrame(frame);
+  }
+  document.addEventListener("visibilitychange", onVisibility);
+
   if (still) {
     draw(0);
-    return;
+    return stop;
   }
 
-  let visible = true;
-  document.addEventListener("visibilitychange", () => {
-    visible = document.visibilityState === "visible";
-    if (visible) requestAnimationFrame(frame);
-  });
-
   function frame(t: number): void {
-    if (!visible) return;
+    if (!visible || !alive) return;
     for (const m of motes) {
       m.x += m.vx;
       m.y += m.vy;
@@ -104,4 +112,5 @@ export function startScene(canvas: HTMLCanvasElement | null): void {
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
+  return stop;
 }

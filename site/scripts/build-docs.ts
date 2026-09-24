@@ -1,10 +1,35 @@
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
+import { marked } from "marked";
+import { icon } from "../src/icons";
+
+const COPY_BUTTON = `<button type="button" class="copy docs-copy" aria-label="Copy" data-copy><span class="when-idle">${icon("copy")}</span><span class="when-done">${icon("check")}</span></button>`;
 
 const site = join(import.meta.dir, "..");
 const repo = join(site, "..");
 const out = join(site, "public", "docs");
 const ORIGIN = "https://soulstack.proxysoul.com";
+const generated = join(site, "src", "generated");
+
+function toDocsHref(href: string, from: string): string {
+  if (/^[a-z]+:/i.test(href) || href.startsWith("#") || !href.includes(".md")) return href;
+  const [path, hash] = href.split("#");
+  const base = from.includes("/") ? from.slice(0, from.lastIndexOf("/") + 1) : "";
+  const stack: string[] = [];
+  for (const part of `${base}${path}`.split("/")) {
+    if (part === "..") stack.pop();
+    else if (part && part !== ".") stack.push(part);
+  }
+  return `/docs/${stack.join("/").replace(/\.md$/, "")}${hash ? `#${hash}` : ""}`;
+}
+
+function renderPage(p: Page): string {
+  const html = marked.parse(p.body, { async: false }).replace(/<\/pre>/g, `${COPY_BUTTON}</pre>`);
+  return html.replace(/href="([^"]+)"/g, (_, href: string) => {
+    const next = toDocsHref(href, p.slug);
+    return /^https?:/.test(next) ? `href="${next}" rel="noopener"` : `href="${next}"`;
+  });
+}
 
 interface Page {
   slug: string;
@@ -105,6 +130,16 @@ for (const p of pages) {
   mkdirSync(dirname(file), { recursive: true });
   writeFileSync(file, p.body.endsWith("\n") ? p.body : `${p.body}\n`);
 }
+rmSync(join(generated, "docs"), { recursive: true, force: true });
+for (const p of pages) {
+  const file = join(generated, "docs", `${p.slug}.html`);
+  mkdirSync(dirname(file), { recursive: true });
+  writeFileSync(file, renderPage(p));
+}
+writeFileSync(
+  join(generated, "docs.json"),
+  JSON.stringify(pages.map(({ slug, title, summary, group }) => ({ slug, title, summary, group })), null, 1),
+);
 writeFileSync(
   join(out, "index.json"),
   JSON.stringify(pages.map(({ slug, title, summary, group }) => ({ slug, title, summary, group })), null, 1),
@@ -139,7 +174,7 @@ writeFileSync(
 writeFileSync(
   join(site, "public", "sitemap.xml"),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n<url><loc>${ORIGIN}/</loc></url>\n${pages
-    .map((p) => `<url><loc>${ORIGIN}/docs?p=${p.slug}</loc></url>`)
+    .map((p) => `<url><loc>${ORIGIN}/docs/${p.slug}</loc></url>`)
     .join("\n")}\n</urlset>\n`,
 );
 writeFileSync(join(site, "public", "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${ORIGIN}/sitemap.xml\n`);
