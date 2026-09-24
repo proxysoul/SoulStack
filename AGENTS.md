@@ -9,7 +9,7 @@ When the user asks you to set up SoulStack, run the setup script and show its ou
 - macOS and Linux: `curl -fsSL https://raw.githubusercontent.com/proxysoul/SoulStack/main/scripts/setup.sh | sh`
 - Windows: `powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/proxysoul/SoulStack/main/scripts/setup.ps1 | iex"`
 
-It clones SoulStack to `~/dev/SoulStack` (or updates it), links the skills, and adds `guides/takeaways.md` as a marked block to the global rules of each agent it finds (Empryo, Claude Code, Codex, Copilot). Existing rules are kept. Empryo parts are skipped when Empryo is not installed.
+It clones SoulStack to `~/dev/SoulStack` (or updates it), links the skills, and adds `guides/takeaways.md` as a marked block to the global rules of each agent it finds (Empryo, Claude Code, Codex, Copilot CLI, pi, OpenCode) and links the immune cells from `agents/` into the agents that support custom agents. Existing rules are kept. Empryo parts are skipped when Empryo is not installed.
 
 Presets are optional and change the user's models, theme and permissions: add them only when the user asks for ProxySoul's setup, by running the script from the clone with `--presets proxysoul,proxysoul-mcp` (`-Presets` on Windows). Add `proxysoul-trusted` only when they explicitly ask for full autonomy, and say what it turns on. `proxysoul-mcp` needs `CLOUDFLARE_API_TOKEN`.
 
@@ -21,6 +21,7 @@ Setup adds a `soulstack` command. When the user asks to update SoulStack, run `s
 - **Presets** in `plugins/presets/*.json` change Empryo settings. Load one with `empryo --plugin <path>` or through the `presets` array in a config file. Never copy their values into the user's config by hand.
 - **Prompts** in `prompts/*.md` are complete briefs. Fill in the bracketed placeholders from the user's project; ask only for what the code cannot tell you.
 - **Guides** in `guides/` are rules for you. Read `guides/takeaways.md` before any task and follow it; `guides/agent-guidance.md` covers working habits, `guides/mote-mascot.md` how to build a mascot.
+- **Immune cells** in `agents/` are stem cells: general versions installed globally. The immune system is grown per project with the `immune-system` skill, and grown copies of the cells live in the project (`.agents/agents/` for Empryo, `.claude/agents/` for Claude Code) with a filled `## This project` section. SoulStack's own grown cells are in `.agents/agents/`.
 - **Design systems** are built by the agent: when a project has UI and no `design_system/`, run the `ensoul` skill before any visual work.
 
 ## Adding to the stack
@@ -46,6 +47,11 @@ templates/                        copy these to start
 guides/<name>.md                  takeaways, working habits, mascot how-to
 assets/                           images used by the README and guides (kept out of the Genome by .empryoignore)
 morphs/                           Empryo morphs
+agents/<name>.md                  immune cells (Claude Code, Empryo, Copilot and OpenCode agent format)
+immune/                           SoulStack's own immune system: setup and update tests for Linux and Windows
+design_system/                    SoulStack's design system, built with ensoul; the site follows it
+site/                             the SoulStack website and docs (bun run dev); docs also ship as Markdown and llms.txt for agents
+EMPRYO.md                         SoulStack's own rules; templates/EMPRYO.md is the template for other projects
 plugin.json                       Copilot plugin manifest (Agent Plugins 1.0): skills/ plus com.github.copilot/rules/
 .github/plugin/marketplace.json   Copilot marketplace listing the plugin
 scripts/setup.sh, setup.ps1       set everything up on macOS and Linux, or Windows: links skills, adds the takeaways to each agent, adds the soulstack command (update, check, remove)

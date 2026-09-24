@@ -1,4 +1,6 @@
-# How we built Mote
+# Mascot guide
+
+How to draw a mascot that stays calm, shown with the one we made for Empryo. Mote stays Empryo's; use the method to make your own.
 
 <p align="center">
   <picture>

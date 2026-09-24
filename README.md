@@ -48,7 +48,8 @@ Or everything, with the setup script. It asks nothing and changes nothing withou
 
 - downloads SoulStack to `~/dev/SoulStack` (or updates it)
 - links the skills into `~/.agents/skills`, and `~/.claude/skills` if you use Claude Code
-- adds the [takeaways](guides/takeaways.md) to the global rules of every agent it finds: `~/.empryo/EMPRYO.md`, `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`, `~/.copilot/copilot-instructions.md`. Your own rules stay; SoulStack's part sits in a marked block that updates in place
+- links the ten immune cells into Empryo, Claude Code, Copilot CLI and OpenCode
+- adds the [takeaways](guides/takeaways.md) to the global rules of every agent it finds: `~/.empryo/EMPRYO.md`, `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`, `~/.copilot/copilot-instructions.md`, `~/.pi/agent/AGENTS.md`, `~/.config/opencode/AGENTS.md`. Your own rules stay; SoulStack's part sits in a marked block that updates in place
 - skips anything Empryo-only when Empryo isn't installed
 
 <table>
@@ -94,6 +95,21 @@ From a clone you can also pass:
 
 <br>
 
+## Best with Empryo
+
+SoulStack comes from the team that builds [Empryo](https://empryo.com). It works in Claude Code, Codex, Copilot CLI, pi and OpenCode, and goes further in Empryo:
+
+| In Empryo | What it changes |
+|---|---|
+| Rules reload live | Edits and `soulstack update` apply on the next message, no restart |
+| The Genome | Immune cells ask the code map where a bug lands before they attack or judge it |
+| `project` tool | Checks run the same way for every agent: `immune`, `immune:smoke` |
+| Background agents | `tcell-helper` runs the other cells in parallel |
+| Memory | Confirmed bugs, disproved claims and traps carry over to the next run |
+| Browser and computer use | Cells drive web and desktop apps through their real front doors |
+| Routines | A nightly `/routine` patrols and wakes the lead on red |
+| `EMPRYO.md` template | Empryo fills it in from the Genome, writing only what the code can't show |
+
 ## What's inside
 
 <table>
@@ -103,7 +119,7 @@ From a clone you can also pass:
       A skill that builds a product's design system and redesigns its website: reads the code and your vibe, connects every theme to its logos and screenshots, keeps one spacing scale, and proves it with screenshots.
     </td>
     <td width="50%" valign="top">
-      <h3><a href="EMPRYO.md">EMPRYO.md</a></h3>
+      <h3><a href="templates/EMPRYO.md">EMPRYO.md template</a></h3>
       A rules file that fills itself in. Copy it into a project and Empryo studies the project, then writes down only what its code map can't: rules, traps, commands and how you work.
     </td>
   </tr>
@@ -119,10 +135,30 @@ From a clone you can also pass:
   </tr>
   <tr>
     <td valign="top">
-      <h3><a href="guides/mote-mascot.md">Mote, the mascot</a></h3>
-      How we drew a mascot that stays calm: one fixed body, a moving eye, a green screen, and every frame aligned.
+      <h3><a href="skills/immune-system/SKILL.md">immune-system</a></h3>
+      Testing that works like an immune system, grown for each project by your agent: it studies the product, researches this month's tools, drives the real app on every platform, and turns every confirmed bug into a permanent check. It ships a small web app (<code>immune:app</code>) in your project's design system to see health, runs, cells and findings, and to start runs.
+    </td>
+    <td valign="top">
+      <h3><a href="agents/">Ten immune cells</a></h3>
+      <code>tcell-helper</code> leads; <code>dendritic</code> finds what is missing, <code>tcell-hunter</code> attacks, <code>negative-selection</code> kills false alarms, <code>memory-cell</code> makes bugs permanent checks, <code>tcell-patrol</code> runs everything, <code>natural-killer</code> guards security (packages, secrets, installers), plus platform, visual and toolsmith cells. Installed as stem cells; each grows into your project's own version.
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <h3><a href="immune/">SoulStack's own immune system</a></h3>
+      The worked example: setup and update tests on Linux and Windows, security checks, and the immune app. Run <code>bun run immune:app</code>, or see the snapshot on the website under <em>View SoulStack immunity</em>.
+    </td>
+    <td valign="top">
+      <h3><a href="site/">Website and docs</a></h3>
+      Every layer shown visually in Empryo's six worlds, with docs for people and <code>llms.txt</code> plus Markdown pages for agents. <code>bun run dev</code> starts it.
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <h3><a href="guides/mote-mascot.md">Mascot guide</a></h3>
+      How to draw a calm mascot of your own: one fixed body, a moving eye, a green screen, every frame aligned. Shown with Mote, Empryo&#39;s mascot, which is not part of the stack.
       <br><br>
-      <img src="assets/mote/renderings.png" width="100%" alt="Mote in six styles">
+      <img src="assets/mote/renderings.png" width="100%" alt="Example output of the mascot guide: Mote, Empryo&#39;s mascot, in six styles">
     </td>
     <td valign="top">
       <h3><a href="prompts/website-redesign.md">Prompts</a> and <a href="templates/">templates</a></h3>
