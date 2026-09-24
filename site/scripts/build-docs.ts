@@ -139,7 +139,7 @@ writeFileSync(
 writeFileSync(
   join(site, "public", "sitemap.xml"),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n<url><loc>${ORIGIN}/</loc></url>\n${pages
-    .map((p) => `<url><loc>${ORIGIN}/docs.html?p=${p.slug}</loc></url>`)
+    .map((p) => `<url><loc>${ORIGIN}/docs?p=${p.slug}</loc></url>`)
     .join("\n")}\n</urlset>\n`,
 );
 writeFileSync(join(site, "public", "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${ORIGIN}/sitemap.xml\n`);

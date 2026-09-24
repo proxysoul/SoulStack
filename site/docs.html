@@ -4,6 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>SoulStack docs</title>
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SoulStack" />
+    <meta property="og:title" content="SoulStack docs" />
+    <meta property="og:description" content="Setup, updating, supported agents, the immune system, skills and immune cells. Every page is also plain Markdown." />
+    <meta property="og:url" content="https://soulstack.proxysoul.com/docs" />
+    <meta property="og:image" content="https://soulstack.proxysoul.com/og/docs.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://soulstack.proxysoul.com/og/docs.png" />
     <meta name="description" content="SoulStack docs: setup, updating, supported agents, the immune system, skills and immune cells. Every page is also plain Markdown for agents." />
     <link rel="icon" href="/brand/logo-undertow.webp" />
     <link rel="alternate" type="text/markdown" href="/llms.txt" title="Docs index for agents" />
@@ -24,21 +34,7 @@
     <script type="module" src="/src/docs.ts"></script>
   </head>
   <body>
-    <header class="bar">
-      <a class="bar-brand" href="/" aria-label="SoulStack home">
-        <img class="bar-logo" data-logo src="/brand/logo-undertow.webp" alt="" width="28" height="28" />
-        <span class="bar-name">SoulStack</span>
-      </a>
-      <nav class="bar-nav" aria-label="Sections">
-        <a href="/#stack">Stack</a>
-        <a href="/#immune">Immune</a>
-        <a href="/docs.html" aria-current="page">Docs</a>
-      </nav>
-      <div class="bar-tools">
-        <a class="icon-btn" href="/llms.txt" title="Docs for agents (llms.txt)" aria-label="Docs for agents"><span data-icon="bot"></span></a>
-        <a class="icon-btn" href="https://github.com/proxysoul/SoulStack" aria-label="SoulStack on GitHub" title="GitHub"><span data-icon="github"></span></a>
-      </div>
-    </header>
+    <header class="bar" data-bar></header>
 
     <main class="docs wrap">
       <nav class="docs-nav" aria-label="Docs" data-docs-nav></nav>

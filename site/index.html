@@ -4,6 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>SoulStack · Empryo × ProxySoul</title>
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SoulStack" />
+    <meta property="og:title" content="SoulStack · Ensoul your agents" />
+    <meta property="og:description" content="Skills, immune cells, working rules and presets for Empryo, Claude Code, Codex, Copilot, pi and OpenCode. One command to set up, one to update." />
+    <meta property="og:url" content="https://soulstack.proxysoul.com/" />
+    <meta property="og:image" content="https://soulstack.proxysoul.com/og/home.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://soulstack.proxysoul.com/og/home.png" />
     <meta name="description" content="The agent stack behind Empryo: skills, immune cells, working rules and presets for Empryo, Claude Code, Codex and Copilot. One command to set up, one to update." />
     <link rel="icon" href="/brand/logo-undertow.webp" />
     <link rel="alternate" type="text/markdown" href="/index.md" title="This page as Markdown" />
@@ -27,35 +37,7 @@
   <body>
     <canvas class="scene" aria-hidden="true"></canvas>
 
-    <header class="bar">
-      <a class="bar-brand" href="#top" aria-label="SoulStack home">
-        <img class="bar-logo" data-logo src="/brand/logo-undertow.webp" alt="" width="28" height="28" />
-        <span class="bar-name">SoulStack</span>
-      </a>
-      <nav class="bar-nav" aria-label="Sections">
-        <a href="#stack">Stack</a>
-        <a href="#agents">Agents</a>
-        <a href="#empryo">Empryo</a>
-        <a href="#immune">Immune</a>
-        <a href="#design">Design</a>
-        <a href="#update">Update</a>
-        <a href="/docs.html">Docs</a>
-      </nav>
-      <div class="bar-tools">
-        <div class="worlds" role="radiogroup" aria-label="World">
-          <button class="world" data-world-pick="empryo" role="radio" aria-label="Empryo"></button>
-          <button class="world" data-world-pick="soul" role="radio" aria-label="proxySoul"></button>
-          <button class="world" data-world-pick="coffee" role="radio" aria-label="Coffee"></button>
-          <button class="world" data-world-pick="water" role="radio" aria-label="Water"></button>
-          <button class="world" data-world-pick="crimson" role="radio" aria-label="Crimson"></button>
-          <button class="world" data-world-pick="undertow" role="radio" aria-label="Undertow"></button>
-        </div>
-        <button class="icon-btn" data-mode-toggle aria-label="Switch light or dark" title="Light or dark">
-          <span data-icon="sun" class="only-dark"></span><span data-icon="moon" class="only-light"></span>
-        </button>
-        <a class="icon-btn" href="https://github.com/proxysoul/SoulStack" aria-label="SoulStack on GitHub" title="GitHub"><span data-icon="github"></span></a>
-      </div>
-    </header>
+    <header class="bar" data-bar></header>
 
     <main id="top">
       <section class="hero wrap">
@@ -126,8 +108,8 @@
             <h2>Works everywhere.<br />Best in Empryo.</h2>
             <p>SoulStack comes from the team that builds Empryo. Inside it, the stack can see your code, run in parallel, remember, and patrol on its own.</p>
             <div class="best-actions">
-              <a class="btn btn-primary" href="https://empryo.com">Get Empryo</a>
-              <a class="btn" href="/docs.html?p=with-empryo">How they fit</a>
+              <a class="btn btn-primary" href="https://empryo.com"><span data-icon="sparkles"></span>Get Empryo</a>
+              <a class="btn" href="/docs?p=with-empryo"><span data-icon="compass"></span>How they fit</a>
             </div>
           </div>
           <ul class="best-grid" data-best></ul>
@@ -140,7 +122,7 @@
           <p>Grown for your project by your agent, like its rules file. Scouts find what is missing, a skeptic kills false alarms, memory makes every real bug a permanent check. Generalised from Empryo’s own.</p>
         </div>
         <div class="qa">
-          <a class="btn btn-primary immune-cta" href="/immunity/">View SoulStack immunity</a>
+          <a class="btn btn-primary immune-cta" href="/immunity/"><span data-icon="shield"></span>View SoulStack immunity</a>
           <svg class="loop" viewBox="0 0 520 520" role="img" aria-label="The immune loop: sense, select, remember, patrol">
             <circle class="loop-ring" cx="260" cy="260" r="190" />
             <circle class="loop-runner" r="7"><animateMotion dur="9s" repeatCount="indefinite" path="M260 70 A190 190 0 1 1 259.99 70" /></circle>

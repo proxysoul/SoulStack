@@ -1,80 +1,11 @@
 import "./living.css";
 import "./worlds.css";
 import "./site.css";
-import { AGENTS, BEST, HOSTS, LAYERS, TAKEAWAYS, TERMINAL, WORLDS, type World } from "./content";
+import { AGENTS, BEST, HOSTS, LAYERS, TAKEAWAYS, TERMINAL, WORLDS } from "./content";
 import { logo } from "./logos";
 import { icon } from "./icons";
 import { startScene } from "./scene";
-
-const root = document.documentElement;
-const STORE = "soulstack-world";
-
-const LOGO: Record<World["id"], string> = {
-  empryo: "/brand/logo-mark.webp",
-  soul: "/brand/logo-proxysoul.webp",
-  coffee: "/brand/logo-coffee.webp",
-  water: "/brand/logo-water.webp",
-  crimson: "/brand/logo-crimson.webp",
-  undertow: "/brand/logo-undertow.webp",
-};
-
-function currentWorld(): World["id"] {
-  const id = root.dataset.world;
-  return WORLDS.find((w) => w.id === id)?.id ?? "undertow";
-}
-
-function currentMode(): "dark" | "light" {
-  return root.dataset.theme === "light" ? "light" : "dark";
-}
-
-function paint(): void {
-  const world = currentWorld();
-  const mode = currentMode();
-  for (const img of document.querySelectorAll<HTMLImageElement>("[data-logo]")) img.src = LOGO[world];
-  document.querySelector<HTMLLinkElement>("link[rel=icon]")?.setAttribute("href", LOGO[world]);
-  const mote = document.querySelector<HTMLImageElement>("[data-mote]");
-  if (mote) mote.src = mode === "light" ? "/mote-light.gif" : "/mote-dark.gif";
-  for (const b of document.querySelectorAll<HTMLButtonElement>("[data-world-pick]")) {
-    b.setAttribute("aria-checked", String(b.dataset.worldPick === world));
-  }
-  for (const s of document.querySelectorAll<HTMLElement>("[data-swatch]")) {
-    s.classList.toggle("is-on", s.dataset.swatch === world);
-  }
-  localStorage.setItem(STORE, JSON.stringify({ world, mode }));
-}
-
-function bloom(x: number, y: number, apply: () => void): void {
-  if (root.dataset.motion === "still" || !document.startViewTransition) {
-    apply();
-    paint();
-    return;
-  }
-  root.style.setProperty("--bloom-x", `${x}px`);
-  root.style.setProperty("--bloom-y", `${y}px`);
-  document.startViewTransition(() => {
-    apply();
-    paint();
-  });
-}
-
-function wireWorlds(): void {
-  for (const b of document.querySelectorAll<HTMLButtonElement>("[data-world-pick]")) {
-    const w = WORLDS.find((x) => x.id === b.dataset.worldPick);
-    if (!w) continue;
-    b.style.setProperty("--sw-a", w.dark.pigment);
-    b.style.setProperty("--sw-b", w.dark.paper);
-    b.title = `${w.name} · ${w.habitat}`;
-    b.addEventListener("click", (e) => bloom(e.clientX, e.clientY, () => {
-      root.dataset.world = w.id;
-    }));
-  }
-  document.querySelector("[data-mode-toggle]")?.addEventListener("click", (e) => {
-    const ev = e as MouseEvent;
-    bloom(ev.clientX, ev.clientY, () => {
-      root.dataset.theme = currentMode() === "dark" ? "light" : "dark";
-    });
-  });
-}
+import { LOGO, bloom, currentWorld, mountBar, onPaint, paint, root } from "./chrome";
 
 function wireIcons(scope: ParentNode = document): void {
   for (const el of scope.querySelectorAll<HTMLElement>("[data-icon]")) {
@@ -171,7 +102,7 @@ function renderMatrix(): void {
     v ? `<code role="cell" data-label="${label}">${v}</code>` : `<span role="cell" class="mx-none" data-label="${label}">not needed</span>`;
   const mark = (id: string) =>
     id === "empryo"
-      ? `<span class="mx-shine"><img data-logo src="${LOGO[currentWorld()]}" alt="" width="22" height="22" /></span>`
+      ? `<img class="mx-mote" src="/mote.webp" alt="" width="36" height="36" />`
       : logo(id, 22);
   const name = (h: (typeof HOSTS)[number]) =>
     h.id === "empryo"
@@ -247,8 +178,11 @@ function playTerminal(): void {
   io.observe(out);
 }
 
+mountBar("home");
+onPaint(() => {
+  for (const s of document.querySelectorAll<HTMLElement>("[data-swatch]")) s.classList.toggle("is-on", s.dataset.swatch === currentWorld());
+});
 wireIcons();
-wireWorlds();
 wireTabs();
 wireLayers();
 renderAgents();

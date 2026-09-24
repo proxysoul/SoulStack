@@ -4,6 +4,7 @@ import "./site.css";
 import "./docs.css";
 import { marked } from "marked";
 import { icon } from "./icons";
+import { mountBar } from "./chrome";
 
 interface NavEntry {
   slug: string;
@@ -11,15 +12,6 @@ interface NavEntry {
   summary: string;
   group: string;
 }
-
-const LOGO: Record<string, string> = {
-  empryo: "/brand/logo-mark.webp",
-  soul: "/brand/logo-proxysoul.webp",
-  coffee: "/brand/logo-coffee.webp",
-  water: "/brand/logo-water.webp",
-  crimson: "/brand/logo-crimson.webp",
-  undertow: "/brand/logo-undertow.webp",
-};
 
 const params = new URLSearchParams(location.search);
 const slug = (params.get("p") ?? "getting-started").replace(/[^a-z0-9/-]/g, "");
@@ -35,12 +27,11 @@ function toDocsHref(href: string, from: string): string {
     else if (part && part !== ".") stack.push(part);
   }
   const target = stack.join("/").replace(/\.md$/, "");
-  return `/docs.html?p=${target}${hash ? `#${hash}` : ""}`;
+  return `/docs?p=${target}${hash ? `#${hash}` : ""}`;
 }
 
 async function load(): Promise<void> {
-  const world = document.documentElement.dataset.world ?? "undertow";
-  for (const img of document.querySelectorAll<HTMLImageElement>("[data-logo]")) img.src = LOGO[world] ?? LOGO.undertow;
+  mountBar("docs");
   for (const el of document.querySelectorAll<HTMLElement>("[data-icon]")) {
     el.innerHTML = icon(el.dataset.icon ?? "");
     el.classList.add("ic");
@@ -59,7 +50,7 @@ async function load(): Promise<void> {
         .filter((e) => e.group === g)
         .map(
           (e) =>
-            `<li><a href="/docs.html?p=${e.slug}"${e.slug === slug ? ' aria-current="page"' : ""}>${e.title.replace(/^Skill: /, "")}</a></li>`,
+            `<li><a href="/docs?p=${e.slug}"${e.slug === slug ? ' aria-current="page"' : ""}>${e.title.replace(/^Skill: /, "")}</a></li>`,
         )
         .join("")}</ul>`,
     )
