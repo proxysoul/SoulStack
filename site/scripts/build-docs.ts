@@ -1,6 +1,9 @@
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { marked } from "marked";
+import { icon } from "../src/icons";
+
+const COPY_BUTTON = `<button type="button" class="copy docs-copy" aria-label="Copy" data-copy><span class="when-idle">${icon("copy")}</span><span class="when-done">${icon("check")}</span></button>`;
 
 const site = join(import.meta.dir, "..");
 const repo = join(site, "..");
@@ -21,7 +24,7 @@ function toDocsHref(href: string, from: string): string {
 }
 
 function renderPage(p: Page): string {
-  const html = marked.parse(p.body, { async: false });
+  const html = marked.parse(p.body, { async: false }).replace(/<\/pre>/g, `${COPY_BUTTON}</pre>`);
   return html.replace(/href="([^"]+)"/g, (_, href: string) => {
     const next = toDocsHref(href, p.slug);
     return /^https?:/.test(next) ? `href="${next}" rel="noopener"` : `href="${next}"`;

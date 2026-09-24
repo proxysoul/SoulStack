@@ -1,6 +1,5 @@
 import { Link, Outlet, getRouteApi, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { icon } from "../icons";
+import { useEffect, useState } from "react";
 import { Icon } from "../app/Icon";
 import { usePageMeta } from "../app/Chrome";
 import { DOCS } from "./docs-data";
@@ -58,39 +57,12 @@ export function DocsLayout() {
 
 const docRoute = getRouteApi("/docs/$");
 
+
 export function DocPage() {
   const { entry, html } = docRoute.useLoaderData();
-  const body = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   usePageMeta(`${entry.title} · SoulStack docs`, entry.summary);
 
-  useLayoutEffect(() => {
-    const el = body.current;
-    if (!el) return;
-    const buttons = [...el.querySelectorAll("pre")].map((pre) => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "copy docs-copy";
-      btn.setAttribute("aria-label", "Copy");
-      btn.innerHTML = icon("copy");
-      const reset = () => {
-        btn.innerHTML = icon("copy");
-        btn.classList.remove("is-done");
-      };
-      btn.addEventListener("click", async () => {
-        await navigator.clipboard.writeText(pre.querySelector("code")?.textContent ?? pre.textContent ?? "");
-        btn.innerHTML = icon("check");
-        btn.classList.add("is-done");
-      });
-      btn.addEventListener("pointerleave", reset);
-      btn.addEventListener("blur", reset);
-      pre.append(btn);
-      return btn;
-    });
-    return () => {
-      for (const b of buttons) b.remove();
-    };
-  }, [html]);
 
   return (
     <article className="docs-page">
@@ -102,9 +74,19 @@ export function DocPage() {
       </div>
       <div
         key={entry.slug}
-        ref={body}
         className="prose"
-        onClick={(e) => {
+        onPointerOut={(e) => {
+          const btn = (e.target as HTMLElement).closest("[data-copy]");
+          if (btn && !btn.contains(e.relatedTarget as Node | null)) btn.classList.remove("is-done");
+        }}
+        onClick={async (e) => {
+          const copy = (e.target as HTMLElement).closest<HTMLElement>("[data-copy]");
+          if (copy) {
+            const code = copy.closest("pre")?.querySelector("code")?.textContent ?? "";
+            await navigator.clipboard.writeText(code);
+            copy.classList.add("is-done");
+            return;
+          }
           const a = (e.target as HTMLElement).closest("a");
           const href = a?.getAttribute("href") ?? "";
           if (!a || !href.startsWith("/docs/") || href.endsWith(".md") || e.metaKey || e.ctrlKey || e.shiftKey) return;

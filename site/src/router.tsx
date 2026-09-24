@@ -44,7 +44,11 @@ export const router = createRouter({
   defaultPreload: "intent",
   scrollRestoration: true,
   defaultViewTransition: {
-    types: ({ pathChanged }) => (pathChanged && !matchMedia("(prefers-reduced-motion: reduce)").matches ? ["page"] : false),
+    types: ({ fromLocation, toLocation, pathChanged }) => {
+      if (!pathChanged || matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+      const inDocs = (path?: string) => path?.startsWith("/docs/") ?? false;
+      return inDocs(fromLocation?.pathname) && inDocs(toLocation.pathname) ? ["doc"] : ["page"];
+    },
   },
 });
 

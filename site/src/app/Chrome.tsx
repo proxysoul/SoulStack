@@ -5,12 +5,12 @@ import { LOGO, persistWorld, pickWorld, toggleMode, useWorld } from "../world";
 import { Icon } from "./Icon";
 
 const SECTIONS = [
-  { hash: "stack", label: "Stack" },
-  { hash: "agents", label: "Agents" },
-  { hash: "empryo", label: "Empryo" },
-  { hash: "immune", label: "Immune" },
-  { hash: "design", label: "Design" },
-  { hash: "update", label: "Update" },
+  { hash: "stack", label: "Stack", icon: "layers" },
+  { hash: "agents", label: "Agents", icon: "bot" },
+  { hash: "empryo", label: "Empryo", icon: "sparkles" },
+  { hash: "immune", label: "Immune", icon: "shield" },
+  { hash: "design", label: "Design", icon: "palette" },
+  { hash: "update", label: "Update", icon: "refresh" },
 ];
 
 export function Bar() {
@@ -28,10 +28,12 @@ export function Bar() {
       <nav className="bar-nav" aria-label="Sections">
         {SECTIONS.map((s) => (
           <Link key={s.hash} to="/" hash={s.hash} activeOptions={{ includeHash: true }} activeProps={{ "aria-current": undefined }}>
+            <Icon name={s.icon} />
             {s.label}
           </Link>
         ))}
         <Link to="/docs" aria-current={onDocs ? "page" : undefined}>
+          <Icon name="book" />
           Docs
         </Link>
       </nav>
