@@ -1,0 +1,13 @@
+{
+  "name": "soulstack",
+  "owner": { "name": "ProxySoul" },
+  "metadata": { "description": "ProxySoul's agent stack for Copilot CLI", "version": "1.0.0" },
+  "plugins": [
+    {
+      "name": "soulstack",
+      "description": "The ensoul design-system skill and the working takeaways as rules.",
+      "version": "1.0.0",
+      "source": "."
+    }
+  ]
+}

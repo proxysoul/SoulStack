@@ -1,0 +1,54 @@
+{
+  "name": "proxysoul-mcp",
+  "version": "1.0.0",
+  "description": "MCP servers. Tokens come from environment variables, never from this file",
+  "config": {
+    "mcpServers": [
+      {
+        "name": "cloudflare",
+        "url": "https://mcp.cloudflare.com/mcp",
+        "transport": "http",
+        "headers": {
+          "Authorization": "Bearer ${CLOUDFLARE_API_TOKEN}"
+        },
+        "disabled": true
+      },
+      {
+        "name": "cloudflare-docs",
+        "url": "https://docs.mcp.cloudflare.com/mcp",
+        "transport": "http",
+        "headers": {
+          "Authorization": "Bearer ${CLOUDFLARE_API_TOKEN}"
+        },
+        "disabled": true
+      },
+      {
+        "name": "cloudflare-bindings",
+        "url": "https://bindings.mcp.cloudflare.com/mcp",
+        "transport": "http",
+        "headers": {
+          "Authorization": "Bearer ${CLOUDFLARE_API_TOKEN}"
+        },
+        "disabled": true
+      },
+      {
+        "name": "cloudflare-builds",
+        "url": "https://builds.mcp.cloudflare.com/mcp",
+        "transport": "http",
+        "headers": {
+          "Authorization": "Bearer ${CLOUDFLARE_API_TOKEN}"
+        },
+        "disabled": true
+      },
+      {
+        "name": "cloudflare-observability",
+        "url": "https://observability.mcp.cloudflare.com/mcp",
+        "transport": "http",
+        "headers": {
+          "Authorization": "Bearer ${CLOUDFLARE_API_TOKEN}"
+        },
+        "disabled": true
+      }
+    ]
+  }
+}

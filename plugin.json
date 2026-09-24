@@ -1,0 +1,11 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "soulstack",
+  "version": "1.0.0",
+  "description": "ProxySoul's agent stack: the ensoul design-system skill and the working takeaways as rules.",
+  "author": { "name": "ProxySoul", "url": "https://github.com/proxysoul" },
+  "homepage": "https://github.com/proxysoul/SoulStack",
+  "repository": "https://github.com/proxysoul/SoulStack",
+  "license": "MIT",
+  "keywords": ["skills", "design-system", "agents", "empryo"]
+}

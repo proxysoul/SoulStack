@@ -1,0 +1,23 @@
+{
+  "name": "proxysoul-trusted",
+  "version": "1.0.0",
+  "description": "Full autonomy: yolo, auto-approved cells, computer use with every capability switch on. Trusted machines only",
+  "config": {
+    "yolo": true,
+    "cells": {
+      "autoApprove": true
+    },
+    "computerUseDrive": "assist",
+    "computerUseSettings": {
+      "switches": {
+        "nativeInput": true,
+        "uploads": true,
+        "downloads": true,
+        "clipboardRead": true,
+        "credentialEntry": true,
+        "arbitraryExecution": true,
+        "consequential": true
+      }
+    }
+  }
+}

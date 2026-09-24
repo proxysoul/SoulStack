@@ -1,0 +1,155 @@
+{
+  "name": "proxysoul",
+  "version": "1.0.0",
+  "description": "proxySoul global Empryo setup: GPT-6 Sol main, Astra reviews, Luna for grunt work and subagents; theme, appearance, editor, agent features",
+  "config": {
+    "defaultModel": "subscriptions/gpt-6-sol",
+    "editor": {
+      "command": "nvim",
+      "args": []
+    },
+    "theme": {
+      "name": "proxysoul-water",
+      "userMessageOpacity": 0,
+      "diffOpacity": 0,
+      "borderStrength": "strong"
+    },
+    "nvimConfig": "user",
+    "editorIntegration": {
+      "diagnostics": true,
+      "symbols": true,
+      "hover": true,
+      "references": true,
+      "definition": true,
+      "codeActions": true,
+      "editorContext": true,
+      "rename": true,
+      "lspStatus": true,
+      "format": true,
+      "syncEditorOnEdit": false
+    },
+    "codeExecution": true,
+    "computerUse": true,
+    "webSearch": true,
+    "nativeSearch": true,
+    "compaction": {
+      "gapFill": "always"
+    },
+    "nerdFont": true,
+    "disabledTools": [
+      "request_tools",
+      "editor"
+    ],
+    "defaultForgeMode": "auto",
+    "showNarration": false,
+    "appearance": {
+      "themeId": "proxysoul-undertow",
+      "themeTokens": {
+        "brand": "#98b0c2",
+        "brandSecondary": "#c49aa4",
+        "brandDim": "#1c242c",
+        "brandAlt": "#c6cfd8",
+        "error": "#d68f8f",
+        "success": "#93b3a2",
+        "warning": "#cfb595",
+        "info": "#8fadc4",
+        "amber": "#bfa285",
+        "textPrimary": "#e8ebee",
+        "textSecondary": "#a4acb6",
+        "textMuted": "#78818c",
+        "textDim": "#59616c",
+        "textFaint": "#3e454f",
+        "textSubtle": "#272d35",
+        "bgApp": "#0c0e11",
+        "bgPopup": "#12151a",
+        "bgPopupHighlight": "#20262e",
+        "bgOverlay": "#07080b",
+        "bgPrimary": "#0c0e11",
+        "bgSecondary": "#090a0d",
+        "bgElevated": "#1a1f26",
+        "bgInput": "#0a0c0f",
+        "bgBanner": "#1b222c",
+        "bgBannerError": "#2c181d",
+        "bgUser": "#11151b",
+        "border": "#2a323c",
+        "borderFocused": "#c49aa4",
+        "borderActive": "#98b0c2",
+        "borderSlash": "#c6cfd8",
+        "diffAddedBg": "#12211b",
+        "diffRemovedBg": "#251618",
+        "diffAddedSign": "#93b3a2",
+        "diffRemovedSign": "#d68f8f",
+        "accentUser": "#c49aa4",
+        "accentAssistant": "#98b0c2",
+        "accentSystem": "#78818c",
+        "bgBase": "#0c0e11",
+        "bgPane": "#12151a",
+        "bgPaneRaised": "#1a1f26"
+      },
+      "shareWithTUI": true,
+      "chromeTone": "auto",
+      "windowBackdrop": "blurred",
+      "settingsPresentation": "popup",
+      "cardOpacity": 48,
+      "composerCollapse": "working",
+      "chromeOpacity": 4
+    },
+    "taskRouter": {
+      "spark": "subscriptions/gpt-6-luna",
+      "ember": "subscriptions/gpt-6-luna",
+      "webSearch": "subscriptions/gpt-6-luna",
+      "desloppify": "subscriptions/gpt-6-luna",
+      "verify": "subscriptions/gpt-6-astra",
+      "compact": "subscriptions/gpt-6-luna",
+      "semantic": "subscriptions/gpt-6-luna",
+      "default": "subscriptions/gpt-6-sol",
+      "review": "subscriptions/gpt-6-astra",
+      "explore": "subscriptions/gpt-6-luna",
+      "maxConcurrentAgents": 0,
+      "goalReview": "subscriptions/gpt-6-astra",
+      "judge": "subscriptions/gpt-6-astra",
+      "advisor": "subscriptions/gpt-6-astra",
+      "duck": "subscriptions/gpt-6-astra",
+      "council": "subscriptions/gpt-6-astra",
+      "namer": "subscriptions/gpt-6-luna",
+      "orchestrate": "subscriptions/gpt-6-sol",
+      "node": "subscriptions/gpt-6-luna",
+      "routine": "subscriptions/gpt-6-luna",
+      "marionette": "opencode-go/gpt-6-luna",
+      "efforts": {
+        "judge": "max",
+        "review": "max",
+        "goalReview": "max",
+        "node": "high"
+      }
+    },
+    "cache": {
+      "ttl": "1h"
+    },
+    "showReasoning": false,
+    "performance": {
+      "effort": "off",
+      "serviceTier": "flex"
+    },
+    "agentFeatures": {
+      "forgeV2": true
+    },
+    "typesafe": {
+      "enabled": true,
+      "rerank": true,
+      "rerankMode": "apply",
+      "skillSuggestion": false,
+      "errorTriage": true,
+      "computerUseGuard": false,
+      "pilot": true
+    },
+    "modelPicker": {
+      "hiddenModels": [],
+      "hiddenProviders": [
+        "subscriptions"
+      ],
+      "hideUnconfigured": true,
+      "groupModels": true
+    }
+  }
+}
