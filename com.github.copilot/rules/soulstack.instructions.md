@@ -19,6 +19,7 @@ Lessons from building Empryo with agents, turned into rules. Follow them by defa
 - **Build first, check what matters.** Don't spend hours measuring and testing before writing the change. Run the checks that prove this change, not every check there is.
 - **Don't cut scope because something is risky.** Plan for the risk and fix what breaks.
 - **Plan once, then run.** For a big task, make a plan you can carry out without asking at every step.
+- **Get the skills the task needs.** Before starting, check which skills fit the task; install any that are missing, load them, and follow them. Unload each one only when the work it covers is fully done.
 - **Do the work yourself.** Use helper agents only when the user asks for them. Then give each one area, the files it owns, the files it must not touch, and how to prove its work, and review their output before committing it.
 - **Second opinions shape the plan, not every step.** Ask a senior model before risky changes to settings or structure; don't gate each step on a review.
 - **Leave the code clean**: no comments, no fragile workarounds, no hand-rolled code where the platform or a package already does it.
