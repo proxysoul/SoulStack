@@ -84,6 +84,19 @@ export const LAYERS: Layer[] = [
     where: "Linked into ~/.agents/agents (Empryo), ~/.claude/agents and ~/.copilot/agents.",
   },
   {
+    id: "immunity",
+    icon: "shield",
+    title: "Immunity",
+    line: "An immune system your agent grows for your project: it finds bugs, proves them, and never lets them back.",
+    items: [
+      { name: "Grown, not copied", what: "Your agent studies the product, researches this month's tools and builds the checks that fit." },
+      { name: "The immune app", what: "immune:app shows health, runs, cells and findings in your design system, and starts runs." },
+      { name: "Security built in", what: "natural-killer watches packages, secrets and installers on every run." },
+      { name: "Memory", what: "Every confirmed bug becomes a permanent check." },
+    ],
+    where: "immune/ and .agents/agents/ in your project. See SoulStack's own under View SoulStack immunity.",
+  },
+  {
     id: "presets",
     icon: "sliders",
     title: "Presets",

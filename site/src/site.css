@@ -1212,3 +1212,70 @@ code {
   justify-self: start;
   grid-column: 1 / -1;
 }
+
+.mx-row-empryo {
+  position: relative;
+  background:
+    linear-gradient(90deg, var(--pigment-12), transparent 70%),
+    var(--glass-strong);
+  box-shadow: inset 3px 0 0 var(--pigment);
+}
+
+.mx-shine {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin: -4px;
+  border-radius: 10px;
+  background: var(--pigment-12);
+  box-shadow: 0 0 0 1px var(--pigment-36), 0 0 18px -2px var(--pigment);
+  overflow: hidden;
+}
+
+.mx-shine img {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+}
+
+.mx-shine::after {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background: linear-gradient(115deg, transparent 40%, color-mix(in oklab, #fff 55%, transparent) 50%, transparent 60%);
+  translate: -120% 0;
+  animation: shine 4.5s var(--ease-in-out) infinite 1s;
+}
+
+@keyframes shine {
+  30%,
+  100% {
+    translate: 120% 0;
+  }
+}
+
+:root[data-motion="still"] .mx-shine::after {
+  animation: none;
+  display: none;
+}
+
+.mx-empryo-link {
+  display: grid;
+  text-decoration: none;
+}
+
+.mx-empryo-link b {
+  color: var(--pigment);
+}
+
+.mx-empryo-link small {
+  color: var(--ink-faint);
+  font-size: var(--t-micro);
+}
+
+.mx-empryo-link:hover b {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}

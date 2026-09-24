@@ -170,12 +170,18 @@ function renderMatrix(): void {
   const cell = (label: string, v: string | null) =>
     v ? `<code role="cell" data-label="${label}">${v}</code>` : `<span role="cell" class="mx-none" data-label="${label}">not needed</span>`;
   const mark = (id: string) =>
-    id === "empryo" ? `<img data-logo src="${LOGO[currentWorld()]}" alt="" width="22" height="22" />` : logo(id, 22);
+    id === "empryo"
+      ? `<span class="mx-shine"><img data-logo src="${LOGO[currentWorld()]}" alt="" width="22" height="22" /></span>`
+      : logo(id, 22);
+  const name = (h: (typeof HOSTS)[number]) =>
+    h.id === "empryo"
+      ? `<a class="mx-empryo-link" href="https://empryo.com" rel="noopener"><b>${h.name}</b><small>by the SoulStack team · empryo.com</small></a>`
+      : `<span><b>${h.name}</b>${h.note ? `<small>${h.note}</small>` : ""}</span>`;
   box.innerHTML =
     `<div class="mx-row mx-head" role="row"><span role="columnheader">Agent</span><span role="columnheader">Rules</span><span role="columnheader">Skills</span><span role="columnheader">Agents</span><span role="columnheader">Presets</span></div>` +
     HOSTS.map(
-      (h) => `<div class="mx-row" role="row">
-        <span class="mx-host" role="rowheader">${mark(h.id)}<span><b>${h.name}</b>${h.note ? `<small>${h.note}</small>` : ""}</span></span>
+      (h) => `<div class="mx-row${h.id === "empryo" ? " mx-row-empryo" : ""}" role="row">
+        <span class="mx-host" role="rowheader">${mark(h.id)}${name(h)}</span>
         ${cell("Rules", h.rules)}${cell("Skills", h.skills)}${h.agents ? cell("Agents", h.agents) : `<span role="cell" class="mx-none" data-label="Agents">no custom agents</span>`}${cell("Presets", h.presets)}
       </div>`,
     ).join("");

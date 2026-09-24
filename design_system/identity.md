@@ -2,7 +2,7 @@
 
 ## The one idea
 
-**A stack you can lift layer by layer.** SoulStack is five layers (rules, skills, agents, presets,
+**A stack you can lift layer by layer.** SoulStack is six layers (rules, skills, agents, immunity, presets,
 setup) that land in whichever agents a person already uses. Every screen shows a layer, where it
 lands, or how it stays current. The visitor should understand the whole stack without reading a
 paragraph.
@@ -19,7 +19,7 @@ paragraph.
 ## The signature moments
 
 1. The hero terminal typing setup's real output beside a living Mote.
-2. The stack: five layers that tilt forward when chosen and open into what they put where.
+2. The stack: six layers that tilt forward when chosen and open into what they put where.
 3. The immune loop: one dot running explore → disprove → make permanent → patrol, with `tcell-helper` at the
    centre.
 4. The world switch: an ink bloom from the click point that repaints everything, logos included.
