@@ -149,7 +149,7 @@ const link = (p: Page) => `- [${p.title}](${ORIGIN}/docs/${p.slug}.md): ${p.summ
 const groups: Page["group"][] = ["Guide", "Reference", "Skills", "Immune cells"];
 const llms = `# SoulStack
 
-> ProxySoul's agent stack for Empryo, Claude Code, Codex, Copilot CLI, pi and OpenCode: working rules, the ensoul and immune-system skills, ten immune-cell agents, and Empryo presets. One setup command, one update command.
+> ProxySoul's agent stack for Empryo, Claude Code, Codex, Copilot CLI, pi and OpenCode: working rules, the ensoul, immune-system and marketing skills, ten immune-cell agents, and Empryo presets. One setup command, one update command.
 
 Every page below is plain Markdown. Paths like \`~/dev/SoulStack\` are defaults in the user's home folder, not fixed locations. To install for a user, run the setup script and show its output; it asks nothing and backs up every file it changes.
 

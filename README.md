@@ -117,6 +117,12 @@ SoulStack comes from [ProxySoul](https://proxysoul.com), the creator of [Empryo]
 
 <table>
   <tr>
+    <td colspan="2" valign="top">
+      <h3><a href="skills/marketing/SKILL.md">marketing</a></h3>
+      Distilled from public LLM Gateway work: turn product evidence and authorized analytics into positioning, launches and measurable learning. Keep claims current, distinguish observation from attribution, and keep reports, slides and videos aligned without exposing private data.
+    </td>
+  </tr>
+  <tr>
     <td width="50%" valign="top">
       <h3><a href="skills/ensoul/SKILL.md">ensoul</a></h3>
       A skill that builds a product's design system and redesigns its website: reads the code and your vibe, connects every theme to its logos and screenshots, keeps one spacing scale, and proves it with screenshots.
