@@ -90,12 +90,12 @@ export const LAYERS: Layer[] = [
     line: "An immune system your agent grows for your project: it finds bugs, proves them, and never lets them back.",
     items: [
       { name: "Grown, not copied", what: "Your agent studies the product, researches this month's tools and builds the checks that fit." },
-      { name: "The immune app", what: "immune:app shows health, runs, cells and findings in your design system, and starts runs." },
+      { name: "The immune console", what: "What needs your decision, triage one key per decision, each bug's life, the commits that closed it and the guard that remembers it." },
       { name: "Security built in", what: "natural-killer watches packages, secrets and installers on every run." },
       { name: "Memory", what: "Every confirmed bug becomes a permanent check." },
       { name: "The bug machine", what: "Hundreds of hunters file only what they reproduced; another model reviews, a fixer proves the fix, and every fix ships a lint rule." },
     ],
-    where: "immune/ and .agents/agents/ in your project. See SoulStack's own under View SoulStack immunity.",
+    where: "immune/ and .agents/agents/ in your project. Try the immune console to see it run on a sample project.",
   },
   {
     id: "presets",

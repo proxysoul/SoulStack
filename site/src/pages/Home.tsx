@@ -349,7 +349,7 @@ function Immune() {
       <div className="qa">
         <a className="btn btn-primary immune-cta" href="/immunity/">
           <Icon name="shield" />
-          View SoulStack immunity
+          Try the immune console
         </a>
         <svg className="loop" viewBox="0 0 520 520" role="img" aria-label="The immune loop: sense, select, remember, patrol">
           <circle className="loop-ring" cx="260" cy="260" r="190" />

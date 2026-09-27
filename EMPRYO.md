@@ -50,8 +50,9 @@ to do it. `AGENTS.md` (and `CLAUDE.md`) explain how to use and extend the stack.
 - Entry point: `immune` (containers, every platform reachable), `immune:smoke` (Alpine only, fast).
   Run them through the `project` tool.
 - App: `immune:app` on http://127.0.0.1:4177 (SoulStack's design system, runs smoke or full from the
-  page). Every run also exports a snapshot to `site/public/immunity/`, which the website serves as
-  "View SoulStack immunity"; `immune:report` refreshes it alone.
+  page). `site/public/immunity/` is the same console exported on the Lantern sample project
+  (`--export` exports the demo; `--live-export` would export SoulStack's own data), which the
+  website serves as "Try the immune console"; `immune:report` refreshes it alone.
 - After touching `scripts/setup.sh` or `scripts/setup.ps1`, run `immune:smoke`; before a release, run
   `immune` and the Windows scripts, and say which platforms were not covered.
 - Every confirmed bug becomes a check in `immune/`; every claim meets `negative-selection` first.

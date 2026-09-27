@@ -149,7 +149,7 @@ SoulStack comes from [ProxySoul](https://proxysoul.com), the creator of [Empryo]
   <tr>
     <td valign="top">
       <h3><a href="immune/">SoulStack's own immune system</a></h3>
-      The worked example: setup and update tests on Linux and Windows, security checks, and the immune app. Run <code>bun run immune:app</code>, or see the snapshot on the website under <em>View SoulStack immunity</em>.
+      The worked example: setup and update tests on Linux and Windows, security checks, and the immune app. Run <code>bun run immune:app</code>, or try the console on a sample project on the website under <em>Try the immune console</em>.
     </td>
     <td valign="top">
       <h3><a href="site/">Website and docs</a></h3>
