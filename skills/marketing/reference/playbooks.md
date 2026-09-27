@@ -65,6 +65,42 @@ Behavioral nudges require a relevant trigger, cadence cap, current account state
 
 Referral programs need a usable sharing path, attribution window, qualifying event, reward cap, self-referral/abuse protection and refund handling. State which rewards exist and test the qualifying purchase boundary; a bonus helper does not prove every caller gates it correctly.
 
+## Authorized account analytics
+
+1. **Set the boundary first.** Record which accounts and operations the user authorized, the output audience and any exclusions. Read access does not authorize publication, configuration changes, campaigns or spending. Prefer aggregate queries with an explicit field allowlist; do not export people, credentials, session recordings or unrelated dashboard panels.
+2. **Capture a receipt.** Keep the source, observed time, selected filters, query definition, successful response and units. Preserve query/result hashes where useful, but never authorization headers or cookies. Visible browser observations count as observations, not exact API exports.
+3. **Define each clock.** Record inclusive/exclusive bounds, timezone, aggregation grain, completion/lag and the comparison interval. Compare equal completed periods where possible. A native search preset, two UTC weeks and all-time account totals must retain separate labels. Weekly bucket labels are not necessarily interval endpoints.
+4. **Define each population.** State production hosts, event scope, identity unit, bot/staff exclusions and missing instrumentation. Distinct identifiers are not deduplicated people. Product-level identifier counts can overlap; do not sum them into a platform audience. A missing product row is not evidence of zero visitors.
+5. **Keep stages honest.** Pageviews, signup events, verified accounts and key creation have different meanings. Existing users may create multiple keys. A conversion rate needs a matched eligible cohort, ordered events and a declared completion window; independently counted stages are not a funnel.
+6. **Check attribution semantics.** UTM presence on all pageviews is not campaign coverage: organic/direct entries may need no tags, and tags may disappear on later navigation. Separate campaign-entry coverage from session persistence. Pageview referrers can include internal navigation; a search referrer is not automatically organic-only, and an AI-assistant referrer is not a citation count.
+7. **Localize, then investigate.** Decompose a movement into products, channels or cohorts with comparable scopes. Contribution to a decline helps prioritize investigation; it does not explain the cause. Check instrumentation and traffic mix before blaming a release or announcing a win.
+8. **Carry uncertainty forward.** Keep approximate headline counts approximate. Do not infer a full brand share from a top-query sample. Retain observation-versus-causation labels in the report, spoken narrative and slide footnotes, not only the raw data.
+
+If data cannot be obtained, record the attempted authorized source and exact access limit. Do not bypass login, expand permissions or silently replace real data with estimates. If the user excludes financial information, use non-financial outcomes and omit monetary fields from all derived assets and public examples.
+
+## Deliverable freshness
+
+Treat the requested artifacts as a dependency chain, not separate writing tasks:
+
+- Freeze one approved evidence snapshot. Record its revision or content hash, capture time, privacy rules and metric definitions. Derive displayed values and spoken statements from it rather than retyping competing numbers.
+- List every requested output: report, editable deck, script, narration, captions/transcript, rendered media and any public contribution. A correction to evidence, scope or voice invalidates the affected downstream outputs.
+- Rebuild all in-scope dependents. Record the source revision and checksums in a manifest with slide count, duration and voice/model/provider. A requested service must actually generate the audio; no silent substitution with a local voice. Reuse validated cached assets only when their text and generation parameters match.
+- Verify the final files: numbers, windows, caveats, links, sensitive text and imagery; media decoding, narration, caption alignment, timing and representative frames; desktop/mobile layouts and controls. Cross-check media and caption hashes against the release manifest. Manifests and checksums are freshness aids, not substitutes for content review.
+- Reopen the finished artifacts when requested. Inspect the owned document/window or selected file, not unrelated user windows. Save a minimal, non-sensitive execution receipt.
+- If the user changes only one deliverable, either keep the others explicitly historical or update the full set when requested. Never imply the deck or video changed because the HTML did.
+- Separate private evidence from reusable guidance. A public skill PR can teach period alignment, unit semantics and freshness checks without including the source account’s metrics, identifiers, credentials, screenshots or dashboard URLs.
+
+### Regression prompts
+
+| Situation | Required result |
+|---|---|
+| New account data replaces a source-only audit | Reconcile the observations, remove obsolete “no analytics available” claims from every in-scope artifact, and preserve remaining uncertainties. |
+| Totals cover unequal periods or identity units | Label scopes separately; refuse a combined conversion rate or causal claim. |
+| User excludes financial data | Query and render only the allowlist, including illustrations and supporting files. |
+| User requests a provider-generated voice | Confirm actual service generation and final playback; no unannounced local-voice fallback. |
+| Report changes after video rendering | Regenerate the requested downstream files and validate one evidence revision, or mark explicitly out-of-scope versions historical. |
+| A public playbook comes from private analytics | Publish the method only; keep account evidence and recordings local. |
+
 ## Measurement contract
 
 Before making a performance claim, record:

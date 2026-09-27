@@ -119,7 +119,7 @@ SoulStack comes from [ProxySoul](https://proxysoul.com), the creator of [Empryo]
   <tr>
     <td colspan="2" valign="top">
       <h3><a href="skills/marketing/SKILL.md">marketing</a></h3>
-      Distilled from public LLM Gateway work: turn product evidence into positioning, content, launches, conversion paths and measurable learning. Audit what exists, keep claims current, connect each audience to a useful next action, and separate shipped assets from proven results.
+      Distilled from public LLM Gateway work: turn product evidence and authorized analytics into positioning, launches and measurable learning. Keep claims current, distinguish observation from attribution, and keep reports, slides and videos aligned without exposing private data.
     </td>
   </tr>
   <tr>
