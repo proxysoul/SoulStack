@@ -9,7 +9,7 @@
     "dev": "bun run docs && vite --port 5190",
     "build": "bun run docs && tsc --noEmit && vite build && bun scripts/finalize.ts",
     "preview": "vite preview --port 5190",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "bun scripts/build-docs.ts && tsc --noEmit",
     "deploy": "bun run build && wrangler deploy",
     "deploy:check": "bun run build && wrangler deploy --dry-run"
   },
