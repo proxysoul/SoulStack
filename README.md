@@ -139,7 +139,7 @@ SoulStack comes from the team that builds [Empryo](https://empryo.com). It works
   <tr>
     <td valign="top">
       <h3><a href="skills/immune-system/SKILL.md">immune-system</a></h3>
-      Testing that works like an immune system, grown for each project by your agent: it studies the product, researches this month's tools, drives the real app on every platform, and turns every confirmed bug into a permanent check. It ships a small web app (<code>immune:app</code>) in your project's design system to see health, runs, cells and findings, and to start runs.
+      Testing that works like an immune system, grown for each project by your agent: it studies the product, researches this month's tools, drives the real app on every platform, and turns every confirmed bug into a permanent check. At scale it runs a bug machine: hundreds of hunters that file only what they reproduced, a second model that reviews, fixers that prove each fix, and a lint rule for every fix so the bug cannot come back. It ships a small web app (<code>immune:app</code>) in your project's design system to see health, runs, cells, findings and the machine, triage one record at a time, and start runs.
     </td>
     <td valign="top">
       <h3><a href="agents/">Ten immune cells</a></h3>

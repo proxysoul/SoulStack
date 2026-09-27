@@ -93,6 +93,7 @@ export const LAYERS: Layer[] = [
       { name: "The immune app", what: "immune:app shows health, runs, cells and findings in your design system, and starts runs." },
       { name: "Security built in", what: "natural-killer watches packages, secrets and installers on every run." },
       { name: "Memory", what: "Every confirmed bug becomes a permanent check." },
+      { name: "The bug machine", what: "Hundreds of hunters file only what they reproduced; another model reviews, a fixer proves the fix, and every fix ships a lint rule." },
     ],
     where: "immune/ and .agents/agents/ in your project. See SoulStack's own under View SoulStack immunity.",
   },

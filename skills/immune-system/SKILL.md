@@ -1,6 +1,6 @@
 ---
 name: immune-system
-description: Build and run an immune system that proves a product works through its real front doors (CLI, terminal UI, desktop app, web, API) on every platform it ships to, finds what is missing as well as what is broken, and turns every confirmed bug into a permanent check. Use when a project needs testing beyond unit tests, before a release, when a bug keeps coming back, or when the user asks for specialized immune cells.
+description: Build and run an immune system that proves a product works through its real front doors (CLI, terminal UI, desktop app, web, API) on every platform it ships to, finds what is missing as well as what is broken, and turns every confirmed bug into a permanent check. At scale it runs a bug machine, hundreds of agents that hunt, reproduce, review, fix and guard bugs through a state machine of plain files. Use when a project needs testing beyond unit tests, before a release, after a burst of agent-written code, when a bug keeps coming back, or when the user asks for specialized immune cells or a bug hunt.
 ---
 
 # Immune system
@@ -55,7 +55,9 @@ turn into this project's cells the first time they run here.
      product it guards, in every theme and mode, and be checked with screenshots like any UI.
    - **Views**: Health (verdict, counts, the family × platform × front door grid, red, coverage holes,
      a strip of recent runs), Runs (every kept run, expandable), Cells (grown or stem, what each does),
-     Findings, Explorations. Add views the project needs (speed trends, screenshots, security).
+     Findings, Explorations, and Machine when the project runs the bug machine (board, records, one
+     record's life, triage with keys, cycles). Add views the project needs (speed trends, screenshots,
+     security).
    - **Run from the app**: buttons for the commands in `immune/app/immune.config.json`, with the log
      streamed live; the page refreshes itself when results change.
    - **Data**: every run writes `immune/results/<time>.json` and `latest.json`; the app reads only these
@@ -82,6 +84,10 @@ turn into this project's cells the first time they run here.
    - where findings go (`immune/findings/`) and where grown cells live.
 10. **Prove it**: run smoke on every reachable platform, put one known bug back and watch a check
    catch it, and write both results in `immune/README.md`.
+11. **Grow the bug machine when the project needs a hunt** ([reference/machine.md](reference/machine.md)):
+   copy `machine/briefs` into `immune/machine/briefs` and fill in the product's front doors, platforms,
+   rules file and guard tool; run one small cycle of 16 hunters end to end (found, reviewed, fixed,
+   reviewed, committed, guarded) before going to hundreds.
 
 ## The two ways it runs
 
@@ -106,6 +112,35 @@ explore or hunt  →  try to refute the claim  →  make it a permanent check  �
   it is filed, fixed or turned into a check. A disproved claim is worth as much as a confirmed one.
 - **Every confirmed bug becomes a check** that fails before the fix and passes after it. Prove both.
 - **Every "we have no way to measure this" becomes a tool order** for the toolsmith.
+- **Every fix ships a guard.** When the mistake has a shape, the guard is a lint rule with a bad and a
+  good fixture, proven to find zero matches in the product. A fix without its guard is not done.
+
+## The bug machine
+
+Patrols re-ask known questions and explorations find a few new ones. When the code base is too big for
+one agent to read, or agents have just written a lot of it, run the bug machine: hunters split the
+code into slices and lenses, and every report they file walks the same path.
+
+```
+found/  →  reviewed by another model  →  ready/  →  fixed with proof  →  fix review  →  verified/  →  committed  →  guarded/
+               ↘ rejected/ with the reason                              ↘ back to the fixer, every defect at its line
+```
+
+- **A record is a markdown file and its folder is its state.** No database, no orchestrator. Each role
+  appends its section and moves the file; exactly one copy ever exists.
+- **Claims are an atomic `mkdir`**, so pools of agents can race for work safely, and a restart loses
+  nothing: the lead clears stale claims and starts new pools.
+- **Hunters reproduce before they file**, in a clean home with the paid dependency faked, and the
+  reviewer runs the reproduction again itself. The hunter and the reviewer never share a model.
+- **Only the lead commits**, one topic at a time, and registers the guards. A human decides what the
+  machine flags: new reports, failed fix reviews, security and data loss.
+- **An antigen census** counts known bad patterns across the code base against a committed floor that
+  only goes down on its own.
+
+Everything, from the folder layout to the claim names, the briefs for each role, the record shape
+and what breaks at hundreds of agents, is in [reference/machine.md](reference/machine.md). The briefs,
+the record template, an example cycle plan and `board.mjs` (counts, claimable work, duplicates,
+stale claims) are in [machine/](machine/).
 
 ## Rules every immune cell follows
 
@@ -145,6 +180,9 @@ it has more to work with; use it:
 - **Cells run in parallel.** `tcell-helper` sends specialists off with `background_dispatch`, each
   with its own bounds, and keeps working; reports arrive when they finish. Two cells that need quiet
   timing never run at the same time.
+- **Pools for the bug machine.** One `background_dispatch` call launches a whole cycle of hunters, or a
+  pool of reviewers and fixers, each with its brief as a file and its own model and effort. Set the
+  agent limit to what your providers allow; grouped notices keep hundreds of reports readable.
 - **Memory is the immune memory.** Read memory before every run; save each confirmed bug, each
   disproved claim and each trap as a memory the next run will see.
 - **Real front doors are in reach.** Drive a web front door with the `browser` tool, a desktop app

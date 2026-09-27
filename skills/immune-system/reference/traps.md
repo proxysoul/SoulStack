@@ -21,3 +21,22 @@ Check for them before blaming the product.
 | An emulated platform reports slow timings | Emulation is correct but not a timing reference. Keep speed budgets per platform and never compare across them |
 | A check passes on an empty screen | Every count is zero when the panel under test was never opened. Assert the panel is open first |
 | Coverage looked 30 capabilities better than it was | The matcher counted words in check titles. Count only what checks make the product do |
+
+## Running many agents
+
+These cost real sessions in a bug machine that ran hundreds of agents at once.
+
+| Symptom | Cause |
+|---|---|
+| Every agent past number 256 sits at zero steps | Bun allows 256 open fetch requests per process (`BUN_CONFIG_MAX_HTTP_REQUESTS`), read once at startup. Setting it inside the process does nothing; set it in the launcher's environment |
+| Reports read well, point at a real line, and nobody can trigger them | Hunters could file without reproducing. Require a reproduction in isolation, and have the reviewer run it again |
+| A fix reviewer keeps failing good fixes | Its brief applied a product-code rule to tests. Read why a gate says no, fix the brief, and tell the running agents |
+| Work vanished after a session restart | It lived only in agents' final messages. Keep every result in the record file |
+| Two agents fixed the same record | Claims lived in a shared list. Claim with an atomic `mkdir` |
+| A record shows up in two stages | A role copied the file instead of moving it. One copy, always; the board flags duplicates |
+| A reworked record is never picked up again | The old claim still exists. Put the round in the claim name (`<id>-r2`) so every rework is a new claim |
+| A repro passes for the hunter and fails for everyone else | It ran with the developer's real home, config or credentials. Fresh `HOME` and `TMPDIR`, no credential store |
+| Runs change depending on which folder they start in | Bun loads `.env` and `bunfig.toml` from the working directory. Pass `--no-env-file` and an explicit config |
+| Another agent's changes disappeared | Someone ran stash, reset, clean or checkout in a shared working tree. Nobody does; the lead stages explicit paths |
+| A fix passes alone and fails in the full suite | The test waited on time or leaked a global, a temp dir or a process. Wait on events with a deadline, release in `finally` |
+| The board says hundreds of agents are done and the tree is full of junk | Repro folders kept whole temporary homes. Ignore generated homes and caches in git and sweep after each cycle |

@@ -49,6 +49,7 @@ assets/                           images used by the README and guides (kept out
 morphs/                           Empryo morphs
 agents/<name>.md                  immune cells (Claude Code, Empryo, Copilot and OpenCode agent format)
 immune/                           SoulStack's own immune system: setup and update tests for Linux and Windows
+skills/immune-system/machine/     the bug machine: role briefs, record template, cycle plan, board.mjs
 design_system/                    SoulStack's design system, built with ensoul; the site follows it
 site/                             the SoulStack website and docs (bun run dev); docs also ship as Markdown and llms.txt for agents
 EMPRYO.md                         SoulStack's own rules; templates/EMPRYO.md is the template for other projects

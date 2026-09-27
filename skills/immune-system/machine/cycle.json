@@ -1,0 +1,16 @@
+{
+  "id": "c01",
+  "at": "2026-09-27T09:00:00Z",
+  "models": {
+    "hunter": "<fast model> medium",
+    "reviewer": "<a different model> high",
+    "fixer": "<strongest coding model> xhigh",
+    "fixReviewer": "<a different top model> high"
+  },
+  "lenses": ["wiring", "config", "platform", "failure-paths", "weird-behavior", "parity", "security"],
+  "hunters": [
+    { "id": "c01-h001", "area": "cli", "kind": "slice", "files": ["src/cli/args.ts", "src/cli/run.ts"], "lens": "failure-paths" },
+    { "id": "c01-h002", "area": "cli", "kind": "slice", "files": ["src/cli/args.ts", "src/cli/run.ts"], "lens": "platform" },
+    { "id": "c01-h003", "area": "settings", "kind": "targets", "targets": ["every settings key"], "lens": "config" }
+  ]
+}

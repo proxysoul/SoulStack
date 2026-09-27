@@ -21,6 +21,26 @@ install starts, draws its screen, keeps their data, and survives a bad network, 
 
 `tcell-helper` coordinates the others. See [immune cells](immune-cells.md) for all ten.
 
+## The bug machine
+
+For a big code base, or after agents have written a lot of it, the skill runs a bug machine: hundreds
+of agents hunting at once, with every report walking the same path.
+
+1. **Hunt**: each hunter reads one slice of the code with one lens (wiring, config, platform, failure
+   paths, security) and files only what it reproduced in a clean home.
+2. **Review**: a different model runs the reproduction again and approves or rejects it with a reason.
+3. **Fix**: the strongest coding model fixes the root cause on every front door and proves it before
+   and after.
+4. **Fix review**: pass or fail. "Pass with a minor issue" is a fail, and the record goes back with
+   every defect at its line.
+5. **Guard**: every fix ships a lint rule that flags the bug, passes the fix and finds zero matches in
+   the code, so the same mistake cannot be merged again.
+
+A bug is one markdown file and its folder is its state, claims are an atomic `mkdir`, and only the
+lead commits. A restart loses nothing. In Empryo's own run, 312 hunters filed 213 records in one
+cycle; reviewers approved 189 and rejected 16. The full method is in the skill's
+[reference/machine.md](https://github.com/proxysoul/SoulStack/blob/main/skills/immune-system/reference/machine.md).
+
 ## Grown for each project
 
 An immune system is built by an agent for one project, like `EMPRYO.md`. The cells SoulStack
