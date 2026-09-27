@@ -789,6 +789,133 @@ code {
   stroke: var(--pigment);
 }
 
+.machine {
+  margin-top: var(--s-8);
+  padding-top: var(--s-7);
+  border-top: 1px solid var(--rule);
+}
+
+.machine-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  gap: var(--s-6);
+  align-items: end;
+}
+
+.machine-head h3 {
+  font-family: var(--font-living);
+  font-size: var(--t-2);
+}
+
+.machine-head p {
+  color: var(--ink-soft);
+  max-width: 60ch;
+}
+
+.machine-flow {
+  list-style: none;
+  margin: var(--s-7) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.machine-flow li {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: var(--s-1);
+  padding: var(--s-6) var(--s-4) 0 0;
+}
+
+.machine-flow li::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--pigment);
+  background: var(--paper);
+  z-index: 1;
+}
+
+.machine-flow li::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 14px;
+  right: 0;
+  height: 2px;
+  background: var(--pigment-36);
+}
+
+.machine-flow li:last-child::before {
+  background: var(--pigment);
+}
+
+.machine-flow li:last-child::after {
+  display: none;
+}
+
+.machine-flow b {
+  font-family: var(--font-living);
+  font-size: var(--t-4);
+}
+
+.machine-flow small {
+  color: var(--pigment);
+  font-size: var(--t-small);
+  font-weight: 600;
+}
+
+.machine-flow span {
+  color: var(--ink-faint);
+  font-size: var(--t-small);
+  line-height: 1.45;
+}
+
+.machine-proof {
+  margin-top: var(--s-6);
+  color: var(--ink-faint);
+  font-size: var(--t-small);
+}
+
+.machine-proof a {
+  color: var(--pigment);
+}
+
+@media (max-width: 1100px) {
+  .machine-head {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .machine-flow {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: var(--s-6);
+  }
+
+  .machine-flow li:nth-child(3n)::after {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .machine-flow {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--s-5);
+  }
+
+  .machine-flow li {
+    padding: 0 0 0 var(--s-6);
+  }
+
+  .machine-flow li::after {
+    display: none;
+  }
+}
+
 .agents {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));

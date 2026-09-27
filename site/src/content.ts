@@ -213,3 +213,12 @@ export const HOSTS: Host[] = [
   { id: "pi", name: "pi", rules: "~/.pi/agent/AGENTS.md", skills: "~/.agents/skills", agents: null, presets: null },
   { id: "opencode", name: "OpenCode", rules: "~/.config/opencode/AGENTS.md", skills: "~/.agents/skills", agents: "~/.config/opencode/agents", presets: null, note: "v1 agent/ and v2 agents/" },
 ];
+
+export const MACHINE = [
+  { stage: "Found", who: "Hunter", what: "Files only what it reproduced in a clean home." },
+  { stage: "Reviewed", who: "Reviewer", what: "A different model runs it again, then approves or rejects." },
+  { stage: "Fixed", who: "Fixer", what: "Fixes the root cause, proven before and after." },
+  { stage: "Fix reviewed", who: "Fix reviewer", what: "Pass or fail. A minor issue is a fail." },
+  { stage: "Landed", who: "Lead", what: "Commits one topic at a time." },
+  { stage: "Guarded", who: "Guard", what: "A lint rule keeps the same bug out for good." },
+];

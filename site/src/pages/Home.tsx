@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { AgentLogo, Icon } from "../app/Icon";
 import { CopyButton } from "../app/CopyButton";
 import { usePageMeta } from "../app/Chrome";
-import { AGENTS, BEST, HOSTS, LAYERS, TAKEAWAYS, TERMINAL, WORLDS } from "../content";
+import { AGENTS, BEST, HOSTS, LAYERS, MACHINE, TAKEAWAYS, TERMINAL, WORLDS } from "../content";
 import { startScene } from "../scene";
 import { LOGO, pickWorld, useWorld } from "../world";
 
@@ -396,6 +396,27 @@ function Immune() {
             );
           })}
         </div>
+      </div>
+      <div className="machine">
+        <div className="machine-head">
+          <h3>The bug machine</h3>
+          <p>
+            Built for big code bases. Hundreds of hunters run at once, and every report walks the same path. A bug is one markdown file, and its folder is its state.
+          </p>
+        </div>
+        <ol className="machine-flow">
+          {MACHINE.map((s) => (
+            <li key={s.stage}>
+              <b>{s.stage}</b>
+              <small>{s.who}</small>
+              <span>{s.what}</span>
+            </li>
+          ))}
+        </ol>
+        <p className="machine-proof">
+          In Empryo’s own run, 312 hunters filed 213 records in one cycle. Reviewers approved 189 and rejected 16.{" "}
+          <a href="https://github.com/proxysoul/SoulStack/blob/main/skills/immune-system/reference/machine.md">How the machine works</a>
+        </p>
       </div>
     </section>
   );
