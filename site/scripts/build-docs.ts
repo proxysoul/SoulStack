@@ -2,6 +2,7 @@ import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "nod
 import { basename, dirname, join } from "node:path";
 import { marked } from "marked";
 import { icon } from "../src/icons";
+import { SKILL_AUTHORS, avatarPath, profileUrl } from "../src/contributors";
 
 const COPY_BUTTON = `<button type="button" class="copy docs-copy" aria-label="Copy" data-copy><span class="when-idle">${icon("copy")}</span><span class="when-done">${icon("check")}</span></button>`;
 
@@ -84,6 +85,12 @@ pages.push({
   body: readFileSync(join(repo, "guides", "mote-mascot.md"), "utf8").replace(/<p align="center">[\s\S]*?<\/p>\n?/g, "").replace(/<p[\s\S]*?<\/p>\n?/g, ""),
 });
 
+function credit(skill: string): string {
+  const by = SKILL_AUTHORS[skill];
+  if (!by) return "";
+  return `<p class="doc-by"><a href="${profileUrl(by)}"><img src="${avatarPath(by)}" alt="" width="24" height="24" /><span>Contributed by <b>${by.name}</b></span></a></p>\n\n`;
+}
+
 for (const name of readdirSync(join(repo, "skills"))) {
   const { meta, body } = frontmatter(readFileSync(join(repo, "skills", name, "SKILL.md"), "utf8"));
   pages.push({
@@ -92,7 +99,9 @@ for (const name of readdirSync(join(repo, "skills"))) {
     summary: meta.description ?? "",
     group: "Skills",
     order: 20,
-    body: body.replace(/\]\((reference\/[^)]+)\)/g, `](https://github.com/proxysoul/SoulStack/blob/main/skills/${name}/$1)`),
+    body: body
+      .replace(/^(#\s.+\n)/, (title) => `${title}\n${credit(name)}`)
+      .replace(/\]\((reference\/[^)]+)\)/g, `](https://github.com/proxysoul/SoulStack/blob/main/skills/${name}/$1)`),
   });
 }
 

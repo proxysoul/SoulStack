@@ -13,6 +13,7 @@
 | World swatch | `.swatch` | Night and day halves with the world's logo and colour dots; clicking switches the page |
 | Takeaway | `.take` | Icon well, a title of three words or fewer, one line |
 | Verb | `.verb` | A `soulstack` subcommand in pigment and what it does |
+| Credit | `.lv-by`, `.doc-by` | A contributor's round avatar and "Contributed by **Name**" in a hairline pill, linking to their GitHub. Avatars live in `site/public/contributors/`; authors are listed once in `site/src/contributors.ts` |
 
 Icons are Lucide-style strokes at 1.75 (`site/src/icons.ts`). Add new ones there; never mix icon
 sets.

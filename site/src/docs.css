@@ -187,6 +187,35 @@
   border-radius: 12px;
 }
 
+.prose .doc-by a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 4px 12px 4px 4px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  color: var(--ink-faint);
+  font-size: var(--t-small);
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.prose .doc-by a:hover,
+.prose .doc-by a:focus-visible {
+  border-color: var(--pigment);
+  color: var(--ink-soft);
+}
+
+.prose .doc-by img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.prose .doc-by b {
+  color: var(--ink);
+}
+
 .docs-picker > summary {
   display: none;
 }
