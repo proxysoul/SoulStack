@@ -6,6 +6,7 @@ import { usePageMeta } from "../app/Chrome";
 import { AGENTS, BEST, HOSTS, LAYERS, MACHINE, TAKEAWAYS, TERMINAL, WORLDS } from "../content";
 import { startScene } from "../scene";
 import { LOGO, pickWorld, useWorld } from "../world";
+import { avatarPath, profileUrl } from "../contributors";
 
 const INSTALL = [
   { id: "unix", icon: "apple", label: "macOS · Linux", cmd: "curl -fsSL https://raw.githubusercontent.com/proxysoul/SoulStack/main/scripts/setup.sh | sh" },
@@ -201,6 +202,14 @@ function Layers() {
                     <div>
                       <b>{i.name}</b>
                       <p>{i.what}</p>
+                      {i.by && (
+                        <a className="lv-by" href={profileUrl(i.by)} rel="noopener">
+                          <img src={avatarPath(i.by)} alt="" width="20" height="20" loading="lazy" />
+                          <span>
+                            Contributed by <b>{i.by.name}</b>
+                          </span>
+                        </a>
+                      )}
                     </div>
                   </li>
                 ))}

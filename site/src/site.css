@@ -633,6 +633,37 @@ code {
   font-size: var(--t-small);
 }
 
+.lv-by {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-top: var(--s-2);
+  padding: 3px 10px 3px 3px;
+  border: 1px solid var(--rule-soft);
+  border-radius: 999px;
+  color: var(--ink-faint);
+  font-size: var(--t-small);
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.lv-by:hover,
+.lv-by:focus-visible {
+  border-color: var(--pigment);
+  color: var(--ink-soft);
+}
+
+.lv-by img {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.lv-by b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
 .lv-dot {
   width: 8px;
   height: 8px;
