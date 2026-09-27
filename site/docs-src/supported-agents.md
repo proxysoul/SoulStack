@@ -20,10 +20,12 @@ agents you don't have. All paths are defaults in your home folder.
 
 Presets are Empryo only.
 
-## Checked on a real machine
+## Historical checks from SoulStack 1.2.0
 
-Each agent was asked, after setup, whether its instructions contain the takeaways, which of the
-two skills it has, and which immune cells it can call:
+This table preserves the checks recorded before the marketing skill was added; it is not
+a current skill inventory or a fresh compatibility test. Each agent was asked, after setup,
+whether its instructions contain the takeaways, which of the then-available skills it has,
+and which immune cells it can call:
 
 | Agent | Rules | Skills | Immune cells |
 |---|---|---|---|

@@ -67,6 +67,7 @@ export const LAYERS: Layer[] = [
     items: [
       { name: "ensoul", what: "Builds a design system with worlds, modes, logos and screenshots, then redesigns the site." },
       { name: "immune-system", what: "Drives the real product everywhere and remembers every bug." },
+      { name: "marketing", what: "Turns product evidence into positioning, launches and measured learning." },
     ],
     where: "Linked into ~/.agents/skills and ~/.claude/skills, so updates arrive with the stack.",
   },

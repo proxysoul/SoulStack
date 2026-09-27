@@ -16,7 +16,7 @@ const INSTALL = [
 
 const LAYER_TABS = [
   { id: "rules", icon: "scroll", title: "Rules", sub: "takeaways every agent follows" },
-  { id: "skills", icon: "sparkles", title: "Skills", sub: "ensoul · immune-system" },
+  { id: "skills", icon: "sparkles", title: "Skills", sub: "ensoul · immune-system · marketing" },
   { id: "agents", icon: "bot", title: "Agents", sub: "ten immune cells" },
   { id: "immunity", icon: "shield", title: "Immunity", sub: "testing grown for your project" },
   { id: "presets", icon: "sliders", title: "Presets", sub: "Empryo models, theme, tools" },
