@@ -2,6 +2,7 @@
   "name": "SoulStack",
   "port": 4177,
   "results": "immune/results",
+  "machine": "immune/machine",
   "keepRuns": 50,
   "cells": [".agents/agents", "agents"],
   "findings": "immune/findings",

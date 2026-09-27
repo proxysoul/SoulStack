@@ -1,54 +1,48 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-world="undertow" data-theme="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SoulStack immune system</title>
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="SoulStack" />
+    <meta name="description" content="Lift the immunity layer. Reports, human decisions, fixes and the guards that remember them." />
     <meta property="og:title" content="SoulStack immunity" />
-    <meta property="og:description" content="The immune system that guards SoulStack: its checks, runs, cells and findings, rebuilt on every run." />
-    <meta property="og:url" content="https://soulstack.proxysoul.com/immunity/" />
+    <meta property="og:description" content="From the first report to the guard that remembers it." />
     <meta property="og:image" content="https://soulstack.proxysoul.com/og/immunity.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="https://soulstack.proxysoul.com/og/immunity.png" />
-    <script>
-      (() => {
-        const saved = JSON.parse(localStorage.getItem("soulstack-world") || "null");
-        const r = document.documentElement;
-        r.dataset.world = saved?.world || "undertow";
-        r.dataset.theme = saved?.mode || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
-      })();
-    </script>
+    <title>SoulStack immunity</title>
     <link rel="preload" href="recursive.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="theme.css" />
     <link rel="stylesheet" href="app.css" />
+    <script src="world.js"></script>
     <script type="module" src="app.js"></script>
   </head>
   <body>
+    <a class="skip" href="#content">Skip to content</a>
     <header class="top">
-      <div class="brand"><span class="cell-mark" aria-hidden="true"></span><b data-name>Immune system</b></div>
-      <nav class="tabs" role="tablist" aria-label="Views">
-        <button role="tab" aria-selected="true" data-view="health">Health</button>
-        <button role="tab" aria-selected="false" data-view="runs">Runs</button>
-        <button role="tab" aria-selected="false" data-view="cells">Cells</button>
-        <button role="tab" aria-selected="false" data-view="findings">Findings</button>
-        <button role="tab" aria-selected="false" data-view="explorations">Explorations</button>
+      <a class="brand" href="#overview" aria-label="SoulStack immunity overview"><span class="stack-mark" aria-hidden="true"><i></i><i></i><i></i></span><b>SoulStack <span>immunity</span></b></a>
+      <nav class="tabs" aria-label="Main views">
+        <a href="#overview">Overview</a><a href="#triage">Triage <span data-count class="count">0</span></a><a href="#records">Records</a><a href="#machine/cycles">Machine</a>
       </nav>
-      <div class="actions" data-actions></div>
+      <div class="world-controls">
+        <span class="connection" data-connection><i></i><span>Connecting</span></span>
+        <select aria-label="World" data-world-picker><option value="undertow">Undertow</option><option value="empryo">Empryo</option><option value="soul">proxySoul</option><option value="coffee">Coffee</option><option value="water">Water</option><option value="crimson">Crimson</option></select>
+        <button data-mode aria-label="Switch day or night">Day</button><button data-motion aria-label="Pause motion">Pause</button>
+      </div>
     </header>
-    <main>
-      <section data-panel="health"></section>
-      <section data-panel="runs" hidden></section>
-      <section data-panel="cells" hidden></section>
-      <section data-panel="findings" hidden></section>
-      <section data-panel="explorations" hidden></section>
+    <main id="content" tabindex="-1">
+      <aside class="demo-banner" data-demo aria-label="About this page" hidden></aside>
+      <div class="context"><span data-name>Immune system</span></div>
+      <nav class="subnav" data-subnav aria-label="More views"></nav>
+      <p role="status" class="notice" data-notice hidden></p>
+      <section data-panel="overview"></section><section data-panel="triage" hidden></section><section data-panel="records" hidden></section><section data-panel="record" hidden></section><section data-panel="machine" hidden></section>
+      <section data-panel="health" hidden></section><section data-panel="runs" hidden></section><section data-panel="cells" hidden></section><section data-panel="findings" hidden></section><section data-panel="explorations" hidden></section>
+      <div class="actions run-actions" data-actions></div>
+      <footer>From the first report to the guard that remembers it.<button data-help>Keyboard help <kbd>?</kbd></button></footer>
     </main>
-    <aside class="log" data-log hidden>
-      <div class="log-head"><b data-log-title>Run</b><button class="ghost" data-log-close aria-label="Close log">Close</button></div>
-      <pre data-log-body></pre>
-    </aside>
+    <dialog data-decision aria-labelledby="decision-title">
+      <form data-decision-form><h2 id="decision-title"></h2><p data-decision-record></p><label data-decision-label for="decision-value"></label><input id="decision-value" name="value" required maxlength="2000" autocomplete="off" /><p role="alert" data-decision-error></p><div class="actions"><button type="button" data-cancel>Cancel</button><button class="btn" type="submit">Save decision</button></div></form>
+    </dialog>
+    <dialog data-keys aria-labelledby="keys-title"><h2 id="keys-title">All keys</h2><dl class="keys"><dt><kbd>A</kbd></dt><dd>Approve the current record</dd><dt><kbd>R</kbd></dt><dd>Reject, with a reason</dd><dt><kbd>X</kbd></dt><dd>Already fixed, with a commit</dd><dt><kbd>J</kbd> / <kbd>K</kbd></dt><dd>Next / previous record</dd><dt><kbd>?</kbd></dt><dd>Show these keys</dd><dt><kbd>Esc</kbd></dt><dd>Close a dialog</dd></dl><p>Decision keys work only in live triage, never while typing.</p><form method="dialog"><button class="btn">Close</button></form></dialog>
+    <aside class="log" data-log hidden><div class="log-head"><b data-log-title>Run</b><button data-log-close aria-label="Close log">Close</button></div><pre data-log-body></pre></aside>
+    <noscript>This console needs JavaScript to read the machine snapshot.</noscript>
   </body>
 </html>

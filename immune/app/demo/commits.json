@@ -1,0 +1,50 @@
+[
+  {
+    "hash": "d0c5a1e000000000000000000000000000000000",
+    "author": "lead",
+    "at": "2026-09-27T11:44:25.572Z",
+    "subject": "docs(machine): explain claims in the lead brief"
+  },
+  {
+    "hash": "aaaaa19000000000000000000000000000000000",
+    "author": "lead",
+    "at": "2026-09-27T11:16:25.572Z",
+    "subject": "fix(sharing): keep share links read-only for guests"
+  },
+  {
+    "hash": "aaaaa18000000000000000000000000000000000",
+    "author": "lead",
+    "at": "2026-09-27T10:39:25.572Z",
+    "subject": "fix(export): write export archives atomically"
+  },
+  {
+    "hash": "aaaaa17000000000000000000000000000000000",
+    "author": "lead",
+    "at": "2026-09-27T10:02:25.572Z",
+    "subject": "fix(sync): make sketch upload retries idempotent"
+  },
+  {
+    "hash": "aaaaa16000000000000000000000000000000000",
+    "author": "lead",
+    "at": "2026-09-27T09:25:25.572Z",
+    "subject": "fix(editor): disable save on read-only notes"
+  },
+  {
+    "hash": "aaaaa15000000000000000000000000000000000",
+    "author": "lead",
+    "at": "2026-09-27T08:48:25.572Z",
+    "subject": "fix(notebooks): update the breadcrumb when a page moves"
+  },
+  {
+    "hash": "aaaaa14000000000000000000000000000000000",
+    "author": "lead",
+    "at": "2026-09-27T08:11:25.572Z",
+    "subject": "fix(export): export notebooks whose cover image is missing"
+  },
+  {
+    "hash": "c02c1e5000000000000000000000000000000000",
+    "author": "lead",
+    "at": "2026-09-27T06:53:25.572Z",
+    "subject": "chore(machine): open hunt cycle c02"
+  }
+]

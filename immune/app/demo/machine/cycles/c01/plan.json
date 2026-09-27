@@ -1,0 +1,97 @@
+{
+  "cycle": "c01",
+  "title": "Sharing and recovery",
+  "started": "2026-09-26T11:53:25.572Z",
+  "hunters": [
+    {
+      "id": "c01-h01",
+      "area": "sharing",
+      "lens": "permissions",
+      "files": [
+        "lantern/sharing/actions.js"
+      ],
+      "source": "hunter 1, scout model"
+    },
+    {
+      "id": "c01-h02",
+      "area": "history",
+      "lens": "restore",
+      "files": [
+        "lantern/history/actions.js"
+      ],
+      "source": "hunter 2, scout model"
+    },
+    {
+      "id": "c01-h03",
+      "area": "search",
+      "lens": "empty-input",
+      "files": [
+        "lantern/search/actions.js"
+      ],
+      "source": "hunter 3, scout model"
+    },
+    {
+      "id": "c01-h04",
+      "area": "notebooks",
+      "lens": "rename",
+      "files": [
+        "lantern/notebooks/actions.js"
+      ],
+      "source": "hunter 4, scout model"
+    },
+    {
+      "id": "c01-h05",
+      "area": "sync",
+      "lens": "reconnect",
+      "files": [
+        "lantern/sync/actions.js"
+      ],
+      "source": "hunter 5, scout model"
+    },
+    {
+      "id": "c01-h06",
+      "area": "reminders",
+      "lens": "timezone",
+      "files": [
+        "lantern/reminders/actions.js"
+      ],
+      "source": "hunter 6, scout model"
+    },
+    {
+      "id": "c01-h07",
+      "area": "sharing",
+      "lens": "expiry",
+      "files": [
+        "lantern/sharing/actions.js"
+      ],
+      "source": "hunter 7, scout model"
+    },
+    {
+      "id": "c01-h08",
+      "area": "import",
+      "lens": "collision",
+      "files": [
+        "lantern/import/actions.js"
+      ],
+      "source": "hunter 8, scout model"
+    },
+    {
+      "id": "c01-h09",
+      "area": "canvas",
+      "lens": "large-input",
+      "files": [
+        "lantern/canvas/actions.js"
+      ],
+      "source": "hunter 9, scout model"
+    },
+    {
+      "id": "c01-h10",
+      "area": "search",
+      "lens": "archive",
+      "files": [
+        "lantern/search/actions.js"
+      ],
+      "source": "hunter 10, scout model"
+    }
+  ]
+}

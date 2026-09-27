@@ -1,0 +1,15 @@
+{
+  "name": "Lantern",
+  "demo": true,
+  "machine": "machine",
+  "results": "results",
+  "findings": "findings",
+  "explorations": "explorations",
+  "commits": "commits.json",
+  "issues": "github/issues.json",
+  "cells": [
+    "cells"
+  ],
+  "commands": {},
+  "keepRuns": 50
+}

@@ -1,0 +1,97 @@
+{
+  "cycle": "c02",
+  "title": "A quieter notebook",
+  "started": "2026-09-26T23:53:25.572Z",
+  "hunters": [
+    {
+      "id": "c02-h01",
+      "area": "editor",
+      "lens": "cleanup",
+      "files": [
+        "lantern/editor/actions.js"
+      ],
+      "source": "hunter 1, scout model"
+    },
+    {
+      "id": "c02-h02",
+      "area": "summary",
+      "lens": "locale",
+      "files": [
+        "lantern/summary/actions.js"
+      ],
+      "source": "hunter 2, scout model"
+    },
+    {
+      "id": "c02-h03",
+      "area": "editor",
+      "lens": "focus",
+      "files": [
+        "lantern/editor/actions.js"
+      ],
+      "source": "hunter 3, scout model"
+    },
+    {
+      "id": "c02-h04",
+      "area": "export",
+      "lens": "missing-file",
+      "files": [
+        "lantern/export/actions.js"
+      ],
+      "source": "hunter 4, scout model"
+    },
+    {
+      "id": "c02-h05",
+      "area": "notebooks",
+      "lens": "move",
+      "files": [
+        "lantern/notebooks/actions.js"
+      ],
+      "source": "hunter 5, scout model"
+    },
+    {
+      "id": "c02-h06",
+      "area": "editor",
+      "lens": "readonly",
+      "files": [
+        "lantern/editor/actions.js"
+      ],
+      "source": "hunter 6, scout model"
+    },
+    {
+      "id": "c02-h07",
+      "area": "sync",
+      "lens": "retry",
+      "files": [
+        "lantern/sync/actions.js"
+      ],
+      "source": "hunter 7, scout model"
+    },
+    {
+      "id": "c02-h08",
+      "area": "export",
+      "lens": "atomic-write",
+      "files": [
+        "lantern/export/actions.js"
+      ],
+      "source": "hunter 8, scout model"
+    },
+    {
+      "id": "c02-h09",
+      "area": "sharing",
+      "lens": "guest-write",
+      "files": [
+        "lantern/sharing/actions.js"
+      ],
+      "source": "hunter 9, scout model"
+    },
+    {
+      "id": "c02-h10",
+      "area": "notebooks",
+      "lens": "intent",
+      "files": [
+        "lantern/notebooks/actions.js"
+      ],
+      "source": "hunter 10, scout model"
+    }
+  ]
+}
