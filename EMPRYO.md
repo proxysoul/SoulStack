@@ -66,7 +66,16 @@ Run them through Empryo's `project` tool:
 - `build`, `typecheck`: the site.
 - `test`: setup and update tests in Linux containers (`immune/run.sh`); Windows steps are in
   `immune/README.md`.
-- `lint`: syntax check of the shell scripts.
+- `lint`: `scripts/lint.sh` (shell and PowerShell syntax, JS syntax, JSON, rules copy, plugin versions).
+
+## CI and deploy
+
+- GitHub Actions (`.github/workflows/ci.yml`) runs lint, a gitleaks scan, the Alpine smoke test and
+  the site build on every pull request and push. `main` is protected: changes land through a pull
+  request with those checks green.
+- Cloudflare Workers Builds deploys `soulstack-web` from `main` (root `site`, `bun run build`,
+  `bunx wrangler deploy`). No Cloudflare token lives in GitHub; `bun run deploy` in `site/` is the
+  manual fallback.
 
 ## Design
 

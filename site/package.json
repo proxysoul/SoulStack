@@ -2,6 +2,7 @@
   "name": "soulstack-site",
   "private": true,
   "type": "module",
+  "packageManager": "bun@1.4.2",
   "scripts": {
     "og": "bun scripts/build-og.ts",
     "docs": "bun scripts/build-docs.ts && cd .. && node immune/app/server.mjs immune/app/immune.config.json --export site/public/immunity",

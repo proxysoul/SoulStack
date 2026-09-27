@@ -10,7 +10,7 @@
     "immune:smoke": "IMMUNE_IMAGES=alpine:latest sh immune/run.sh",
     "immune:report": "node immune/app/server.mjs immune/app/immune.config.json --export site/public/immunity",
     "test": "sh immune/run.sh",
-    "lint": "sh -n scripts/setup.sh && sh -n scripts/install.sh",
+    "lint": "sh scripts/lint.sh",
     "immune:app": "node immune/app/server.mjs immune/app/immune.config.json"
   }
 }
