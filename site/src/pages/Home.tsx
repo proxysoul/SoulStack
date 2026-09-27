@@ -251,7 +251,7 @@ function Matrix() {
               {h.id === "empryo" ? (
                 <a className="mx-empryo-link" href="https://empryo.com" rel="noopener">
                   <b>{h.name}</b>
-                  <small>by the SoulStack team · empryo.com</small>
+                  <small>by Empryo’s creator · empryo.com</small>
                 </a>
               ) : (
                 <span>
@@ -303,7 +303,7 @@ function Best() {
             <br />
             Best in Empryo.
           </h2>
-          <p>SoulStack comes from the team that builds Empryo. Inside it, the stack can see your code, run in parallel, remember, and patrol on its own.</p>
+          <p>SoulStack comes from Empryo’s creator. Inside it, the stack can see your code, run in parallel, remember, and patrol on its own.</p>
           <div className="best-actions">
             <a className="btn btn-primary" href="https://empryo.com">
               <Icon name="sparkles" />

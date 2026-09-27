@@ -1,6 +1,6 @@
 # Mascot guide
 
-How to draw a mascot that stays calm, shown with the one we made for Empryo. Mote stays Empryo's; use the method to make your own.
+How to draw a mascot that stays calm, shown with the one I made for Empryo. Mote stays Empryo's; use the method to make your own.
 
 <p align="center">
   <picture>
@@ -28,7 +28,7 @@ The page shows one frame at a time by moving the sheet behind a small window, so
 
 ## How it was made
 
-1. **Start from a working pipeline.** We used the open-source [page-mascot](https://github.com/nilbuild/page-mascot) skill (MIT, by Kamran Ahmed): it turns a character description into two aligned sheets and a React component.
+1. **Start from a working pipeline.** I used the open-source [page-mascot](https://github.com/nilbuild/page-mascot) skill (MIT, by Kamran Ahmed): it turns a character description into two aligned sheets and a React component.
 2. **Describe the character, not a style.** The prompt names what never changes (membrane shape, six cilia, one eye, the palette) and what may change (only the eye). The logo was attached as the reference image.
 3. **Draw on a green screen.** Each sheet is generated on flat bright green (`#00FF00`) with wide gaps between frames and nothing touching a cell edge. The green is keyed out afterwards to give real transparency.
 4. **Build the sheets.** The skill's build step cuts the grid, keys the green and writes the two sheets.

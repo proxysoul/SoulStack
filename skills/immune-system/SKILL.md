@@ -169,7 +169,7 @@ stale claims) are in [machine/](machine/).
 
 ## With Empryo
 
-SoulStack is made by the Empryo team, and the immune system is Empryo's own, generalised. In Empryo
+SoulStack comes from Empryo's creator, and the immune system is Empryo's own, generalised. In Empryo
 it has more to work with; use it:
 
 - **Genome first.** Before writing a check or chasing a failure, ask the code map where the damage

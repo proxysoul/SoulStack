@@ -6,7 +6,7 @@ order: 1.5
 
 # Best with Empryo
 
-SoulStack comes from the team that builds [Empryo](https://empryo.com). Everything works in Claude
+SoulStack comes from [ProxySoul](https://proxysoul.com), the creator of [Empryo](https://empryo.com). Everything works in Claude
 Code, Codex, Copilot CLI, pi and OpenCode, and it all goes further in Empryo:
 
 | In Empryo | What it changes |

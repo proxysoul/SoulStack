@@ -100,7 +100,7 @@ From a clone you can also pass:
 
 ## Best with Empryo
 
-SoulStack comes from the team that builds [Empryo](https://empryo.com). It works in Claude Code, Codex, Copilot CLI, pi and OpenCode, and goes further in Empryo:
+SoulStack comes from [ProxySoul](https://proxysoul.com), the creator of [Empryo](https://empryo.com). It works in Claude Code, Codex, Copilot CLI, pi and OpenCode, and goes further in Empryo:
 
 | In Empryo | What it changes |
 |---|---|
