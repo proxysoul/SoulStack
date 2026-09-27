@@ -11,11 +11,12 @@ cat src/scripts/setup.sh | sh > out1; cat out1
 grep -q "stack   created" out1 || fail "clone"
 [ -L $HOME/.local/bin/soulstack ] || fail "command not linked"
 soulstack check > out1b; grep -q "same" out1b || { cat out1b; fail "same after install"; }
-cd src; sed -i 's/"version": "1.1.0"/"version": "9.9.9"/' plugin.json; echo "- new rule" >> guides/takeaways.md; git commit -qam "feat(guides): add a new rule"; git push -q ../remote.git main; cd ..
+v=$(sed -n 's/.*"version": "\([^"]*\)".*/\1/p' src/plugin.json | head -n 1); [ -n "$v" ] || fail "read version"
+cd src; sed -i "s/\"version\": \"$v\"/\"version\": \"9.9.9\"/" plugin.json; echo "- new rule" >> guides/takeaways.md; git commit -qam "feat(guides): add a new rule"; git push -q ../remote.git main; cd ..
 soulstack check > out2; cat out2; grep -q "outdated" out2 || fail "check did not see update"
 grep -q "v9.9.9 is out" out2 || fail "check version"
 soulstack update > out3; cat out3
-grep -q "updated  ~/dev/SoulStack v1.1.0 to v9.9.9" out3 || fail "update line"
+grep -q "updated  ~/dev/SoulStack v$v to v9.9.9" out3 || fail "update line"
 grep -q "new     feat(guides): add a new rule" out3 || fail "news"
 cd src; git commit -q --amend -m "feat: rewritten"; git push -qf ../remote.git main; cd ..
 soulstack update > out4; cat out4; grep -q "updated" out4 || fail "rewrite not handled"

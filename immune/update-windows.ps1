@@ -19,11 +19,13 @@ if ($o -notmatch "stack\s+created") { Fail "clone" }
 if (-not (Test-Path "$base\bin\soulstack.cmd")) { Fail "command" }
 $o = Soul @("check"); if ($o -notmatch "stack\s+same") { Write-Host $o; Fail "same" }
 Push-Location src
-(Get-Content plugin.json -Raw).Replace('"version": "1.1.0"', '"version": "9.9.9"') | Set-Content -NoNewline plugin.json
+$v = (Get-Content plugin.json -Raw | ConvertFrom-Json).version
+if (-not $v) { Fail "read version" }
+(Get-Content plugin.json -Raw).Replace("`"version`": `"$v`"", '"version": "9.9.9"') | Set-Content -NoNewline plugin.json
 git commit -qam "feat(guides): add a new rule"; git push -q ..\remote.git main; Pop-Location
 $o = Soul @("check"); Write-Host $o; if ($o -notmatch "v9.9.9 is out") { Fail "check" }
 $o = Soul @("update"); Write-Host $o
-if ($o -notmatch "v1.1.0 to v9.9.9") { Fail "update line" }
+if ($o -notmatch "v$([regex]::Escape($v)) to v9.9.9") { Fail "update line" }
 if ($o -notmatch "new\s+feat\(guides\): add a new rule") { Fail "news" }
 Push-Location src; git commit -q --amend -m "feat: rewritten"; git push -qf ..\remote.git main; Pop-Location
 $o = Soul @("update"); if ($o -notmatch "stack\s+updated") { Write-Host $o; Fail "rewrite" }
