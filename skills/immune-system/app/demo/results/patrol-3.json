@@ -1,0 +1,61 @@
+{
+  "id": "patrol-3",
+  "commit": "de002ab",
+  "finished": "2026-09-27T09:53:25.572Z",
+  "results": [
+    {
+      "check": "Notebook round trip",
+      "family": "storage",
+      "platform": "linux",
+      "door": "cli",
+      "target": "local fixture",
+      "status": "pass",
+      "detail": "Saved notebook matches the input"
+    },
+    {
+      "check": "Notebook round trip",
+      "family": "storage",
+      "platform": "macos",
+      "door": "web",
+      "target": "browser",
+      "status": "pass",
+      "detail": "Reload preserves all pages"
+    },
+    {
+      "check": "Permission boundary",
+      "family": "security",
+      "platform": "linux",
+      "door": "api",
+      "target": "isolated service",
+      "status": "fail",
+      "detail": "Expired invitation was accepted"
+    },
+    {
+      "check": "Installer smoke",
+      "family": "setup",
+      "platform": "windows",
+      "door": "installer",
+      "target": "unavailable host",
+      "status": "hole",
+      "detail": "Windows host not exercised"
+    },
+    {
+      "check": "Export recovery",
+      "family": "recovery",
+      "platform": "macos",
+      "door": "cli",
+      "target": "local fixture",
+      "status": "pass",
+      "detail": "Interrupted export keeps the last archive"
+    },
+    {
+      "check": "Sketch upload",
+      "family": "sync",
+      "platform": "linux",
+      "door": "web",
+      "target": "browser",
+      "status": "known",
+      "detail": "Tracked in the current cycle"
+    }
+  ]
+}

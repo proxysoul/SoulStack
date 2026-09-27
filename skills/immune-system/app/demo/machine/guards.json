@@ -1,0 +1,23 @@
+[
+  {
+    "name": "m-retry",
+    "record": "c02-h07-1",
+    "description": "A retry creates two copies of an uploaded sketch",
+    "status": "Registered",
+    "proof": "Bad fixture: caught. Good fixture: passed. Product matches: 0."
+  },
+  {
+    "name": "m-atomic-write",
+    "record": "c02-h08-1",
+    "description": "An interrupted export replaces the last good archive",
+    "status": "Registered",
+    "proof": "Bad fixture: caught. Good fixture: passed. Product matches: 0."
+  },
+  {
+    "name": "m-guest-write",
+    "record": "c02-h09-1",
+    "description": "A guest can edit a notebook through the share link",
+    "status": "Registered",
+    "proof": "Bad fixture: caught. Good fixture: passed. Product matches: 0."
+  }
+]

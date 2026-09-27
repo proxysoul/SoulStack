@@ -1,37 +1,27 @@
+@import "worlds.css";
+
+@font-face {
+  font-family: "Recursive";
+  src: url("recursive.woff2") format("woff2");
+  font-weight: 300 1000;
+  font-display: swap;
+}
+
 :root {
-  color-scheme: dark light;
-  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-code: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  --paper: #0c0e11;
-  --paper-raised: #14181d;
-  --paper-sunken: #080a0c;
-  --ink: #e8ebee;
-  --ink-soft: #a4afba;
-  --ink-faint: #77818c;
-  --rule: #262d35;
-  --pigment: #98b0c2;
-  --on-pigment: #0c0e11;
-  --nucleus: #e0a9b6;
-  --ok: #8fc3a1;
-  --warn: #e2b86b;
-  --bad: #ff7a7a;
+  --font: "Recursive", ui-sans-serif, system-ui, sans-serif;
+  --font-code: "Recursive", ui-monospace, Menlo, monospace;
   --radius: 16px;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --paper: #f4f6f8;
-    --paper-raised: #ffffff;
-    --paper-sunken: #eaeef2;
-    --ink: #1a2028;
-    --ink-soft: #46525e;
-    --ink-faint: #5d6873;
-    --rule: #d6dde3;
-    --pigment: #4a6a80;
-    --on-pigment: #f4f6f8;
-    --nucleus: #914d5e;
-    --ok: #1f7a45;
-    --warn: #8f5800;
-    --bad: #c02828;
-  }
+code,
+pre,
+.cell b {
+  font-variation-settings: "MONO" 1;
+}
+
+h1,
+.brand b {
+  font-weight: var(--voice-wght, 700);
+  font-variation-settings: "CASL" var(--voice-casl, 0.5), "MONO" var(--voice-mono, 0);
+  letter-spacing: var(--voice-tracking, -0.02em);
 }

@@ -1,0 +1,283 @@
+:root[data-world="empryo"] {
+  --voice-casl: 0.55;
+  --voice-wght: 820;
+  --voice-mono: 0;
+  --voice-tracking: -0.035em;
+}
+
+:root[data-world="empryo"][data-theme="dark"],
+:root:not([data-world])[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #060807;
+  --paper-raised: #0f1411;
+  --paper-sunken: #030504;
+  --ink: #f3f7f3;
+  --ink-soft: #a9b5aa;
+  --ink-faint: #7c8a76;
+  --rule: #243a24;
+  --pigment: #1deb1b;
+  --pigment-alt: #d89b65;
+  --pigment-deep: #0e2f0d;
+  --on-pigment: #031203;
+  --nucleus: #eca3c4;
+  --ok: #1deb1b;
+  --warn: #e5a84b;
+  --bad: #ff6b6b;
+  --info: #5cf25a;
+}
+
+:root[data-world="empryo"][data-theme="light"],
+:root:not([data-world])[data-theme="light"] {
+  color-scheme: light;
+  --paper: #f7faf7;
+  --paper-raised: #ffffff;
+  --paper-sunken: #eef4ee;
+  --ink: #111a12;
+  --ink-soft: #3f4f41;
+  --ink-faint: #5f7061;
+  --rule: #cfdccf;
+  --pigment: #0f7a0e;
+  --pigment-alt: #8f5f22;
+  --pigment-deep: #dff3dd;
+  --on-pigment: #f7faf7;
+  --nucleus: #a34170;
+  --ok: #0f7a0e;
+  --warn: #8f5800;
+  --bad: #c02828;
+  --info: #0b6a1e;
+}
+
+:root[data-world="soul"] {
+  --voice-casl: 1;
+  --voice-wght: 620;
+  --voice-mono: 0;
+  --voice-tracking: -0.03em;
+}
+
+:root[data-world="soul"][data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #0a0812;
+  --paper-raised: #171226;
+  --paper-sunken: #06050c;
+  --ink: #e9e7f2;
+  --ink-soft: #b0acc6;
+  --ink-faint: #827d9a;
+  --rule: #2e2946;
+  --pigment: #9b6af5;
+  --pigment-alt: #ff3d7f;
+  --pigment-deep: #241c3d;
+  --on-pigment: #0a0812;
+  --nucleus: #ff8fb4;
+  --ok: #3fc85a;
+  --warn: #f09a2e;
+  --bad: #ff5c6c;
+  --info: #2fb8e0;
+}
+
+:root[data-world="soul"][data-theme="light"] {
+  color-scheme: light;
+  --paper: #faf8ff;
+  --paper-raised: #ffffff;
+  --paper-sunken: #f1edfc;
+  --ink: #1c1830;
+  --ink-soft: #4e4a66;
+  --ink-faint: #6f6a8a;
+  --rule: #d6d0ea;
+  --pigment: #5b2fd6;
+  --pigment-alt: #c40046;
+  --pigment-deep: #e9e2fb;
+  --on-pigment: #faf8ff;
+  --nucleus: #c40046;
+  --ok: #1a6f1a;
+  --warn: #9a4f00;
+  --bad: #c8102e;
+  --info: #00658f;
+}
+
+:root[data-world="coffee"] {
+  --voice-casl: 1;
+  --voice-wght: 940;
+  --voice-mono: 0;
+  --voice-tracking: -0.04em;
+}
+
+:root[data-world="coffee"][data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #0b0906;
+  --paper-raised: #1a1510;
+  --paper-sunken: #070504;
+  --ink: #f0ece4;
+  --ink-soft: #b8b0a2;
+  --ink-faint: #8a8272;
+  --rule: #332619;
+  --pigment: #e88a1a;
+  --pigment-alt: #d4a35a;
+  --pigment-deep: #2e2010;
+  --on-pigment: #140c03;
+  --nucleus: #f0a08a;
+  --ok: #3fc85a;
+  --warn: #f0703a;
+  --bad: #ff5c6c;
+  --info: #5cc8e8;
+}
+
+:root[data-world="coffee"][data-theme="light"] {
+  color-scheme: light;
+  --paper: #fdf9f3;
+  --paper-raised: #fffdf9;
+  --paper-sunken: #f4ecdf;
+  --ink: #2a1d10;
+  --ink-soft: #5c4a36;
+  --ink-faint: #7d6a54;
+  --rule: #dfd3c2;
+  --pigment: #a34a00;
+  --pigment-alt: #ad3d15;
+  --pigment-deep: #f5e6d4;
+  --on-pigment: #fffdf9;
+  --nucleus: #ad3d15;
+  --ok: #27702a;
+  --warn: #ad3d15;
+  --bad: #c2262e;
+  --info: #0b6f8f;
+}
+
+:root[data-world="water"] {
+  --voice-casl: 0.8;
+  --voice-wght: 540;
+  --voice-mono: 0;
+  --voice-tracking: -0.025em;
+}
+
+:root[data-world="water"][data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #070b10;
+  --paper-raised: #0e1a22;
+  --paper-sunken: #04070a;
+  --ink: #e6eef3;
+  --ink-soft: #a6b7c2;
+  --ink-faint: #788994;
+  --rule: #1a3040;
+  --pigment: #1eb4e0;
+  --pigment-alt: #1ab8a4;
+  --pigment-deep: #0e2030;
+  --on-pigment: #03121a;
+  --nucleus: #f28fb0;
+  --ok: #3fc85a;
+  --warn: #f09a2e;
+  --bad: #ff5c6c;
+  --info: #5cc8e8;
+}
+
+:root[data-world="water"][data-theme="light"] {
+  color-scheme: light;
+  --paper: #f5fafc;
+  --paper-raised: #ffffff;
+  --paper-sunken: #e8f2f7;
+  --ink: #10222b;
+  --ink-soft: #3f5560;
+  --ink-faint: #617680;
+  --rule: #c9dbe3;
+  --pigment: #00708f;
+  --pigment-alt: #00705f;
+  --pigment-deep: #d8ecf3;
+  --on-pigment: #f5fafc;
+  --nucleus: #b8336a;
+  --ok: #1b7045;
+  --warn: #9a5a00;
+  --bad: #bd2b35;
+  --info: #146d8a;
+}
+
+:root[data-world="crimson"] {
+  --voice-casl: 1;
+  --voice-wght: 1000;
+  --voice-mono: 0;
+  --voice-tracking: -0.045em;
+}
+
+:root[data-world="crimson"][data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #0e0812;
+  --paper-raised: #1e1024;
+  --paper-sunken: #09050c;
+  --ink: #f6eaf1;
+  --ink-soft: #c7b3c5;
+  --ink-faint: #9a8499;
+  --rule: #3f2040;
+  --pigment: #f43a6b;
+  --pigment-alt: #ab7bf0;
+  --pigment-deep: #2c1022;
+  --on-pigment: #1a0410;
+  --nucleus: #ffb3c8;
+  --ok: #45c98d;
+  --warn: #f2a94c;
+  --bad: #ff6a52;
+  --info: #ab7bf0;
+}
+
+:root[data-world="crimson"][data-theme="light"] {
+  color-scheme: light;
+  --paper: #fdf6f8;
+  --paper-raised: #fffbfc;
+  --paper-sunken: #f7e9ee;
+  --ink: #2a1520;
+  --ink-soft: #5d4452;
+  --ink-faint: #7d6472;
+  --rule: #e6cbd5;
+  --pigment: #c4184a;
+  --pigment-alt: #6b3fc4;
+  --pigment-deep: #f9dde6;
+  --on-pigment: #fffbfc;
+  --nucleus: #9c2247;
+  --ok: #1b7350;
+  --warn: #925300;
+  --bad: #b8381a;
+  --info: #6b3fc4;
+}
+
+:root[data-world="undertow"] {
+  --voice-casl: 0;
+  --voice-wght: 360;
+  --voice-mono: 0;
+  --voice-tracking: -0.02em;
+}
+
+:root[data-world="undertow"][data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #0c0e11;
+  --paper-raised: #1a1f26;
+  --paper-sunken: #08090c;
+  --ink: #e8ebee;
+  --ink-soft: #adb5bf;
+  --ink-faint: #838c97;
+  --rule: #2a323c;
+  --pigment: #98b0c2;
+  --pigment-alt: #c49aa4;
+  --pigment-deep: #1c242c;
+  --on-pigment: #0c0e11;
+  --nucleus: #e0a9b6;
+  --ok: #93b3a2;
+  --warn: #cfb595;
+  --bad: #d68f8f;
+  --info: #8fadc4;
+}
+
+:root[data-world="undertow"][data-theme="light"] {
+  color-scheme: light;
+  --paper: #f4f6f8;
+  --paper-raised: #fbfcfd;
+  --paper-sunken: #e9edf1;
+  --ink: #1a2028;
+  --ink-soft: #4a5560;
+  --ink-faint: #67727d;
+  --rule: #cdd5dc;
+  --pigment: #4a6a80;
+  --pigment-alt: #914d5e;
+  --pigment-deep: #dde5ec;
+  --on-pigment: #fbfcfd;
+  --nucleus: #914d5e;
+  --ok: #376f57;
+  --warn: #7e6032;
+  --bad: #a8484a;
+  --info: #43667f;
+}

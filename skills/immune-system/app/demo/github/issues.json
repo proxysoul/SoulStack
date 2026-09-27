@@ -1,0 +1,104 @@
+{
+  "fetchedAt": "2026-09-27T11:33:25.572Z",
+  "issues": [
+    {
+      "number": 53,
+      "state": "OPEN",
+      "title": "A keyboard shortcut for a new page",
+      "url": "",
+      "labels": [
+        {
+          "name": "enhancement"
+        }
+      ],
+      "createdAt": "2026-09-25T11:53:25.572Z"
+    },
+    {
+      "number": 52,
+      "state": "CLOSED",
+      "title": "Search shows archived notebooks",
+      "url": "",
+      "labels": [
+        {
+          "name": "bug"
+        }
+      ],
+      "createdAt": "2026-09-22T11:53:25.572Z"
+    },
+    {
+      "number": 50,
+      "state": "OPEN",
+      "title": "Reminders fire twice after travelling",
+      "url": "",
+      "labels": [
+        {
+          "name": "bug"
+        }
+      ],
+      "createdAt": "2026-09-18T11:53:25.572Z"
+    },
+    {
+      "number": 48,
+      "state": "OPEN",
+      "title": "Dark mode for the sketch canvas",
+      "url": "",
+      "labels": [
+        {
+          "name": "enhancement"
+        }
+      ],
+      "createdAt": "2026-09-13T11:53:25.572Z"
+    },
+    {
+      "number": 47,
+      "state": "CLOSED",
+      "title": "A share link lets guests type into notes",
+      "url": "",
+      "labels": [
+        {
+          "name": "bug"
+        },
+        {
+          "name": "security"
+        }
+      ],
+      "createdAt": "2026-09-07T11:53:25.572Z"
+    },
+    {
+      "number": 45,
+      "state": "OPEN",
+      "title": "Export a single page instead of the whole notebook",
+      "url": "",
+      "labels": [
+        {
+          "name": "enhancement"
+        }
+      ],
+      "createdAt": "2026-09-01T11:53:25.572Z"
+    },
+    {
+      "number": 44,
+      "state": "OPEN",
+      "title": "Pinned notes vanish after renaming a notebook",
+      "url": "",
+      "labels": [
+        {
+          "name": "bug"
+        }
+      ],
+      "createdAt": "2026-08-27T11:53:25.572Z"
+    },
+    {
+      "number": 41,
+      "state": "CLOSED",
+      "title": "Export stops when a notebook has no cover",
+      "url": "",
+      "labels": [
+        {
+          "name": "bug"
+        }
+      ],
+      "createdAt": "2026-08-18T11:53:25.572Z"
+    }
+  ]
+}

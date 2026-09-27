@@ -1,13 +1,11 @@
 {
-  "name": "[Project]",
+  "name": "Immune system",
   "port": 4177,
   "results": "immune/results",
+  "machine": "immune/machine",
   "keepRuns": 50,
   "cells": [".agents/agents", ".claude/agents"],
   "findings": "immune/findings",
   "explorations": "immune/explorations",
-  "commands": {
-    "smoke": "[the project's immune:smoke command]",
-    "full": "[the project's immune command]"
-  }
+  "commands": {}
 }
