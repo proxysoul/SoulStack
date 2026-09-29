@@ -51,7 +51,7 @@ function Paint([string]$Word, [string]$Text) {
   $color = switch -Regex ($Word) {
     '^(added|linked|created)$' { $C.ok }
     '^(updated|copied|removed)$' { $C.acc }
-    '^(missing|skipped|outdated|offline)$' { $C.warn }
+    '^(missing|skipped|outdated|offline|hidden)$' { $C.warn }
     default { $C.dim }
   }
   return "$color$Text$($C.off)"
@@ -170,7 +170,7 @@ function Show-Summary {
     $rows = @($script:Results | Where-Object { $_.Label -eq $label })
     if (-not $rows.Count) { continue }
     $words = @($rows | ForEach-Object { $_.Word } | Select-Object -Unique)
-    $word = if ($words.Count -eq 1) { $words[0] } elseif ($words -contains "removed") { "removed" } elseif (($words -join " ") -match "skipped|missing|outdated") { "check" } else { "updated" }
+    $word = if ($words.Count -eq 1) { $words[0] } elseif ($words -contains "removed") { "removed" } elseif (($words -join " ") -match "skipped|missing|outdated|hidden") { "check" } else { "updated" }
     $names = @($rows | ForEach-Object { $_.Name } | Select-Object -Unique) -join ", "
     $extra = if ($label -eq "skill" -and $rows.Count -gt 1) { "$($C.dim)  in $($rows.Count) places$($C.off)" } else { "" }
     Out-Line ("  {0}{1,-7}{2} {3} {4}{5}{6}{7}" -f $C.dim, $label, $C.off, (Paint $word ("{0,-8}" -f $word)), $C.fg, $names, $C.off, $extra)
@@ -277,17 +277,35 @@ function Phase-Command {
   Row "command" "linked" (Item "soulstack" (Tilde $cmd))
 }
 
+function Test-Any([string]$Dir, [string[]]$Markers) {
+  foreach ($m in $Markers) { if (Test-Path (Join-Path $Dir $m)) { return $true } }
+  return $false
+}
+
+function Test-PiCli {
+  $cmd = Get-Command pi -ErrorAction SilentlyContinue | Select-Object -First 1
+  if (-not $cmd -or -not $cmd.Source -or -not (Test-Path $cmd.Source)) { return $false }
+  $head = (Get-Content $cmd.Source -TotalCount 40 -ErrorAction SilentlyContinue) -join "`n"
+  return $head -match "coding-agent|earendil"
+}
+
 function Phase-Detect {
   $empryoBin = if ($env:LOCALAPPDATA) { Join-Path $env:LOCALAPPDATA "Empryo\bin\empryo.exe" } else { "" }
   $script:hasEmpryo = [bool](Get-Command empryo -ErrorAction SilentlyContinue) -or (Test-Path (Join-Path $UserHome ".empryo\config.json")) -or ($empryoBin -and (Test-Path $empryoBin))
-  $script:hasClaude = [bool](Get-Command claude -ErrorAction SilentlyContinue) -or (Test-Path (Join-Path $UserHome ".claude"))
-  $script:hasCodex = [bool](Get-Command codex -ErrorAction SilentlyContinue) -or (Test-Path (Join-Path $UserHome ".codex"))
+  $script:claudeHome = if ($env:CLAUDE_CONFIG_DIR -and [IO.Path]::IsPathRooted($env:CLAUDE_CONFIG_DIR)) { $env:CLAUDE_CONFIG_DIR } else { Join-Path $UserHome ".claude" }
+  $script:hasClaude = [bool](Get-Command claude -ErrorAction SilentlyContinue) -or (Test-Any $script:claudeHome "settings.json", "CLAUDE.md", "projects", ".credentials.json")
+  $script:codexHome = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $UserHome ".codex" }
+  $script:hasCodex = [bool](Get-Command codex -ErrorAction SilentlyContinue) -or (Test-Any $script:codexHome "config.toml", "auth.json", "AGENTS.md", "sessions")
   $script:copilotHome = if ($env:COPILOT_HOME) { $env:COPILOT_HOME } else { Join-Path $UserHome ".copilot" }
-  $script:hasCopilot = [bool](Get-Command copilot -ErrorAction SilentlyContinue) -or (Test-Path $script:copilotHome)
-  $script:hasPi = [bool](Get-Command pi -ErrorAction SilentlyContinue) -or (Test-Path (Join-Path $UserHome ".pi"))
+  $script:hasCopilot = [bool](Get-Command copilot -ErrorAction SilentlyContinue) -or (Test-Any $script:copilotHome "config.json", "copilot-instructions.md", "session-state", "agents")
+  $script:piHome = if ($env:PI_CODING_AGENT_DIR) { $env:PI_CODING_AGENT_DIR } else { Join-Path $UserHome ".pi\agent" }
+  $script:hasPi = (Test-PiCli) -or (Test-Path $script:piHome)
   $configHome = if ($env:XDG_CONFIG_HOME) { $env:XDG_CONFIG_HOME } else { Join-Path $UserHome ".config" }
   $script:opencodeHome = Join-Path $configHome "opencode"
-  $script:hasOpencode = [bool](Get-Command opencode -ErrorAction SilentlyContinue) -or (Test-Path $script:opencodeHome)
+  $script:hasOpencode = [bool](Get-Command opencode -ErrorAction SilentlyContinue) -or (Test-Any $script:opencodeHome "opencode.json", "opencode.jsonc", "AGENTS.md", "agents", "agent")
+  $geminiRoot = if ($env:GEMINI_CLI_HOME) { $env:GEMINI_CLI_HOME } else { $UserHome }
+  $script:geminiHome = Join-Path $geminiRoot ".gemini"
+  $script:hasGemini = [bool](Get-Command gemini -ErrorAction SilentlyContinue) -or (Test-Any $script:geminiHome "settings.json", "GEMINI.md", "oauth_creds.json")
   $found = @()
   if ($script:hasEmpryo) { $found += "Empryo" }
   if ($script:hasClaude) { $found += "Claude Code" }
@@ -295,6 +313,7 @@ function Phase-Detect {
   if ($script:hasCopilot) { $found += "Copilot" }
   if ($script:hasPi) { $found += "pi" }
   if ($script:hasOpencode) { $found += "OpenCode" }
+  if ($script:hasGemini) { $found += "Gemini CLI" }
   Row "found" "" $(if ($found.Count) { $found -join ", " } else { "no agents yet" })
   if (-not $script:hasEmpryo) { Row "" "" "no Empryo: skipping Empryo parts (https://empryo.com)" }
 }
@@ -398,19 +417,29 @@ function Sync-Rules([string]$File, [string]$Label) {
   }
 }
 
+function Resolve-Preset([string]$Spec) {
+  $path = if ($Spec -match '^~(?=$|[\\/])') { $UserHome + $Spec.Substring(1) } else { $Spec }
+  $full = [IO.Path]::GetFullPath([IO.Path]::Combine((Split-Path -Parent ([IO.Path]::GetFullPath($Config))), $path))
+  $item = Get-Item $full -ErrorAction SilentlyContinue
+  if ($item -and $item.LinkType) { $full = [IO.Path]::GetFullPath([IO.Path]::Combine((Split-Path -Parent $full), @($item.Target)[0])) }
+  return $full.TrimEnd('\', '/').ToLowerInvariant()
+}
+
 function Add-Presets([string[]]$Files) {
   New-Item -ItemType Directory -Force -Path (Split-Path -Parent $Config) | Out-Null
   $cfg = [pscustomobject]@{}
-  $note = Backup $Config
   if (Test-Path $Config) {
     $raw = [IO.File]::ReadAllText($Config)
     if ($raw.Trim()) { $cfg = $raw | ConvertFrom-Json }
   }
   $list = New-Object System.Collections.Generic.List[string]
   if ($cfg.PSObject.Properties["presets"]) { foreach ($s in @($cfg.presets)) { if ($s -is [string]) { $list.Add($s) } } }
+  $have = New-Object System.Collections.Generic.HashSet[string]
+  foreach ($s in $list) { [void]$have.Add((Resolve-Preset $s)) }
   $new = @()
-  foreach ($f in $Files) { if ($list.Contains($f)) { Row "preset" "same" (Item ([IO.Path]::GetFileNameWithoutExtension($f)) (Tilde $Config)) } else { $list.Add($f); $new += $f } }
+  foreach ($f in $Files) { if (-not $have.Add((Resolve-Preset $f))) { Row "preset" "same" (Item ([IO.Path]::GetFileNameWithoutExtension($f)) (Tilde $Config)) } else { $list.Add($f); $new += $f } }
   if (-not $new.Count) { return }
+  $note = Backup $Config
   $cfg | Add-Member -NotePropertyName presets -NotePropertyValue ([string[]]$list.ToArray()) -Force
   [IO.File]::WriteAllText($Config, (ConvertTo-Json -InputObject $cfg -Depth 100) + $nl, $utf8)
   foreach ($f in $new) { Row "preset" "added" (Item ([IO.Path]::GetFileNameWithoutExtension($f)) "$(Tilde $Config)$note"); $note = "" }
@@ -467,7 +496,7 @@ function Sync-Agents([string]$Target, [string]$Label, [string]$Suffix) {
 
 function Phase-Agents {
   if ($script:hasEmpryo) { Sync-Agents (Join-Path $UserHome ".agents\agents") "Empryo" ".md" }
-  if ($script:hasClaude) { Sync-Agents (Join-Path $UserHome ".claude\agents") "Claude Code" ".md" }
+  if ($script:hasClaude) { Sync-Agents (Join-Path $script:claudeHome "agents") "Claude Code" ".md" }
   if ($script:hasCopilot) { Sync-Agents (Join-Path $script:copilotHome "agents") "Copilot" ".agent.md" }
   if ($script:hasOpencode) {
     Sync-Agents (Join-Path $script:opencodeHome "agents") "OpenCode" ".md"
@@ -477,17 +506,24 @@ function Phase-Agents {
 
 function Phase-Skills {
   Sync-Skills $Skills
-  $claudeSkills = Join-Path $UserHome ".claude\skills"
+  $claudeSkills = Join-Path $script:claudeHome "skills"
   if ($script:hasClaude -and ($Skills -ne $claudeSkills)) { Sync-Skills $claudeSkills }
+}
+
+function Sync-AgentsMd([string]$Dir, [string]$Label) {
+  Sync-Rules (Join-Path $Dir "AGENTS.md") $Label
+  $override = Join-Path $Dir "AGENTS.override.md"
+  if ($mode -ne "remove" -and (Test-Path $override)) { Row "rules" "hidden" (Item $Label "$(Tilde $override) is read instead of AGENTS.md") }
 }
 
 function Phase-Rules {
   if ($script:hasEmpryo) { Sync-Rules (Join-Path $UserHome ".empryo\EMPRYO.md") "Empryo" }
-  if ($script:hasClaude) { Sync-Rules (Join-Path $UserHome ".claude\CLAUDE.md") "Claude Code" }
-  if ($script:hasCodex) { Sync-Rules (Join-Path $UserHome ".codex\AGENTS.md") "Codex" }
+  if ($script:hasClaude) { Sync-Rules (Join-Path $script:claudeHome "CLAUDE.md") "Claude Code" }
+  if ($script:hasCodex) { Sync-AgentsMd $script:codexHome "Codex" }
   if ($script:hasCopilot) { Sync-Rules (Join-Path $script:copilotHome "copilot-instructions.md") "Copilot" }
-  if ($script:hasPi) { Sync-Rules (Join-Path $UserHome ".pi\agent\AGENTS.md") "pi" }
+  if ($script:hasPi) { Sync-AgentsMd $script:piHome "pi" }
   if ($script:hasOpencode) { Sync-Rules (Join-Path $script:opencodeHome "AGENTS.md") "OpenCode" }
+  if ($script:hasGemini) { Sync-Rules (Join-Path $script:geminiHome "GEMINI.md") "Gemini CLI" }
 }
 
 function Phase-Presets {

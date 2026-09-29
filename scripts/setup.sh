@@ -186,17 +186,39 @@ has_empryo=0
 has_claude=0
 has_codex=0
 has_copilot=0
-copilot_home="${COPILOT_HOME:-$HOME/.copilot}"
 has_pi=0
 has_opencode=0
+has_gemini=0
+claude_home="$HOME/.claude"
+case "${CLAUDE_CONFIG_DIR:-}" in /*) claude_home=$CLAUDE_CONFIG_DIR ;; esac
+codex_home="${CODEX_HOME:-$HOME/.codex}"
+copilot_home="${COPILOT_HOME:-$HOME/.copilot}"
+pi_home="${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}"
 opencode_home="${XDG_CONFIG_HOME:-$HOME/.config}/opencode"
+gemini_home="${GEMINI_CLI_HOME:-$HOME}/.gemini"
+
+has_any() {
+  dir=$1
+  shift
+  for m in "$@"; do
+    if [ -e "$dir/$m" ]; then return 0; fi
+  done
+  return 1
+}
+
+pi_cli() {
+  p=$(command -v pi 2>/dev/null) || return 1
+  { ls -l "$p"; head -c 2048 "$p"; } 2>/dev/null | grep -q 'coding-agent\|earendil'
+}
+
 phase_detect() {
-  if command -v empryo >/dev/null 2>&1 || [ -f "$HOME/.empryo/config.json" ] || [ -x "$HOME/.empryo/bin/empryo" ] || [ -d "/Applications/Empryo.app" ]; then has_empryo=1; fi
-  if command -v claude >/dev/null 2>&1 || [ -d "$HOME/.claude" ]; then has_claude=1; fi
-  if command -v codex >/dev/null 2>&1 || [ -d "$HOME/.codex" ]; then has_codex=1; fi
-  if command -v copilot >/dev/null 2>&1 || [ -d "$copilot_home" ]; then has_copilot=1; fi
-  if command -v pi >/dev/null 2>&1 || [ -d "$HOME/.pi" ]; then has_pi=1; fi
-  if command -v opencode >/dev/null 2>&1 || [ -d "$opencode_home" ]; then has_opencode=1; fi
+  if command -v empryo >/dev/null 2>&1 || [ -f "$HOME/.empryo/config.json" ] || [ -x "$HOME/.empryo/bin/empryo" ] || [ -d "/Applications/Empryo.app" ] || [ -d "$HOME/Applications/Empryo.app" ]; then has_empryo=1; fi
+  if command -v claude >/dev/null 2>&1 || has_any "$claude_home" settings.json CLAUDE.md projects .credentials.json; then has_claude=1; fi
+  if command -v codex >/dev/null 2>&1 || has_any "$codex_home" config.toml auth.json AGENTS.md sessions; then has_codex=1; fi
+  if command -v copilot >/dev/null 2>&1 || has_any "$copilot_home" config.json copilot-instructions.md session-state agents; then has_copilot=1; fi
+  if pi_cli || [ -d "$pi_home" ]; then has_pi=1; fi
+  if command -v opencode >/dev/null 2>&1 || has_any "$opencode_home" opencode.json opencode.jsonc AGENTS.md agents agent; then has_opencode=1; fi
+  if command -v gemini >/dev/null 2>&1 || has_any "$gemini_home" settings.json GEMINI.md oauth_creds.json; then has_gemini=1; fi
   found=""
   [ "$has_empryo" -eq 1 ] && found="Empryo"
   [ "$has_claude" -eq 1 ] && found="${found:+$found, }Claude Code"
@@ -204,6 +226,7 @@ phase_detect() {
   [ "$has_copilot" -eq 1 ] && found="${found:+$found, }Copilot"
   [ "$has_pi" -eq 1 ] && found="${found:+$found, }pi"
   [ "$has_opencode" -eq 1 ] && found="${found:+$found, }OpenCode"
+  [ "$has_gemini" -eq 1 ] && found="${found:+$found, }Gemini CLI"
   record found "" "${found:-no agents yet}" ""
   if [ "$has_empryo" -eq 0 ]; then record "" "" "no Empryo: skipping Empryo parts (https://empryo.com)" ""; fi
   return 0
@@ -298,7 +321,7 @@ link_agents() {
 
 phase_agents() {
   if [ "$has_empryo" -eq 1 ]; then link_agents "$HOME/.agents/agents" "Empryo" ".md"; fi
-  if [ "$has_claude" -eq 1 ]; then link_agents "$HOME/.claude/agents" "Claude Code" ".md"; fi
+  if [ "$has_claude" -eq 1 ]; then link_agents "$claude_home/agents" "Claude Code" ".md"; fi
   if [ "$has_copilot" -eq 1 ]; then link_agents "$copilot_home/agents" "Copilot" ".agent.md"; fi
   if [ "$has_opencode" -eq 1 ]; then
     link_agents "$opencode_home/agents" "OpenCode" ".md"
@@ -309,7 +332,7 @@ phase_agents() {
 
 phase_skills() {
   link_skills "$skills_target"
-  if [ "$has_claude" -eq 1 ] && [ "$skills_target" != "$HOME/.claude/skills" ]; then link_skills "$HOME/.claude/skills"; fi
+  if [ "$has_claude" -eq 1 ] && [ "$skills_target" != "$claude_home/skills" ]; then link_skills "$claude_home/skills"; fi
 }
 
 block_file="$work/block"
@@ -351,6 +374,13 @@ write_rules() {
   fi
 }
 
+write_agents_md() {
+  write_rules "$1/AGENTS.md" "$2"
+  if [ "$mode" != remove ] && [ -f "$1/AGENTS.override.md" ]; then
+    record rules hidden "$2" "$(tilde "$1/AGENTS.override.md") is read instead of AGENTS.md"
+  fi
+}
+
 phase_rules() {
   {
     echo "<!-- soulstack:start -->"
@@ -358,11 +388,12 @@ phase_rules() {
     echo "<!-- soulstack:end -->"
   } > "$block_file"
   if [ "$has_empryo" -eq 1 ]; then write_rules "$HOME/.empryo/EMPRYO.md" "Empryo"; fi
-  if [ "$has_claude" -eq 1 ]; then write_rules "$HOME/.claude/CLAUDE.md" "Claude Code"; fi
-  if [ "$has_codex" -eq 1 ]; then write_rules "$HOME/.codex/AGENTS.md" "Codex"; fi
+  if [ "$has_claude" -eq 1 ]; then write_rules "$claude_home/CLAUDE.md" "Claude Code"; fi
+  if [ "$has_codex" -eq 1 ]; then write_agents_md "$codex_home" "Codex"; fi
   if [ "$has_copilot" -eq 1 ]; then write_rules "$copilot_home/copilot-instructions.md" "Copilot"; fi
-  if [ "$has_pi" -eq 1 ]; then write_rules "$HOME/.pi/agent/AGENTS.md" "pi"; fi
+  if [ "$has_pi" -eq 1 ]; then write_agents_md "$pi_home" "pi"; fi
   if [ "$has_opencode" -eq 1 ]; then write_rules "$opencode_home/AGENTS.md" "OpenCode"; fi
+  if [ "$has_gemini" -eq 1 ]; then write_rules "$gemini_home/GEMINI.md" "Gemini CLI"; fi
   return 0
 }
 
@@ -383,45 +414,73 @@ phase_presets() {
     IFS=$old_ifs
     f="$root/plugins/presets/$p.json"
     [ -f "$f" ] || { echo "unknown preset: $p" >&2; exit 2; }
-    if [ -f "$config" ] && grep -qF "\"$f\"" "$config"; then record preset same "$p" "$(tilde "$config")"; else specs="$specs $f"; fi
+    specs="$specs $f"
   done
   IFS=$old_ifs
-  [ -n "$specs" ] || return 0
   runner=$(json_runner)
   if [ "$runner" = none ]; then record preset skipped "$presets" "needs bun, node or python3"; return 0; fi
   mkdir -p "$(dirname "$config")"
-  note=$(backup "$config")
   case "$runner" in
     bun|node) "$runner" -e '
       const fs = require("fs");
-      const [file, ...specs] = process.argv.slice(1);
+      const os = require("os");
+      const path = require("path");
+      const [file, out, ...specs] = process.argv.slice(1);
       const cfg = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : {};
+      const real = (s) => {
+        const p = path.resolve(path.dirname(file), s.replace(/^~(?=$|[\\/])/, os.homedir()));
+        try { return fs.realpathSync(p); } catch { return p; }
+      };
       const list = Array.isArray(cfg.presets) ? cfg.presets.filter((s) => typeof s === "string") : [];
-      for (const s of specs) if (!list.includes(s)) list.push(s);
+      const have = new Set(list.map(real));
+      for (const s of specs) {
+        if (have.has(real(s))) { console.log("same " + s); continue; }
+        list.push(s);
+        have.add(real(s));
+        console.log("added " + s);
+      }
       cfg.presets = list;
-      fs.writeFileSync(file, JSON.stringify(cfg, null, 2) + "\n");
-    ' "$config" $specs ;;
-    python3) python3 - "$config" $specs <<'EOF'
+      fs.writeFileSync(out, JSON.stringify(cfg, null, 2) + "\n");
+    ' "$config" "$work/config" $specs > "$work/presets" ;;
+    python3) python3 - "$config" "$work/config" $specs > "$work/presets" <<'EOF'
 import json, os, sys
-file, specs = sys.argv[1], sys.argv[2:]
+file, out, specs = sys.argv[1], sys.argv[2], sys.argv[3:]
 cfg = json.load(open(file)) if os.path.exists(file) else {}
+real = lambda s: os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(file)), os.path.expanduser(s)))
 cur = [s for s in cfg.get("presets", []) if isinstance(s, str)]
+have = set(map(real, cur))
 for s in specs:
-    if s not in cur:
-        cur.append(s)
+    if real(s) in have:
+        print("same " + s)
+        continue
+    cur.append(s)
+    have.add(real(s))
+    print("added " + s)
 cfg["presets"] = cur
-open(file, "w").write(json.dumps(cfg, indent=2) + "\n")
+open(out, "w").write(json.dumps(cfg, indent=2) + "\n")
 EOF
     ;;
   esac
-  for f in $specs; do record preset added "$(basename "$f" .json)" "$(tilde "$config")$note"; note=""; done
+  note=""
+  if grep -q '^added ' "$work/presets"; then
+    note=$(backup "$config")
+    cat "$work/config" > "$config"
+  fi
+  while read -r word f; do
+    if [ "$word" = added ]; then
+      record preset added "$(basename "$f" .json)" "$(tilde "$config")$note"
+      note=""
+    else
+      record preset same "$(basename "$f" .json)" "$(tilde "$config")"
+    fi
+  done < "$work/presets"
 }
 
 paint() {
   case "$1" in
     added|linked|created) printf '%s' "$c_ok" ;;
     updated|copied|removed) printf '%s' "$c_acc" ;;
-    missing|skipped|outdated|offline) printf '%s' "$c_warn" ;;
+    missing|skipped|outdated|offline|hidden) printf '%s' "$c_warn" ;;
     *) printf '%s' "$c_dim" ;;
   esac
 }
@@ -607,7 +666,7 @@ draw() {
 
 summary() {
   awk -F'|' -v dim="$c_dim" -v off="$c_off" -v fg="$c_fg" -v ok="$c_ok" -v acc="$c_acc" -v warn="$c_warn" '
-    function color(s) { return (s ~ /^(added|linked|created)$/) ? ok : (s ~ /^(updated|copied|removed)$/) ? acc : (s ~ /^(missing|skipped|outdated|offline)$/) ? warn : dim }
+    function color(s) { return (s ~ /^(added|linked|created)$/) ? ok : (s ~ /^(updated|copied|removed)$/) ? acc : (s ~ /^(missing|skipped|outdated|offline|hidden)$/) ? warn : dim }
     $1 == "stack" || $1 == "found" || $1 == "new" || $1 == "" { next }
     {
       if (!($1 in seen)) { order[++n] = $1; seen[$1] = 1 }
@@ -617,7 +676,7 @@ summary() {
     }
     END {
       for (i = 1; i <= n; i++) {
-        l = order[i]; s = st[l]; if (s ~ /\//) { s = (s ~ /removed/) ? "removed" : (s ~ /skipped|missing|outdated/) ? "check" : "updated" } first = s
+        l = order[i]; s = st[l]; if (s ~ /\//) { s = (s ~ /removed/) ? "removed" : (s ~ /skipped|missing|outdated|hidden/) ? "check" : "updated" } first = s
         extra = (l == "skill" && cnt[l] > 1) ? dim "  in " cnt[l] " places" off : ""
         printf "  %s%-7s%s %s%-8s%s %s%s%s%s\n", dim, l, off, color(first), s, off, fg, nm[l], off, extra
       }
