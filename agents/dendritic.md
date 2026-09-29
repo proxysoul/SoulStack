@@ -2,6 +2,7 @@
 name: dendritic
 description: Finds behaviour that is MISSING rather than broken - states a screen forgets, platform conventions the product ignores, one front door behaving unlike another. Use for new features, unexplored screens, or "what are we not testing". Stem cell: grows into this project's own version on first run.
 role: code
+include-custom-instructions: true
 skills: immune-system
 ---
 

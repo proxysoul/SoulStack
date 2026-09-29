@@ -2,6 +2,7 @@
 name: tcell-retina
 description: Visual defect hunter for desktop, web and terminal UIs. Give it a screen, a screenshot or a complaint ("the dialog is see-through", "text is unreadable in light mode") and it finds which layer is wrong instead of guessing from pixels. Use for any rendering, contrast, clipping or layout bug. Stem cell: grows into this project's own version on first run.
 role: code
+include-custom-instructions: true
 skills: immune-system
 ---
 

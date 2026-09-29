@@ -2,6 +2,7 @@
 name: negative-selection
 description: Tries to disprove a claimed bug before it is filed, fixed or turned into a check. Attacks it from two sides - is the behaviour intended, and does it reproduce by hand outside the harness. Use for every claim from a hunt, an exploration, a patrol or a user report. Stem cell: grows into this project's own version on first run.
 role: code
+include-custom-instructions: true
 skills: immune-system
 ---
 

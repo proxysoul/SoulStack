@@ -2,6 +2,7 @@
 name: memory-cell
 description: Turns a confirmed bug into a permanent check so it can never come back unnoticed, proving the check fails before the fix and passes after it. Use right after a bug is confirmed or fixed. Stem cell: grows into this project's own version on first run.
 role: code
+include-custom-instructions: true
 skills: immune-system
 ---
 

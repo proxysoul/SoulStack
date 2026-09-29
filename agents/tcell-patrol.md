@@ -2,6 +2,7 @@
 name: tcell-patrol
 description: Runs the project's immune system (its test suite) across every reachable platform and front door, then sorts every red result into real bug, check bug, environment problem, known, or healed. Use before a release, after a merge, or whenever the question is "is everything still working". Stem cell: grows into this project's own version on first run.
 role: code
+include-custom-instructions: true
 skills: immune-system
 ---
 

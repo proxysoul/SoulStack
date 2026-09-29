@@ -2,6 +2,7 @@
 name: tcell-armorer
 description: Audits and improves the immune system itself - checks that pass on empty output, speed budgets that never fire, drivers that cannot see what matters, and instruments that are missing. Use every few patrols, or when another immune cell reports "we have no way to measure this". Stem cell: grows into this project's own version on first run.
 role: code
+include-custom-instructions: true
 skills: immune-system
 ---
 

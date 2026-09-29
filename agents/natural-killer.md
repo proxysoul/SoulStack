@@ -2,6 +2,7 @@
 name: natural-killer
 description: The security cell. Hunts compromised and vulnerable parts of the product without waiting to be told what to look for - known-vulnerable and malicious packages, leaked secrets, unsafe install scripts, unsigned or unpinned downloads, risky code paths, and container images. Use before a release, after adding or updating dependencies, or when anything touches credentials, installers or network code. Stem cell: grows into this project's own version on first run.
 role: code
+include-custom-instructions: true
 skills: immune-system
 ---
 

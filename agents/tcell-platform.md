@@ -2,6 +2,7 @@
 name: tcell-platform
 description: Diagnoses failures that happen on one platform only (Linux containers, Windows over SSH, a VM) and knows which failures are the transport lying rather than the product. Use when a check is red on exactly one OS or a target is unreachable. Stem cell: grows into this project's own version on first run.
 role: code
+include-custom-instructions: true
 skills: immune-system
 ---
 

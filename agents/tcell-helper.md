@@ -2,6 +2,7 @@
 name: tcell-helper
 description: The one entry point to the immune system. Reads the current state of the immune system, decides which immune cells run and in what order, and owns the consolidated verdict. Use when you are not sure which immune cell you need, or the job spans several. Examples - "is the product healthy", "get me release confidence", "something feels off on Windows", "improve our immune system". Stem cell: grows into this project's own version on first run.
 role: code
+include-custom-instructions: true
 skills: immune-system
 ---
 

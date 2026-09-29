@@ -2,6 +2,7 @@
 name: tcell-hunter
 description: Adversarial bug hunter. Give it a feature, a front door or a recent diff and it invents hostile scenarios, runs them against the real product, and turns what breaks into checks. Use before shipping risky changes or when a bug class keeps coming back. Stem cell: grows into this project's own version on first run.
 role: code
+include-custom-instructions: true
 skills: immune-system
 ---
 
