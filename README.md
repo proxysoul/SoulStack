@@ -52,7 +52,7 @@ Or everything, with the setup script. It asks nothing and changes nothing withou
 - downloads SoulStack to `~/dev/SoulStack` (or updates it)
 - links the skills into `~/.agents/skills`, and `~/.claude/skills` if you use Claude Code
 - links the ten immune cells into Empryo, Claude Code, Copilot CLI and OpenCode
-- adds the [takeaways](guides/takeaways.md) to the global rules of every agent it finds: `~/.empryo/EMPRYO.md`, `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`, `~/.copilot/copilot-instructions.md`, `~/.pi/agent/AGENTS.md`, `~/.config/opencode/AGENTS.md`. Your own rules stay; SoulStack's part sits in a marked block that updates in place
+- adds the [takeaways](guides/takeaways.md) to the global rules of every agent it finds: `~/.empryo/EMPRYO.md`, `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`, `~/.copilot/copilot-instructions.md`, `~/.pi/agent/AGENTS.md`, `~/.config/opencode/AGENTS.md`, `~/.gemini/GEMINI.md`. It follows `CLAUDE_CONFIG_DIR`, `CODEX_HOME`, `COPILOT_HOME`, `PI_CODING_AGENT_DIR` and `GEMINI_CLI_HOME` when you set them. Your own rules stay; SoulStack's part sits in a marked block that updates in place
 - skips anything Empryo-only when Empryo isn't installed
 
 <table>
@@ -100,7 +100,7 @@ From a clone you can also pass:
 
 ## Best with Empryo
 
-SoulStack comes from [ProxySoul](https://proxysoul.com), the creator of [Empryo](https://empryo.com). It works in Claude Code, Codex, Copilot CLI, pi and OpenCode, and goes further in Empryo:
+SoulStack comes from [ProxySoul](https://proxysoul.com), the creator of [Empryo](https://empryo.com). It works in Claude Code, Codex, Copilot CLI, pi, OpenCode and Gemini CLI, and goes further in Empryo:
 
 | In Empryo | What it changes |
 |---|---|

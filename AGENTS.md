@@ -9,7 +9,7 @@ When the user asks you to set up SoulStack, run the setup script and show its ou
 - macOS and Linux: `curl -fsSL https://raw.githubusercontent.com/proxysoul/SoulStack/main/scripts/setup.sh | sh`
 - Windows: `powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/proxysoul/SoulStack/main/scripts/setup.ps1 | iex"`
 
-It clones SoulStack to `~/dev/SoulStack` (or updates it), links the skills, and adds `guides/takeaways.md` as a marked block to the global rules of each agent it finds (Empryo, Claude Code, Codex, Copilot CLI, pi, OpenCode) and links the immune cells from `agents/` into the agents that support custom agents. Existing rules are kept. Empryo parts are skipped when Empryo is not installed.
+It clones SoulStack to `~/dev/SoulStack` (or updates it), links the skills, and adds `guides/takeaways.md` as a marked block to the global rules of each agent it finds (Empryo, Claude Code, Codex, Copilot CLI, pi, OpenCode, Gemini CLI) and links the immune cells from `agents/` into the agents that support custom agents. Existing rules are kept. Empryo parts are skipped when Empryo is not installed.
 
 Presets are optional and change the user's models, theme and permissions: add them only when the user asks for ProxySoul's setup, by running the script from the clone with `--presets proxysoul,proxysoul-mcp` (`-Presets` on Windows). Add `proxysoul-trusted` only when they explicitly ask for full autonomy, and say what it turns on. `proxysoul-mcp` needs `CLOUDFLARE_API_TOKEN`.
 

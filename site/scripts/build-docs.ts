@@ -158,7 +158,7 @@ const link = (p: Page) => `- [${p.title}](${ORIGIN}/docs/${p.slug}.md): ${p.summ
 const groups: Page["group"][] = ["Guide", "Reference", "Skills", "Immune cells"];
 const llms = `# SoulStack
 
-> ProxySoul's agent stack for Empryo, Claude Code, Codex, Copilot CLI, pi and OpenCode: working rules, the ensoul, immune-system and marketing skills, ten immune-cell agents, and Empryo presets. One setup command, one update command.
+> ProxySoul's agent stack for Empryo, Claude Code, Codex, Copilot CLI, pi, OpenCode and Gemini CLI: working rules, the ensoul, immune-system and marketing skills, ten immune-cell agents, and Empryo presets. One setup command, one update command.
 
 Every page below is plain Markdown. Paths like \`~/dev/SoulStack\` are defaults in the user's home folder, not fixed locations. To install for a user, run the setup script and show its output; it asks nothing and backs up every file it changes.
 
@@ -178,7 +178,7 @@ writeFileSync(
 );
 writeFileSync(
   join(site, "public", "index.md"),
-  `# SoulStack\n\nThe stack that ensouls your agents: rules, skills, immune cells and presets for Empryo, Claude Code, Codex, Copilot CLI, pi and OpenCode.\n\n## Install\n\n\`\`\`bash\ncurl -fsSL https://raw.githubusercontent.com/proxysoul/SoulStack/main/scripts/setup.sh | sh\n\`\`\`\n\n\`\`\`powershell\nirm https://raw.githubusercontent.com/proxysoul/SoulStack/main/scripts/setup.ps1 | iex\n\`\`\`\n\n## Docs\n\n${pages.map(link).join("\n")}\n`,
+  `# SoulStack\n\nThe stack that ensouls your agents: rules, skills, immune cells and presets for Empryo, Claude Code, Codex, Copilot CLI, pi, OpenCode and Gemini CLI.\n\n## Install\n\n\`\`\`bash\ncurl -fsSL https://raw.githubusercontent.com/proxysoul/SoulStack/main/scripts/setup.sh | sh\n\`\`\`\n\n\`\`\`powershell\nirm https://raw.githubusercontent.com/proxysoul/SoulStack/main/scripts/setup.ps1 | iex\n\`\`\`\n\n## Docs\n\n${pages.map(link).join("\n")}\n`,
 );
 writeFileSync(
   join(site, "public", "sitemap.xml"),

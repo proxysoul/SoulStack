@@ -7,7 +7,7 @@ order: 1
 # Getting started
 
 SoulStack adds working rules, skills, immune cells and optional presets to the coding agents you
-already use: Empryo, Claude Code, Codex, Copilot CLI, pi and OpenCode.
+already use: Empryo, Claude Code, Codex, Copilot CLI, pi, OpenCode and Gemini CLI.
 
 ## Install
 

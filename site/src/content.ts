@@ -186,12 +186,12 @@ const acc = (s: string) => `<i class="c-acc">${s}</i>`;
 export const TERMINAL: string[] = [
   `<b class="c-fg">SoulStack</b>  ${d("Empryo × ProxySoul")}`,
   `${d("stack")}   ${ok("created")}  ~/dev/SoulStack  ${d("v1.1.0")}`,
-  `${d("found")}   Empryo, Claude Code, Codex, Copilot, pi, OpenCode`,
+  `${d("found")}   Empryo, Claude Code, Codex, Copilot, pi, OpenCode, Gemini`,
   "",
   `${d("skill")}   ${ok("linked")}   ensoul, immune-system  ${d("in 2 places")}`,
   `${d("agent")}   ${ok("linked")}   10 immune cells  ${d("in 4 agents")}`,
   `${d("command")} ${ok("linked")}   soulstack`,
-  `${d("rules")}   ${acc("added")}    all 6 agents  ${d("your text kept")}`,
+  `${d("rules")}   ${acc("added")}    all 7 agents  ${d("your text kept")}`,
   `${d("preset")}  ${ok("added")}    proxysoul`,
   "",
   `${ok("Done.")} ${d("Restart your agent to load SoulStack.")}`,
@@ -199,7 +199,7 @@ export const TERMINAL: string[] = [
 ];
 
 export interface Host {
-  id: "empryo" | "claude" | "codex" | "copilot" | "pi" | "opencode";
+  id: "empryo" | "claude" | "codex" | "copilot" | "pi" | "opencode" | "gemini";
   name: string;
   rules: string;
   skills: string;
@@ -215,6 +215,7 @@ export const HOSTS: Host[] = [
   { id: "copilot", name: "Copilot CLI", rules: "~/.copilot/copilot-instructions.md", skills: "~/.agents/skills", agents: "~/.copilot/agents", presets: null, note: "or the Copilot plugin" },
   { id: "pi", name: "pi", rules: "~/.pi/agent/AGENTS.md", skills: "~/.agents/skills", agents: null, presets: null },
   { id: "opencode", name: "OpenCode", rules: "~/.config/opencode/AGENTS.md", skills: "~/.agents/skills", agents: "~/.config/opencode/agents", presets: null, note: "v1 agent/ and v2 agents/" },
+  { id: "gemini", name: "Gemini CLI", rules: "~/.gemini/GEMINI.md", skills: "~/.agents/skills", agents: null, presets: null },
 ];
 
 export const MACHINE = [

@@ -32,8 +32,12 @@ the same way. It asks nothing.
 |---|---|---|
 | `SOULSTACK_DIR` | `~/dev/SoulStack` | Where SoulStack is kept |
 | `SOULSTACK_REPO` | the GitHub repo | Where it is cloned from |
+| `CLAUDE_CONFIG_DIR` | `~/.claude` | Claude Code's folder (absolute paths only, like Claude Code) |
+| `CODEX_HOME` | `~/.codex` | Codex's folder |
 | `COPILOT_HOME` | `~/.copilot` | Copilot CLI's folder |
+| `PI_CODING_AGENT_DIR` | `~/.pi/agent` | pi's agent folder |
 | `XDG_CONFIG_HOME` | `~/.config` | Where OpenCode's folder is looked for |
+| `GEMINI_CLI_HOME` | your home folder | Where Gemini CLI's `.gemini` folder is looked for |
 | `NO_COLOR` | unset | Plain output |
 
 ## What it never does

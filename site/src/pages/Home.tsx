@@ -27,7 +27,7 @@ const LAYER_TABS = [
 export function Home() {
   usePageMeta(
     "SoulStack · Empryo × ProxySoul",
-    "The agent stack behind Empryo: skills, immune cells, working rules and presets for Empryo, Claude Code, Codex, Copilot, pi and OpenCode.",
+    "The agent stack behind Empryo: skills, immune cells, working rules and presets for Empryo, Claude Code, Codex, Copilot, pi, OpenCode and Gemini CLI.",
   );
   return (
     <>
