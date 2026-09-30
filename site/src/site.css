@@ -53,7 +53,7 @@ main {
 }
 
 :root.is-blooming::view-transition-new(root) {
-  animation: bloom 760ms var(--ease-out);
+  animation: bloom 320ms var(--ease-out);
 }
 
 @keyframes page-out {
@@ -1533,4 +1533,157 @@ code {
 
 .lost p {
   color: var(--ink-soft);
+}
+
+/* enliven: one frame-time ribbon that resolves from jank to a steady comb as a
+   profiling scan crosses it. The section's whole idea in one object. */
+.enliven {
+  display: grid;
+  gap: var(--s-5, 32px);
+}
+
+.ribbon {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 132px;
+  padding: var(--s-3, 12px);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--paper-sunken);
+  overflow: hidden;
+  contain: content;
+}
+
+.ribbon-bar {
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: 2px 2px 0 0;
+  height: calc(var(--slow) * 1%);
+  background: var(--ink-faint);
+  transform-origin: bottom;
+}
+
+.ribbon-bar[data-drop="1"] {
+  background: var(--bad);
+}
+
+.ribbon.is-fast .ribbon-bar {
+  height: calc(var(--fast) * 1%);
+  background: var(--pigment);
+  transition:
+    height 420ms var(--ease-out),
+    background-color 420ms var(--ease-out);
+  transition-delay: calc(var(--i) * 9ms);
+}
+
+.ribbon.is-fast .ribbon-bar[data-drop="1"] {
+  background: var(--pigment);
+}
+
+.ribbon-scan {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  background: var(--pigment);
+  box-shadow: 0 0 18px 4px color-mix(in srgb, var(--pigment) 45%, transparent);
+  opacity: 0;
+}
+
+.ribbon.is-scanning .ribbon-scan {
+  animation: scan 900ms var(--ease-out) forwards;
+}
+
+@keyframes scan {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(calc(100cqw - 2px));
+  }
+}
+
+.ribbon-legend {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-3, 12px);
+  margin-top: var(--s-2, 8px);
+  font-size: 13px;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.ribbon-legend b {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.enliven-figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--s-4, 20px);
+  padding-top: var(--s-4, 20px);
+  border-top: 1px solid var(--rule);
+}
+
+.enliven-figures div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.enliven-figures b {
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--pigment);
+  font-variant-numeric: tabular-nums;
+}
+
+.enliven-figures span {
+  font-size: 13px;
+  color: var(--ink-faint);
+  line-height: 1.35;
+}
+
+.enliven-loop {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2, 8px);
+  align-items: center;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.enliven-loop code {
+  background: var(--paper-raised);
+  border: 1px solid var(--rule-soft);
+  border-radius: 6px;
+  padding: 3px 9px;
+}
+
+.enliven-loop i {
+  color: var(--ink-faint);
+  font-style: normal;
+}
+
+:root[data-motion="still"] .ribbon.is-fast .ribbon-bar {
+  transition: none;
+}
+
+:root[data-motion="still"] .ribbon-scan {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ribbon.is-fast .ribbon-bar {
+    transition: none;
+  }
+  .ribbon-scan {
+    display: none;
+  }
 }

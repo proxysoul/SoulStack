@@ -39,6 +39,7 @@ export function Home() {
         <Best />
         <Immune />
         <Design />
+        <Enliven />
         <section className="wrap section">
           <div className="section-head">
             <h2>What every agent learns</h2>
@@ -462,6 +463,113 @@ function Design() {
           <img src="/renderings.png" alt="Example from the mascot guide: Mote, Empryo's mascot, in six styles" loading="lazy" />
           <figcaption>Made with the mascot guide: one still body, a moving eye. Mote is Empryo's; make your own.</figcaption>
         </figure>
+      </div>
+    </section>
+  );
+}
+
+const RIBBON = Array.from({ length: 56 }, (_, i) => {
+  const base = 26 + Math.sin(i * 0.7) * 6;
+  const spike = i % 7 === 3 ? 44 + ((i * 37) % 38) : 0;
+  const slow = Math.round(base + spike + ((i * 17) % 9));
+  return { i, slow: Math.min(96, slow), fast: 26 + ((i * 13) % 5), drop: spike > 0 ? 1 : 0 };
+});
+
+function Enliven() {
+  const [state, setState] = useState<"slow" | "scanning" | "fast">("slow");
+  const ribbon = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const node = ribbon.current;
+    if (!node) return;
+    if (document.documentElement.dataset.motion === "still") {
+      setState("fast");
+      return;
+    }
+    let scan: ReturnType<typeof setTimeout> | undefined;
+    let settle: ReturnType<typeof setTimeout> | undefined;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        scan = setTimeout(() => setState("scanning"), 260);
+        settle = setTimeout(() => setState("fast"), 900);
+      },
+      { threshold: 0.4 },
+    );
+    io.observe(node);
+    return () => {
+      io.disconnect();
+      clearTimeout(scan);
+      clearTimeout(settle);
+    };
+  }, []);
+  const fast = state === "fast";
+  return (
+    <section id="enliven" className="wrap section">
+      <div className="section-head">
+        <h2>enliven: the same app, answering instantly</h2>
+        <p>
+          Every bar is one frame. Red is a frame the user waited for. The scan is the profiler
+          finding out why, and it is the only way the green is allowed to be claimed.
+        </p>
+      </div>
+      <div className="enliven">
+        <div>
+          <div
+            ref={ribbon}
+            className={`ribbon${state === "scanning" ? " is-scanning" : ""}${fast ? " is-fast" : ""}`}
+            style={{ containerType: "inline-size" }}
+            aria-hidden="true"
+          >
+            <span className="ribbon-scan" />
+            {RIBBON.map((b) => (
+              <span
+                key={b.i}
+                className="ribbon-bar"
+                data-drop={b.drop}
+                style={{ "--slow": b.slow, "--fast": b.fast, "--i": b.i } as React.CSSProperties}
+              />
+            ))}
+          </div>
+          <p className="ribbon-legend">
+            <span>{fast ? "after" : "before"}</span>
+            <span>
+              worst frame <b>{fast ? "18 ms" : "107 ms"}</b>
+            </span>
+            <span>
+              dropped <b>{fast ? "0" : String(RIBBON.filter((b) => b.drop === 1).length)}</b>
+            </span>
+          </p>
+        </div>
+        <p className="enliven-loop">
+          <code>measure</code>
+          <i>then</i>
+          <code>name the cause</code>
+          <i>then</i>
+          <code>fix the cause</code>
+          <i>then</i>
+          <code>measure the same way</code>
+          <i>then</i>
+          <code>report, regressions included</code>
+        </p>
+        <div className="enliven-figures">
+          <div>
+            <b>&minus;28%</b>
+            <span>layout passes across every phase of a real Electron audit</span>
+          </div>
+          <div>
+            <b>&minus;14%</b>
+            <span>time recalculating style, from two CSS rules</span>
+          </div>
+          <div>
+            <b>0</b>
+            <span>DOM nodes or listeners retained over eight open and close cycles</span>
+          </div>
+          <div>
+            <b>1</b>
+            <span>self-contained HTML report, every figure read from the run's JSON</span>
+          </div>
+        </div>
       </div>
     </section>
   );

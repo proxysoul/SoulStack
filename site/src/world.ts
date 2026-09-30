@@ -17,10 +17,27 @@ export const LOGO: Record<WorldId, string> = {
 
 const root = () => document.documentElement;
 
+const listeners = new Set<() => void>();
+let observer: MutationObserver | null = null;
+
 function subscribe(onChange: () => void): () => void {
-  const observer = new MutationObserver(onChange);
-  observer.observe(root(), { attributes: true, attributeFilter: ["data-world", "data-theme", "data-motion"] });
-  return () => observer.disconnect();
+  listeners.add(onChange);
+  if (!observer) {
+    observer = new MutationObserver(() => {
+      for (const fn of listeners) fn();
+    });
+    observer.observe(root(), {
+      attributes: true,
+      attributeFilter: ["data-world", "data-theme", "data-motion"],
+    });
+  }
+  return () => {
+    listeners.delete(onChange);
+    if (listeners.size === 0) {
+      observer?.disconnect();
+      observer = null;
+    }
+  };
 }
 
 function snapshot(): string {
@@ -48,16 +65,25 @@ export function persistWorld({ world, mode }: WorldState): void {
   localStorage.setItem(STORE, JSON.stringify({ world, mode }));
 }
 
+let blooming = false;
+
 function bloom(x: number, y: number, apply: () => void): void {
   const r = root();
-  if (r.dataset.motion === "still" || !document.startViewTransition) {
+  if (blooming || r.dataset.motion === "still" || !document.startViewTransition) {
     apply();
     return;
   }
+  blooming = true;
   r.style.setProperty("--bloom-x", `${x}px`);
   r.style.setProperty("--bloom-y", `${y}px`);
   r.classList.add("is-blooming");
-  document.startViewTransition(apply).finished.finally(() => r.classList.remove("is-blooming"));
+  r.dataset.painting = "hold";
+  const done = (): void => {
+    blooming = false;
+    r.classList.remove("is-blooming");
+    delete r.dataset.painting;
+  };
+  document.startViewTransition(apply).finished.then(done, done);
 }
 
 export function pickWorld(id: WorldId, at: { clientX: number; clientY: number }): void {

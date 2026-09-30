@@ -100,6 +100,12 @@ export function startScene(canvas: HTMLCanvasElement): () => void {
 
   function frame(t: number): void {
     if (!visible || !alive) return;
+    // A root view transition replaces the page with a snapshot, so anything the
+    // canvas paints during it is never seen. Keep the loop alive, skip the work.
+    if (document.documentElement.dataset.painting === "hold") {
+      requestAnimationFrame(frame);
+      return;
+    }
     for (const m of motes) {
       m.x += m.vx;
       m.y += m.vy;
