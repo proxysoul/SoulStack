@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "soulstack",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "ProxySoul's agent stack: design, testing, marketing and performance skills, immune cells and working takeaways as rules.",
   "author": {
     "name": "ProxySoul",

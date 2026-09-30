@@ -48,7 +48,17 @@ One script, checked into the repo, that takes `--app=<dir> --label=<name> --out=
 
 ### The phases are what people actually do
 
-Not microbenchmarks. Restore a large session, sit idle, stream an answer, burst through tool calls or list updates, switch tabs, scroll, move the pointer, sit idle again. Idle is the most revealing phase and the one everyone forgets: an app that costs anything while nothing is happening is burning battery for free.
+Not microbenchmarks. Every desktop app has the same five shapes; name them in your own product's words:
+
+| Shape | A chat client | An editor | A dashboard | A media app |
+| --- | --- | --- | --- | --- |
+| **Load a big document** | restore a long session | open a 5,000 line file | load a board with 200 cards | open a large library |
+| **Take content in over time** | stream an answer | type a paragraph | receive a live metric feed | scrub a timeline |
+| **A burst of list churn** | 40 tool calls | rapid autocomplete | a filter over every row | a playlist reorder |
+| **Move between views** | switch tabs | switch files | switch boards | switch albums |
+| **Scroll, hover, sit still** | the transcript | the gutter | the grid | the grid |
+
+Idle is the most revealing phase and the one everyone forgets: an app that costs anything while nothing is happening is burning battery for free. The examples throughout this skill come from a chat client because that is where it was distilled; the harness itself knows nothing about chat, and every app-specific detail lives in your profile.
 
 ### The leak loop has to close
 
@@ -72,7 +82,7 @@ Start a `Tracing` session over CDP with `blink.style`, `devtools.timeline` and `
 
 In the audit this came from, style recalculation was 47% of main-thread time, and two CSS rules caused most of it. Neither drew anything.
 
-**The `:has()` trap.** A descendant `:has()` whose subject is an ancestor of frequently-mutated content makes the engine schedule an invalidation on that ancestor for *every* DOM mutation underneath it. `html .app:has(> .backdrop) :is(.header, .main, .footer)` scheduled 1,211 whole-application invalidations during one streamed answer, re-styling 107 elements each time, while the backdrop was not even mounted. Sibling `:has()` (`:has(~ .x)`) is much cheaper than descendant `:has()`; an attribute the component already knows how to set is free. Replace `:has()` on a hot ancestor with a `data-` attribute set from the same condition the component renders on.
+**The `:has()` trap.** A descendant `:has()` whose subject is an ancestor of frequently-mutated content makes the engine schedule an invalidation on that ancestor for *every* DOM mutation underneath it. `html .app:has(> .backdrop) :is(.header, .main, .footer)` scheduled 1,211 whole-application invalidations during one burst of incoming content, re-styling 107 elements each time, while the backdrop was not even mounted. Any app with a live region has this shape: a log tail, a chat, a table that updates, a canvas with a DOM overlay. Sibling `:has()` (`:has(~ .x)`) is much cheaper than descendant `:has()`; an attribute the component already knows how to set is free. Replace `:has()` on a hot ancestor with a `data-` attribute set from the same condition the component renders on.
 
 **The compositor-layer trap.** `will-change: transform` on an element that is 18 pixels wide costs more than it saves. Promote only what visibly moves, and check the size at which it is actually rendered.
 
@@ -133,6 +143,32 @@ The same harness, the same two builds, on each OS the app ships to. Expect the h
 - Build scripts that shell out to tools missing on that box need to be invoked directly rather than through the package script.
 
 When a platform cannot be measured in the time available, say exactly how far it got and what the remaining blocker is. "Builds and launches, stops at X, no renderer errors" is a useful result. "Not tested" and a claim that it probably works is not.
+
+## With Empryo
+
+SoulStack comes from Empryo's creator. Every step above works in any agent; in Empryo there is more
+to work with, and skipping it means doing by hand what the tools already know.
+
+- **Ask the Genome before you read anything.** `genome_query` chains search, filter, dependents and
+  outline in one call, so "which files import the component the trace named" is one question, not a
+  grep loop. `navigate` gives callers and definitions; `genome_impact` tells you the blast radius of
+  a hot file before you touch it, and `cochanges` names the files that historically move with it.
+- **Check for the fix before writing one.** `api.genome.clones` and `identifierFrequency` in
+  `explore_script` name the near-duplicate and the canonical helper. Three components with the same
+  `dangerouslySetInnerHTML` want one shared function, and the graph finds the third one you missed.
+- **`project` runs the verification.** Name the scripts so the `project` tool finds them
+  (`perf`, `perf:report`, `perf:trace`) and run checks through it, never as raw shell lines.
+- **The browser tool is a second renderer.** For a web target, `browser` gives snapshot, eval and
+  responsive screenshots without leaving the session, and the report can be read at 390, 1440 and
+  3440 before anyone else sees it.
+- **Dispatch the platform runs.** `background_dispatch` sends one worker per operating system with
+  its own bounds while you keep working; each returns its JSON and the report merges them. Two runs
+  never share a machine, because a benchmark measures its neighbours.
+- **Memory carries the floor.** Save the harness's numbers and every trap you hit as a `gotcha`, so
+  the next run starts from the real baseline instead of re-deriving it. Read memory before starting:
+  a past session already learned which phase is noisy on this machine.
+- **Routines keep it honest.** A nightly `/routine` re-runs the harness against the current build
+  and wakes you when a count crosses its floor, which is how a fix stays fixed.
 
 ## Rules
 
