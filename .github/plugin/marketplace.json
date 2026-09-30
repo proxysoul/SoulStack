@@ -5,13 +5,13 @@
   },
   "metadata": {
     "description": "ProxySoul's agent stack for Copilot CLI",
-    "version": "1.4.3"
+    "version": "1.4.4"
   },
   "plugins": [
     {
       "name": "soulstack",
       "description": "Design, testing, marketing and performance skills, immune cells and working takeaways as rules.",
-      "version": "1.4.3",
+      "version": "1.4.4",
       "source": "."
     }
   ]

@@ -6,7 +6,7 @@
 // feed both files to perf-report.mjs. See profile.example.mjs for the contract.
 import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, isAbsolute, join, resolve } from "node:path";
+import { basename, dirname, isAbsolute, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
 const arg = (name, fallback) => {
@@ -378,7 +378,7 @@ const numericKeys = [
 ];
 const summary = {
   label: LABEL,
-  app: isAbsolute(APP) ? APP : resolve(APP),
+  app: basename(isAbsolute(APP) ? APP : resolve(APP)),
   profile: PROFILE,
   platform: `${process.platform}-${process.arch}`,
   at: new Date().toISOString(),
