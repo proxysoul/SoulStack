@@ -49,7 +49,7 @@ Choose only the channels warranted by the brief. Use the [channel playbooks](ref
 - **Distribution:** name the destination, audience, format, timing, owner, permission and tracking for every asset. Repurpose the proof for the channel; a blog file is not distribution.
 - **Lifecycle and referrals:** choose messages from relevant behavior, verify consent and suppression at the send boundary, test unsubscribe, and validate reward eligibility and abuse controls. Never equate a signup form with a delivered campaign.
 
-If visual work needs a design system, use the repository’s existing one; use `ensoul` if it is installed and applicable. Other specialist skills are optional: inspect their availability, then load only what the task needs. Never assume a tool, account, key or paid service exists.
+If visual work needs a design system, use the repository’s existing one; use `ensoul` if it is installed and applicable. Performance claims need measurements from the real build, which is what `enliven` produces; never quote a speed number you did not measure. Other specialist skills are optional: inspect their availability, then load only what the task needs. Never assume a tool, account, key or paid service exists.
 
 ## 5. Measure the intended value
 

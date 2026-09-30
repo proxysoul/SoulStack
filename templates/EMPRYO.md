@@ -68,6 +68,14 @@ AGENT: this file is a template. Fill it in yourself, then delete this comment.
   meets `negative-selection` first.
 - Findings: `immune/findings/`. Grown cells: `.agents/agents/`.
 
+## Performance
+
+- [Where the A/B harness and its profile live, and the command that runs it.] None yet? Build one
+  with the `enliven` skill ([skills/enliven](https://github.com/proxysoul/SoulStack/tree/main/skills/enliven)).
+- Measure before changing anything, with the instrument you will use afterwards. Clean build on
+  both sides; a number from a stale output directory is not a number.
+- [Where the before and after JSON and the generated report are kept.]
+
 ## Commands
 
 Agents run checks through Empryo's `project` tool, so set the project up for it instead of listing shell lines here. `project` finds the tools on its own (package.json scripts, Cargo, Go, Python, Make, Gradle, Maven and more) and runs: `check` (types, lint and tests at once), `test` (one file with `file`), `build`, `lint`, `format`, `typecheck`, `run` (a named script) and `list` (the packages in a monorepo).

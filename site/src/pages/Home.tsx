@@ -17,7 +17,7 @@ const INSTALL = [
 
 const LAYER_TABS = [
   { id: "rules", icon: "scroll", title: "Rules", sub: "takeaways every agent follows" },
-  { id: "skills", icon: "sparkles", title: "Skills", sub: "ensoul · immune-system · marketing" },
+  { id: "skills", icon: "sparkles", title: "Skills", sub: "ensoul · immune-system · marketing · enliven" },
   { id: "agents", icon: "bot", title: "Agents", sub: "ten immune cells" },
   { id: "immunity", icon: "shield", title: "Immunity", sub: "testing grown for your project" },
   { id: "presets", icon: "sliders", title: "Presets", sub: "Empryo models, theme, tools" },
@@ -504,7 +504,7 @@ function Update() {
               __html: `<i class="c-dim">stack</i>   <i class="c-ok">updated</i>  ~/dev/SoulStack  <i class="c-dim">v1.0.0 to v1.1.0</i>
 <i class="c-dim">new</i>     feat(scripts): add soulstack update, check and remove
 <i class="c-dim">new</i>     feat(guides): get, load and unload the skills a task needs
-<i class="c-dim">skill</i>   <i class="c-dim">same</i>     ensoul, immune-system
+<i class="c-dim">skill</i>   <i class="c-dim">same</i>     ensoul, immune-system, marketing, enliven
 <i class="c-dim">rules</i>   <i class="c-acc">updated</i>  Empryo, Claude Code, Codex, Copilot
 
 <i class="c-ok">Done.</i> <i class="c-dim">Restart your agent to load SoulStack.</i>`,

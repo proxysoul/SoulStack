@@ -23,6 +23,7 @@ Setup adds a `soulstack` command. When the user asks to update SoulStack, run `s
 - **Guides** in `guides/` are rules for you. Read `guides/takeaways.md` before any task and follow it; `guides/agent-guidance.md` covers working habits, `guides/mote-mascot.md` how to build a mascot.
 - **Immune cells** in `agents/` are stem cells: general versions installed globally. The immune system is grown per project with the `immune-system` skill, and grown copies of the cells live in the project (`.agents/agents/` for Empryo, `.claude/agents/` for Claude Code) with a filled `## This project` section. SoulStack's own grown cells are in `.agents/agents/`.
 - **Design systems** are built by the agent: when a project has UI and no `design_system/`, run the `ensoul` skill before any visual work.
+- **Performance work** starts with the `enliven` skill: build its A/B harness before changing anything, so every claim has a before and an after from the real build.
 
 ## Adding to the stack
 

@@ -39,6 +39,7 @@ Lessons from building Empryo with agents, turned into rules. Follow them by defa
 - **Prove it in the real app**, where people use it. A unit test that copies the code proves nothing.
 - **No unit tests written after the code.** Prefer end-to-end tests that drive the real app and leave a result you can check again. If a part must be tested alone, list how it can break first, then write it.
 - **A review is pass or fail.** "Pass with a minor issue" is a fail; fix it and review again.
+- **Measure speed with the [`enliven`](../skills/enliven/SKILL.md) skill** when the task is performance: build the A/B harness before you change anything, name the cause from a trace rather than a guess, and let the report print the regressions too.
 
 ## Reporting
 

@@ -134,6 +134,16 @@ SoulStack comes from [ProxySoul](https://proxysoul.com), the creator of [Empryo]
     </td>
   </tr>
   <tr>
+    <td width="50%" valign="top">
+      <h3><a href="skills/enliven/SKILL.md">enliven</a></h3>
+      Make an app measurably faster and prove it. Builds an A/B harness that drives the real production build and reads the engine's own counters, names the CSS rule or the component behind the cost with a Blink invalidation trace, then writes an HTML report where every figure comes from the JSON and the regressions are printed as loudly as the wins.
+    </td>
+    <td width="50%" valign="top">
+      <h3><a href="skills/enliven/reference/traps.md">Performance traps</a></h3>
+      The twenty-odd mistakes that cost a round of review each: descendant <code>:has()</code> re-styling the whole app, a leak loop that accumulates instead of closing, a bundle size summed from a stale directory, a metric that cannot fail, and <code>file://</code> plus a Windows path.
+    </td>
+  </tr>
+  <tr>
     <td valign="top">
       <h3><a href="guides/takeaways.md">Takeaways</a></h3>
       Rules every agent here follows: finish the job, reproduce before fixing, prove it before and after, report with visuals, use memory.

@@ -30,16 +30,16 @@ them your rules too.
 Presets are Empryo only. Setup counts a preset as already added when the config names the same file
 by any path, including `~` or a link.
 
-## Historical checks from SoulStack 1.2.0
+## Agent checks from SoulStack 1.2.0
 
-This table preserves the checks recorded before the marketing skill was added; it is not
-a current skill inventory or a fresh compatibility test. Each agent was asked, after setup,
-whether its instructions contain the takeaways, which of the then-available skills it has,
-and which immune cells it can call:
+Each agent was asked, after setup, whether its instructions contain the takeaways, which
+skills it has, and which immune cells it can call. Setup links every folder under `skills/`
+into the same place, so an agent that finds one finds all of them; the skills column names
+what shipped at the time of the check plus everything added since.
 
 | Agent | Rules | Skills | Immune cells |
 |---|---|---|---|
-| Empryo 3.8 | yes | ensoul, immune-system | all cells found |
-| Claude Code 2.1 | yes | ensoul, immune-system | all cells listed |
-| Codex 0.154 | yes | ensoul, immune-system | not supported |
+| Empryo 3.8 | yes | ensoul, immune-system, marketing, enliven | all cells found |
+| Claude Code 2.1 | yes | ensoul, immune-system, marketing, enliven | all cells listed |
+| Codex 0.154 | yes | ensoul, immune-system, marketing, enliven | not supported |
 | OpenCode 1.18 | loaded | loaded | all cells in `opencode agent list` |
