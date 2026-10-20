@@ -18,6 +18,28 @@ Every row below cost a round of review or a wasted rebuild in the audit this ski
 
 **Nav timings under `file://`.** `performance.getEntriesByType("resource")` is empty and first-contentful-paint reads 0 for a `file://` renderer. Use wall time to first commit and the CDP counters instead.
 
+**Reading a CPU profile as a wall-clock trace.** Chrome samples the renderer at an interval and stores each sample's duration in `timeDeltas`. Count milliseconds from those deltas, not from sample count, and label the sampling interval in the report. A profile names where the renderer spent time; it does not measure startup, GPU, main-process, or un-sampled work.
+
+**Profiling a different state than the A/B phase.** Starting the profiler after the interaction changes the evidence and misses the setup that made the phase expensive. Launch the same hermetic profile, replay the earlier phases, then start CDP `Profiler` immediately before the target phase. Use `cpu-analyze.mjs --anchor` or `--window` to narrow a saved profile without rerunning the app.
+
+**Publishing absolute profile paths.** Chrome profiles contain file URLs with the runner's home directory. Pass `--root=<project>` to the analyzer and keep raw profiles in an ignored output directory; do not paste machine paths into a report or issue.
+
+**Playwright hides the background.** It emulates focus, so `document.hasFocus()` stays true, and `BrowserWindow.hide()` leaves `document.hidden` false. A second CDP session that turns focus emulation off does not undo it. Measure the behind-another-window state through the app's own focus signal (the profile's `focus` hook) and the hidden or occluded state without Playwright at all.
+
+**GPU-process CPU is not GPU utilization.** The GPU process's CPU time is what a profile and `getAppMetrics` show; the GPU's own load is not in either. Count drawn frames and composited layers, which drive both, and say in the report which one you measured.
+
+**RSS on a process that maps files.** A database opened with a large `mmap_size` counts clean, droppable file pages in RSS: the same workload measured 1.5 GB in one run and 7.4 GB in the next. Use the platform's footprint number (`footprint` / phys_footprint on macOS, private working set on Windows).
+
+**LayerTree sizes are device pixels.** A full-window layer on a 1440x900 window at scale 2 reports 2880x1800. Multiplying by `devicePixelRatio` again overstates texture memory four times on every high-density screen.
+
+**Diagnostic probes change the cost.** Blink invalidation tracking, a React fiber walk or a timer census each add work. Take the baseline without them and run them as separate diagnostic passes.
+
+**Driving the app through an event nobody listens to.** A harness that dispatched a synthetic "switch tab" event kept passing after the app stopped listening for it, and measured nothing. Click the real control and assert the destination is visible (a non-zero box) before timing anything.
+
+**Other work on the same machine.** File sync, indexers and a parallel build land in "idle" CPU. Note what else was running, and never pause a shared service without asking its owner.
+
+**A static listener scan is a triage list.** A scan flagged 45 files for listeners, frames and observers without a visible cleanup; every one traced so far either lived as long as the process or was already removed on close. Listeners that live as long as the process are fine. Check that per-window and per-component listeners are removed on their own lifecycle, and fix only those.
+
 ## Rendering traps
 
 **Descendant `:has()` on a hot ancestor.** `html .app:has(> .backdrop) :is(.header, .main, .footer)` scheduled 1,211 whole-application invalidations during one streamed answer, re-styling 107 elements each time, with the backdrop not even mounted. The engine cannot bound it, so every DOM mutation anywhere under `.app` re-evaluates it.
@@ -34,6 +56,14 @@ Every row below cost a round of review or a wasted rebuild in the audit this ski
 
 **Animating an SVG child's transform in JS at a capped frame rate** is sometimes *better* than a CSS animation, because SVG element transforms force layout in Blink and a CSS animation runs at display rate. Measure before converting either direction, and gate the work by rendered size.
 
+**A blur under an opaque fill.** The default appearance put `backdrop-filter: blur(20px)` on every pane while the pane's own background was fully opaque. Nothing showed, but the compositor built render surfaces every frame, lost the cheap native overlays and pinned GPU memory while the caret blinked. Turn the blur off whenever the fill is opaque and keep it where the surface is really translucent; prove it with the look check.
+
+**Removing `will-change` everywhere to cut layers.** It reduced the layer count and made main-thread scrolling slower (596 to 621 ms per 120 frames). Layer count is not the goal; drawn frames and main-thread time are.
+
+**Animated `<svg>` and `box-shadow` keyframes.** An animated `<svg>` element is never composited, so every tick needs a main-thread frame; animate a wrapping element. `box-shadow` keyframes repaint on the main thread every frame; fade a pseudo-element that carries the shadow instead.
+
+**Idle loops that keep themselves alive.** A decorative animation's settle loop re-armed on its own `animationend` events and ticked forever at rest; a canvas library kept a display-rate ticker alive after its last scene closed. Look for loops whose stop condition is fed by their own output, and stop shared tickers explicitly.
+
 ## React traps
 
 **One compiler bailout unmemoizes a whole component.** If it sits high in the tree, everything under it re-renders on every commit. Common causes and their fixes:
@@ -49,6 +79,24 @@ Every row below cost a round of review or a wasted rebuild in the audit this ski
 Keep a baseline of skipped functions per file and fail the build when a file rises above it, so the count only goes down.
 
 **Counting renders without React DevTools.** Install a `__REACT_DEVTOOLS_GLOBAL_HOOK__` stub in an init script. `onCommitFiberRoot` gives commits; walking the tree for `flags & PerformedWork` gives per-component counts, and comparing `alternate.memoizedProps === memoizedProps && alternate.memoizedState === memoizedState` gives the wasted ones. Following `fiber.return` until you find another fiber that also performed work identifies the render *root*, which is the component actually responsible.
+
+## Memory traps
+
+**Decoded images stay in the renderer.** Removing 40 large pasted images from the page freed nothing: Chromium kept the encoded bytes (about 52 MB) and the decoded copies (about 61 MB), growing linearly, and garbage collection, a critical memory-pressure signal and a cache clear did not release them. Draw a preview sized to twice the box it fills, keep the image's colour profile, and load the full image only when it is opened.
+
+**Image bytes in app state.** Base64 images in a store make every state copy, persist and devtools snapshot carry them. Keep the bytes out of band (IndexedDB, a file) and only an id, type and size in state, and reserve the box from the stored size so nothing jumps while it loads.
+
+**Undo history that keeps whole files.** Twenty full versions of up to 200 files, kept for every open document, reached about 1 GB on a large project; one non-Latin-1 character made each copy two bytes per character. Compressing each entry (zstd took an 860 KB file to 201 KB in about 2 ms), a global byte budget and a trim on memory pressure brought it to 48 MB with the same undo depth.
+
+**A worker's heap outlives the worker.** A Bun process that ran a one-off 800 MB scan in a worker kept most of that memory after the worker ended. Collect in chunks during the scan, or run it in a child process that exits.
+
+## Host-process traps
+
+**Durable writes on the event loop.** A full-disk flush (`F_FULLFSYNC` on macOS) for every step of a background job blocked a busy back-end for long enough that its Stop button went unanswered with twenty jobs running. Move the flush to a worker, give it a timeout, and fall back to the main thread only when the worker is gone.
+
+**Startup calls drained one at a time.** Calls queued before a worker finished starting were replayed with `await` in a loop, so a slow index scan at the front held a priority change behind it for 65 seconds. Start queued calls together, as calls that arrive later already are.
+
+**Polling a file for each running command.** Following output by opening, `fstat`ing and closing a log every 40 ms cost 14% of the loop with many commands running. Read once per change, or keep the handle open.
 
 ## Cross-platform traps
 

@@ -1,6 +1,6 @@
 ---
 name: enliven
-description: Make an Electron or web app measurably faster without losing a feature, and prove it. The agent builds a repeatable A/B harness that drives the real production build through Playwright and reads Chromium's own counters over the DevTools protocol, finds the cause of the cost with a Blink style-invalidation trace and a React commit probe instead of guessing, fixes root causes, re-measures the same way, and writes a self-contained HTML report that shows the regressions as loudly as the wins. Use when the user asks to profile, speed up, slim down, find memory leaks in, or benchmark before and after on a desktop or web app, or asks for a performance report.
+description: Make an Electron or web app measurably faster without losing a feature, and prove it. The agent builds a repeatable A/B harness that drives the real production build through Playwright and reads Chromium's own counters over the DevTools protocol, finds the cause of the cost with a Blink style-invalidation trace, a React commit probe and a frame, wake-up and GPU probe instead of guessing, proves a fix keeps the look pixel for pixel, fixes root causes, re-measures the same way, and writes a self-contained HTML report that shows the regressions as loudly as the wins. Use when the user asks to profile, speed up, slim down, find memory leaks in, or benchmark before and after on a desktop or web app, or asks for a performance report.
 ---
 
 # Enliven
@@ -20,14 +20,22 @@ The scripts in `scripts/` are the audit already written down. Do not rebuild the
 ```sh
 cp scripts/profile.example.mjs perf-profile.mjs   # fill in: entry, selectors, phases, cycle
 node scripts/perf-ab.mjs --profile=./perf-profile.mjs --app=<build> --label=before --out=./perf
-node scripts/style-trace.mjs --profile=./perf-profile.mjs --app=<build> --phase=<worst phase>
-#   fix what the trace names, rebuild from a purged output directory
+node scripts/style-trace.mjs --profile=./perf-profile.mjs --app=<build> --phase=<worst phase> --out=./perf/style-trace.json
+node scripts/cpu-profile.mjs --profile=./perf-profile.mjs --app=<build> --phase=<worst phase> --out=./perf/worst.cpuprofile
+node scripts/cpu-analyze.mjs ./perf/worst.cpuprofile --mode=summary --root="$PWD"
+node scripts/cpu-analyze.mjs ./perf/worst.cpuprofile --mode=longtasks --root="$PWD"
+node scripts/trace-analyze.mjs ./perf/style-trace.json --mode=selectors
+node scripts/frame-probe.mjs --profile=./perf-profile.mjs --app=<build> --after=<phase> --label=frames-before --out=./perf/frames-before.json
+#   fix what the trace or profile names, rebuild from a purged output directory
+node scripts/look-equivalence.mjs --profile=./perf-profile.mjs --app=<build> --css=./perf/fix.css --out=./perf/look
 node scripts/perf-ab.mjs --profile=./perf-profile.mjs --app=<build> --label=after --out=./perf
 node scripts/perf-report.mjs --before=./perf/before.json --after=./perf/after.json \
      --changes=./perf/changes.json --out=./perf/report.html
 ```
 
 Writing `perf-profile.mjs` is the only real work: name the phases people actually perform, and make the leak cycle end where it began. Read [reference/traps.md](reference/traps.md) first, in full. Every line in it cost a failed review.
+
+`frame-probe.mjs` and `look-equivalence.mjs` share `harness.mjs` and find `playwright-core` from `--app`, so they run straight from the skill folder. Give the profile an optional `focus(context, focused)` hook (tell the app it lost focus the way the OS would) and a `looks` map of named states (light, dark, a panel open) for them to use.
 
 These scripts have been run end to end against a real Electron build, not just written: a five-phase profile produced boot timings, per-phase CDP counters, a three-cycle leak series with flat node counts, and an HTML page. On that run the orphan count came back at 866 files and 43 MB, which was correct: the output directory had accumulated stale chunks from earlier builds. Purge it before you trust any bundle number, exactly as Phase 4 says.
 
@@ -42,7 +50,7 @@ One script, checked into the repo, that takes `--app=<dir> --label=<name> --out=
 1. **Launch the real production build**, not a dev server and not a test renderer. Optimisations that only exist in a dev build are not optimisations. For Electron, Playwright's `_electron.launch` against the built main entry.
 2. **Run every phase N times and report the median.** Three is the floor. A single run on a shared machine moves by tens of percent.
 3. **Read the engine's own counters, not a stopwatch.** Over the DevTools protocol, `Performance.getMetrics` gives `TaskDuration`, `ScriptDuration`, `RecalcStyleDuration`, `LayoutDuration`, `RecalcStyleCount`, `LayoutCount`, `Nodes`, `JSEventListeners`, `JSHeapUsedSize`. Those last four are the leak triad plus the DOM size.
-4. **Count renders without React DevTools.** Install a `window.__REACT_DEVTOOLS_GLOBAL_HOOK__` stub in an init script with `supportsFiber`, a `renderers` Map, `inject`, and `onCommitFiberRoot`. Counting commits is one line. Walking the fiber tree for `flags & PerformedWork` gives per-component render counts and which of them had identical props and state, which is the wasted-render number.
+4. **Count renders without React DevTools.** Install a `window.__REACT_DEVTOOLS_GLOBAL_HOOK__` stub in an init script with `supportsFiber`, a `renderers` Map, `inject`, and `onCommitFiberRoot`. Counting commits is one line. Walking the fiber tree for `flags & PerformedWork` gives per-component render counts and which of them had identical props and state, which is the wasted-render number. Enable `probes.react` only on diagnostic runs; its fiber walk changes the cost being measured.
 5. **Count animation frames.** Wrap `requestAnimationFrame` in the same init script. An idle window doing 74 callbacks per second is a finding on its own.
 6. **Be hermetic.** Seed a throwaway config home per run: a temp dir, `HOME`/`USERPROFILE`/`LOCALAPPDATA` pointed at it, and a config file written with the onboarding and intro flags already set. Without this the benchmark silently inherits the developer's real settings, the numbers are not reproducible on another machine, and the run stops on a first-run screen on any clean OS. This one item is what makes the harness portable; it is not optional.
 
@@ -66,15 +74,34 @@ Run 6-10 identical cycles at the end, force garbage collection twice between eac
 
 The cycle must return the app to the same state it started in. If each cycle appends a message, opens a panel, or otherwise adds content, the series measures accumulation, not retention, and the "leak" it reports is fiction. End every cycle by replaying the identical restore payload, then assert the DOM node count is flat before you believe any heap number.
 
+### Soak with what people really have, then purge
+
+A closed cycle proves the DOM and listeners come back. It does not find memory that grows with use, and that is where the user's complaint usually lives. Add one soak: the heavy content the product really carries (large images, long documents or logs, many open views, a big saved state restored from disk), for 30 to 60 rounds, then put the app back in a small state and check that memory comes down.
+
+- Read the process footprint, not the JS heap and not RSS. Decoded images, allocator buffers and GPU textures never show in `JSHeapUsedSize`; memory-mapped files inflate RSS with pages the OS can drop. On macOS use `footprint <pid>` (phys_footprint), on Windows the private working set, and Chromium's own memory dump (`Tracing` with `disabled-by-default-memory-infra`) to split it into `partition_alloc`, `cc/image_memory`, `v8` and `gpu`.
+- Anything that keeps full copies (undo history, change logs, closed views, caches keyed by content) gets a byte budget, compression for cold entries and a trim on memory pressure. Count it in bytes: V8 and JavaScriptCore store a string with one non-Latin-1 character at two bytes per character.
+- Check the host process too. A Node or Bun process that ran a big one-off job keeps the high-water mark; a terminated worker's heap is not always handed back to the OS.
+
 ## Phase 2: Find the cause, do not guess it
 
-Three probes answer three different questions. Run the one that matches the phase that came out worst.
+Each probe answers a different question. Run the one that matches the phase that came out worst.
 
 | Probe | Answers |
 | --- | --- |
+| CPU profile and analyzer | Which functions and modules consumed self or inclusive time, who called them, what ran under a target, and which sampled spans formed long tasks |
 | Blink invalidation trace | Which CSS rule scheduled each style recalculation, and how many elements it touched |
+| Trace analyzer | Selector matching cost, invalidation reasons, layout totals, and long trace events from a saved Chrome trace |
 | React commit probe | Which component rendered, how often, which renders were wasted, and what triggered the root of each render |
 | React Compiler bailout report | Every function the compiler refused to memoize, with the reason and the line |
+| Frame probe | Drawn frames and BeginFrames per second, CPU per process (renderer, GPU, browser, helpers), idle wake-ups, every timer and animation frame scheduled while still with its caller, and the composited layers with their texture size and promotion reasons |
+| Look equivalence | Whether a CSS change alters a single pixel, against the noise floor of an untouched repeat |
+| Host-process profile | Event-loop lag and CPU of the main or back-end process, which no renderer probe sees |
+
+### CPU profiles name the JavaScript cause
+
+Run `cpu-profile.mjs` after the A/B harness has named a bad phase. It launches the same profile, replays all earlier phases, samples the target phase through CDP's `Profiler` domain, and writes a standard `.cpuprofile` file that Chrome DevTools can open. `cpu-analyze.mjs` keeps the useful GUI-QA views in a portable CLI: `summary`, `window`, `anchor`, `who`, `children`, `modules`, and `longtasks`. Pass `--root=<project>` to turn absolute file URLs into reviewable `src/...:line` paths without baking a machine path into the report.
+
+The profiler samples the renderer only. Use `--anchor=<function>` with `--before=<ms> --after=<ms>` for a request or interaction, `--window=<seconds> --skip=<seconds>` for a settled idle tail, `--target=<function>` with `--mode=who` or `--mode=children` for caller and child attribution, and `--mode=modules --needle=<regex>` for dependency cost. A profile is evidence for a cause, not a replacement for the before/after counters.
 
 ### The style trace is the one people skip
 
@@ -88,6 +115,15 @@ In the audit this came from, style recalculation was 47% of main-thread time, an
 
 **The per-instance listener trap.** A component that registers its own `window` listener costs N listeners for N instances, and every event wakes all of them. One shared dispatcher in a coordinator that already tracks which instances are on screen, fanning out only to those, is the fix. While you are there: element `scroll` events do not bubble to `window`, so a `window` scroll listener meant for an inner scroller has never fired. Check before you "optimise" it; you may be optimising dead code.
 
+### Below the renderer: frames, GPU and the host process
+
+Main-thread counters miss most of what drains a battery. Run `frame-probe.mjs` on the idle phase and on the busiest one, with the window in front and, through the profile's `focus` hook, behind another window.
+
+- **The GPU pays per drawn frame.** In the audit this came from, each frame of the full app window cost about 4 ms in the GPU process against 0.3 ms for a bare page, and the cost did not change between a 900x600 and a 2400x1350 window. Count drawn frames before anything else: the cheapest frame is the one that is never drawn. An idle window drawing 60 frames a second is the finding; per-pixel tricks are not.
+- **Effects nobody can see still cost.** A `backdrop-filter` under an opaque fill draws nothing, yet it makes the compositor build render surfaces every frame and pins GPU memory. List every blurred element with its own background alpha; an alpha of 1 is a blur that cannot show.
+- **Wake-ups come from timers, not just frames.** A 400 ms poll that checks for a change woke one idle page 20 times in 8 seconds; reacting to the event instead woke it once. The census in `frame-probe.mjs` names the caller of every timer and animation frame that fired while nothing happened.
+- **The host process is profiled separately.** A synchronous `fsync` per step, a file polled every 40 ms for each running command, or a queue of startup calls drained one at a time can stall a busy back-end while the renderer looks fine. Measure event-loop lag (a timer that records how late it fires) and take a CPU profile of that process, under the same load as the renderer phase.
+
 **React Compiler bailouts.** One bailout unmemoizes a whole component, and if that component is high in the tree it re-renders on every state change below it. The usual causes are `try`/`finally` inside the component, reading a ref during render, a dynamic `import()` of a module also imported statically, and update expressions on variables captured in closures. Hoist the offending code to a module-level function; the compiler does not compile those. Keep a baseline file of skipped-function counts per file and fail the build when a file rises above it.
 
 ## Phase 3: Fix causes, and revert what does not pay
@@ -95,6 +131,13 @@ In the audit this came from, style recalculation was 47% of main-thread time, an
 Fix the thing the trace named, not the thing nearby that looks untidy.
 
 **Bundler chunk grouping is a trap with a high failure rate.** Hand-written vendor groups produce cross-chunk edges that drag large feature chunks into the boot graph. The temptation is to rewrite the grouping. Measure the rewrite against a *clean* build before keeping it: in the audit this came from, the rewrite pushed 379 KB *into* the boot path and the problem it was meant to fix turned out to be an artifact of an incremental build. It was reverted. A change that does not pay for itself in the measurement is not a change, however clever the reasoning was.
+
+### Keep the look: throttle, do not delete, and prove it with pixels
+
+"Faster without losing a feature" includes how it looks. Two rules keep it honest:
+
+- **Throttle what moves; do not remove it.** Removing an animation is a feature cut. Step long or looping animations onto one shared clock instead (for example 30 frames a second in front, 10 behind another window, using `steps()` timing and a start time snapped to the tick) so every loop stays visible and the compositor skips the frames whose value did not change. Animate a wrapper rather than an `<svg>` (an animated SVG is never composited), and fade a pseudo-element rather than animating `box-shadow`.
+- **A change that should be invisible is proved invisible.** `look-equivalence.mjs` freezes motion, screenshots each of the profile's `looks`, applies the change, screenshots again, removes it, and screenshots a third time for the noise floor. The change passes only if it alters no more pixels than the untouched repeat did. Run it in light and dark, and with the state that shows the effect (a focused field, an open menu). It writes the before, the after and a red change mask when a state fails.
 
 **Framework upgrades are measured like everything else.** Pin them to the one app under test rather than a shared catalog when other surfaces in the repo would be affected mid-flight. Read the release notes for the thing you are actually fixing: a minor that batches resize-driven updates to the next frame is relevant to a layout-thrash finding; most of the rest is not.
 
@@ -154,7 +197,7 @@ to work with, and skipping it means doing by hand what the tools already know.
   grep loop. `navigate` gives callers and definitions; `genome_impact` tells you the blast radius of
   a hot file before you touch it, and `cochanges` names the files that historically move with it.
 - **Check for the fix before writing one.** `api.genome.clones` and `identifierFrequency` in
-  `explore_script` name the near-duplicate and the canonical helper. Three components with the same
+  `code_script` name the near-duplicate and the canonical helper. Three components with the same
   `dangerouslySetInnerHTML` want one shared function, and the graph finds the third one you missed.
 - **`project` runs the verification.** Name the scripts so the `project` tool finds them
   (`perf`, `perf:report`, `perf:trace`) and run checks through it, never as raw shell lines.
@@ -185,5 +228,7 @@ to work with, and skipping it means doing by hand what the tools already know.
 - Both JSON files exist, were produced by the same harness version, and their `platform` and `repeats` fields match.
 - Boot-critical and reachable bundle sizes are equal on both sides unless a bundling change was intentional and kept.
 - The leak series for DOM nodes is flat; if it is not, the cycle does not close and the heap number means nothing.
+- The soak's process footprint comes back down after the purge, and the report says which process held what.
+- Idle draws no frames the user cannot see, and every change meant to keep the look passed `look-equivalence.mjs` in light and dark.
 - Every figure in the HTML is interpolated from the JSON, not typed.
 - Typecheck, lint and the project's own test suite pass, and the counts of failures and compiler bailouts are no worse than before the work started.

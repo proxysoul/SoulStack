@@ -100,6 +100,9 @@ const phaseRows = PHASES.map((key) => {
       ${fact("style recalcs", b.styleCount, a.styleCount)}
       ${fact("layouts", b.layoutCount, a.layoutCount)}
       ${fact("commits", b.commits, a.commits)}
+      ${fact("React renders", b.reactRenders, a.reactRenders)}
+      ${fact("wasted React renders", b.wastedRenders, a.wastedRenders)}
+      ${fact("animations alive", b.animations, a.animations)}
       ${fact("frame callbacks", b.raf, a.raf)}
     </dl>
   </section>`;
@@ -199,7 +202,7 @@ footer{margin-top:var(--s7);padding-top:var(--s4);border-top:1px solid var(--rul
 </div>
 
 <h2>How this was measured</h2>
-<p>One script drives a production build through Playwright and reads the engine's own counters over the DevTools protocol. It ran ${n(before.repeats)} times against each build on the same machine; every number is the median. The two builds differ only by the changes listed at the end, and each was compiled from a purged output directory. The run seeds a throwaway config home, so it does not inherit local settings.</p>
+<p>One script drives a production build through Playwright and reads the engine's own counters over the DevTools protocol. It ran ${n(before.repeats)} times against each build on the same machine; every number is the median. The two builds differ only by the changes listed at the end, and each was compiled from a purged output directory. The run seeds a throwaway config home, so it does not inherit local settings. React render rows appear when the optional fiber probe is enabled; timer-site attribution remains in the JSON.</p>
 <p class="mono" style="color:var(--ink-faint);font-size:13px">${esc(before.platform)} · before ${esc(before.at)} · after ${esc(after.at)}</p>
 
 <h2>Where the time went, phase by phase</h2>
@@ -212,7 +215,11 @@ footer{margin-top:var(--s7);padding-top:var(--s4);border-top:1px solid var(--rul
 <p>Bars share one scale, so a shorter bar is less work.</p>
 ${phaseRows}
 
-<h2>What the app costs at rest</h2>
+  ${componentTableRows(before, after) ? `<h2>React render hotspots</h2>
+  <p>Render and wasted-render counts come from the optional fiber probe. Rows show before / after.</p>
+  <table><thead><tr><th scope="col">component</th><th scope="col">phase</th><th scope="col">before renders / wasted</th><th scope="col">after renders / wasted</th></tr></thead><tbody>${componentTableRows(before, after)}</tbody></table>` : ""}
+
+  <h2>What the app costs at rest</h2>
 <table>
 <caption>Startup, footprint and bundle. Lower is better on every row.</caption>
 <thead><tr><th scope="col">measure</th><th scope="col">before</th><th scope="col">after</th><th scope="col">change</th></tr></thead>
@@ -276,3 +283,21 @@ ${worse.length ? `<div class="caveat"><p><strong>Phases that came out slower.</s
 
 writeFileSync(OUT, html);
 console.log(OUT);
+function componentTableRows(before, after) {
+  const rows = new Map();
+  for (const [side, source] of [["before", before], ["after", after]]) {
+    for (const [phase, components] of Object.entries(source.components ?? {})) {
+      for (const item of components ?? []) {
+        const key = `${phase}\u0000${item.name}`;
+        const row = rows.get(key) ?? { phase, name: item.name, before: null, after: null };
+        row[side] = item;
+        rows.set(key, row);
+      }
+    }
+  }
+  return [...rows.values()]
+    .sort((a, b) => (b.after?.renders ?? b.before?.renders ?? 0) - (a.after?.renders ?? a.before?.renders ?? 0))
+    .slice(0, 40)
+    .map((row) => `<tr><th scope="row">${esc(row.name)}</th><td>${esc(label(row.phase))}</td><td class="mono">${n(row.before?.renders)} / ${n(row.before?.wasted)}</td><td class="mono">${n(row.after?.renders)} / ${n(row.after?.wasted)}</td></tr>`)
+    .join("\n");
+}

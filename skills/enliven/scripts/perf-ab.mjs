@@ -44,37 +44,111 @@ const slope = (ys) => {
 
 // Runs in the page before any app code. Counts React commits without React
 // DevTools, long tasks, animation frames and uncaught errors.
-function installProbe() {
-  const probe = { commits: 0, longTasks: [], raf: 0, errors: [], skeletonSeen: 0 };
+function installProbe(options = {}) {
+  const probe = {
+    commits: 0,
+    longTasks: [],
+    raf: 0,
+    errors: [],
+    skeletonSeen: 0,
+    componentStats: new Map(),
+    rafSites: new Map(),
+    timerSites: new Map(),
+  };
   window.__perfProbe = probe;
+  const digest = (value) => {
+    try {
+      const seen = new WeakSet();
+      return JSON.stringify(value, (key, item) => {
+        if (typeof item === "function") return "function";
+        if (item && typeof item === "object") {
+          if (seen.has(item)) return "circular";
+          seen.add(item);
+          if (key.startsWith("_")) return undefined;
+        }
+        return item;
+      }).slice(0, 4000);
+    } catch {
+      return typeof value;
+    }
+  };
+  const sourceOf = (fiber) => {
+    const source = fiber._debugSource;
+    const where = source?.fileName ? `${source.fileName}:${source.lineNumber ?? 0}` : "";
+    const type = fiber.elementType ?? fiber.type;
+    const name = typeof type === "function" ? type.displayName ?? type.name : type?.displayName ?? type;
+    return `${name || "(anonymous)"}${where ? ` ${where}` : ""}`;
+  };
+  const visit = (fiber) => {
+    if (!fiber) return;
+    if ((fiber.flags & 1) !== 0) {
+      const key = `${sourceOf(fiber)}#${fiber.key ?? ""}`;
+      const props = digest(fiber.memoizedProps);
+      const state = digest(fiber.memoizedState);
+      const previous = probe.componentStats.get(key);
+      const current = previous ?? { renders: 0, wasted: 0, props, state };
+      current.renders++;
+      if (previous && previous.props === props && previous.state === state) current.wasted++;
+      current.props = props;
+      current.state = state;
+      probe.componentStats.set(key, current);
+    }
+    visit(fiber.child);
+    visit(fiber.sibling);
+  };
   window.__REACT_DEVTOOLS_GLOBAL_HOOK__ = {
     supportsFiber: true,
     renderers: new Map(),
-    inject(r) {
-      this.renderers.set(1, r);
-      return 1;
+    inject(renderer) {
+      this.renderers.set(this.renderers.size + 1, renderer);
+      return this.renderers.size;
     },
-    onCommitFiberRoot() {
+    onCommitFiberRoot(_rendererId, root) {
       probe.commits++;
+      if (options.react) visit(root?.current);
     },
-    onCommitFiberUnmount() {},
+    onCommitFiberUnmount() { },
   };
-  window.addEventListener("error", (e) => probe.errors.push(String(e.message)));
-  window.addEventListener("unhandledrejection", (e) =>
-    probe.errors.push(`unhandled: ${e.reason?.message ?? e.reason}`),
+  window.addEventListener("error", (event) => probe.errors.push(String(event.message)));
+  window.addEventListener("unhandledrejection", (event) =>
+    probe.errors.push(`unhandled: ${event.reason?.message ?? event.reason}`),
   );
   try {
     new PerformanceObserver((list) => {
-      for (const e of list.getEntries()) probe.longTasks.push(Math.round(e.duration));
+      for (const entry of list.getEntries()) probe.longTasks.push(Math.round(entry.duration));
     }).observe({ entryTypes: ["longtask"] });
   } catch (error) {
     probe.errors.push(`longtask observer: ${String(error)}`);
   }
-  const raw = window.requestAnimationFrame.bind(window);
-  window.requestAnimationFrame = (cb) => {
+  const site = () =>
+    (new Error().stack ?? "")
+      .split("\n")
+      .slice(2, 4)
+      .map((line) => line.trim().replace(/^at /, ""))
+      .join(" < ");
+  const rawRaf = window.requestAnimationFrame.bind(window);
+  window.requestAnimationFrame = (callback) => {
     probe.raf++;
-    return raw(cb);
+    if (options.sites) {
+      const key = site();
+      probe.rafSites.set(key, (probe.rafSites.get(key) ?? 0) + 1);
+    }
+    return rawRaf(callback);
   };
+  if (options.sites) {
+    const rawTimeout = window.setTimeout.bind(window);
+    const rawInterval = window.setInterval.bind(window);
+    window.setTimeout = (callback, delay, ...rest) => {
+      const key = `timeout ${delay ?? 0} ${site()}`;
+      probe.timerSites.set(key, (probe.timerSites.get(key) ?? 0) + 1);
+      return rawTimeout(callback, delay, ...rest);
+    };
+    window.setInterval = (callback, delay, ...rest) => {
+      const key = `interval ${delay ?? 0} ${site()}`;
+      probe.timerSites.set(key, (probe.timerSites.get(key) ?? 0) + 1);
+      return rawInterval(callback, delay, ...rest);
+    };
+  }
 }
 
 // A hermetic config home, so the run never inherits the developer's settings
@@ -189,10 +263,10 @@ async function launch(configHome, userData) {
         ...(profile.env ?? {}),
         ...(profile.electron.rendererUrlEnv
           ? {
-              [profile.electron.rendererUrlEnv]: pathToFileURL(
-                join(APP, profile.electron.rendererHtml),
-              ).href,
-            }
+            [profile.electron.rendererUrlEnv]: pathToFileURL(
+              join(APP, profile.electron.rendererHtml),
+            ).href,
+          }
           : {}),
         ...(profile.userDataEnv ? { [profile.userDataEnv]: userData } : {}),
       },
@@ -211,12 +285,15 @@ async function runOnce(runIndex) {
   const configHome = seedConfigHome();
   const launchedAt = Date.now();
   const { app, page, close } = await launch(configHome, userData);
-  const run = { phases: {}, boot: {}, leak: {}, dom: {}, errors: [] };
+  const run = { phases: {}, boot: {}, leak: {}, dom: {}, errors: [], components: {}, probeSites: {} };
   try {
     run.boot.launchToWindowMs = Date.now() - launchedAt;
     page.setDefaultTimeout(30_000);
     await page.waitForLoadState("domcontentloaded");
-    await page.addInitScript(installProbe);
+    await page.addInitScript(installProbe, {
+      react: arg("react-renders", "0") === "1" || profile.probes?.react === true,
+      sites: arg("attribute-sites", "0") === "1" || profile.probes?.sites === true,
+    });
     const reloadAt = Date.now();
     await page.reload();
     await page.waitForFunction(() => window.__perfProbe?.commits > 0, null, { timeout: 45_000 });
@@ -250,17 +327,30 @@ async function runOnce(runIndex) {
     const readProbe = () =>
       page.evaluate(() => {
         const p = window.__perfProbe;
+        const renderStats = [...p.componentStats.entries()]
+          .map(([name, stats]) => ({ name, renders: stats.renders, wasted: stats.wasted }))
+          .sort((a, b) => b.renders - a.renders);
         const out = {
           commits: p.commits,
           raf: p.raf,
           longTasks: p.longTasks.length,
           longMs: p.longTasks.reduce((a, b) => a + b, 0),
+          maxLongMs: Math.max(0, ...p.longTasks),
+          animations: document.getAnimations().length,
+          renderStats,
+          reactRenders: renderStats.reduce((a, b) => a + b.renders, 0),
+          wastedRenders: renderStats.reduce((a, b) => a + b.wasted, 0),
+          rafSites: [...p.rafSites].sort((a, b) => b[1] - a[1]).slice(0, 20),
+          timerSites: [...p.timerSites].sort((a, b) => b[1] - a[1]).slice(0, 20),
           errors: p.errors.slice(),
         };
         p.commits = 0;
         p.raf = 0;
         p.longTasks = [];
         p.errors = [];
+        p.componentStats.clear();
+        p.rafSites.clear();
+        p.timerSites.clear();
         return out;
       });
     const settled = async () => {
@@ -286,6 +376,9 @@ async function runOnce(runIndex) {
         layoutCount: m1.layoutCount - m0.layoutCount,
         styleCount: m1.styleCount - m0.styleCount,
         commits: p.commits,
+        reactRenders: p.reactRenders,
+        wastedRenders: p.wastedRenders,
+        animations: p.animations,
         raf: p.raf,
         longTasks: p.longTasks,
         longMs: p.longMs,
@@ -294,6 +387,8 @@ async function runOnce(runIndex) {
         heapMB: +(m1.heapBytes / 1048576).toFixed(1),
       };
       run.errors.push(...p.errors);
+      run.components[label] = p.renderStats;
+      run.probeSites[label] = { raf: p.rafSites, timers: p.timerSites };
     };
 
     const ctx = { page, app, sleep, userData, phase };
@@ -358,7 +453,7 @@ async function runOnce(runIndex) {
     }
     if (runIndex === 0) await page.screenshot({ path: join(OUT, `${LABEL}-final.png`) });
   } finally {
-    await close().catch(() => {});
+    await close().catch(() => { });
     rmSync(userData, { recursive: true, force: true });
     rmSync(configHome, { recursive: true, force: true });
   }
@@ -374,7 +469,7 @@ for (let i = 0; i < REPEATS; i++) {
 
 const numericKeys = [
   "taskMs", "scriptMs", "layoutMs", "styleMs", "layoutCount", "styleCount",
-  "commits", "raf", "longTasks", "longMs", "nodes", "listeners", "heapMB",
+  "commits", "reactRenders", "wastedRenders", "animations", "raf", "longTasks", "longMs", "nodes", "listeners", "heapMB",
 ];
 const summary = {
   label: LABEL,
@@ -397,7 +492,7 @@ const summary = {
     cycles: CYCLES,
     ...Object.fromEntries(
       ["heapKBPerCycle", "nodesPerCycle", "listenersPerCycle", "baseHeapMB", "finalHeapMB",
-       "baseNodes", "finalNodes", "baseListeners", "finalListeners"]
+        "baseNodes", "finalNodes", "baseListeners", "finalListeners"]
         .map((k) => [k, median(runs.map((r) => r.leak[k]))]),
     ),
     series: runs[0].leak.series,
@@ -409,6 +504,8 @@ const summary = {
   rendererErrors: [...new Set(runs.flatMap((r) => r.errors))],
   rendererErrorCount: median(runs.map((r) => r.errors.length)),
   runs,
+  components: runs[0].components,
+  probeSites: runs[0].probeSites,
 };
 for (const key of profile.extraSummaryKeys ?? []) {
   summary[key] = median(runs.map((r) => r[key] ?? 0));

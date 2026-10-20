@@ -6,7 +6,7 @@
 // selector", which a flame graph does not. The output is a ranked list; the
 // rows at the top with an ancestor node name (#root, .app) are the expensive
 // ones, because an invalidation scheduled there re-styles the whole subtree.
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { dirname, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -28,23 +28,45 @@ const CATEGORIES = [
 ];
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-const { _electron: electron } = await import("playwright-core");
 const userData = mkdtempSync(join(tmpdir(), "style-user-"));
-const app = await electron.launch({
-  args: [join(APP, profile.electron.main)],
-  cwd: APP,
-  timeout: 60_000,
-  env: {
-    ...process.env,
-    ...(profile.env ?? {}),
-    ...(profile.userDataEnv ? { [profile.userDataEnv]: userData } : {}),
-    ...(profile.electron.rendererUrlEnv
-      ? { [profile.electron.rendererUrlEnv]: pathToFileURL(join(APP, profile.electron.rendererHtml)).href }
-      : {}),
-  },
-});
+const configHome = mkdtempSync(join(tmpdir(), "style-home-"));
+for (const [relative, contents] of Object.entries(profile.configFiles ?? {})) {
+  const target = join(configHome, relative);
+  mkdirSync(dirname(target), { recursive: true });
+  writeFileSync(target, typeof contents === "string" ? contents : JSON.stringify(contents, null, 2));
+}
+const environment = {
+  ...process.env,
+  HOME: configHome,
+  USERPROFILE: configHome,
+  LOCALAPPDATA: configHome,
+  ...(profile.env ?? {}),
+  ...(profile.userDataEnv ? { [profile.userDataEnv]: userData } : {}),
+};
+let app;
+let browser;
+let page;
+if (profile.kind === "electron") {
+  const { _electron: electron } = await import("playwright-core");
+  app = await electron.launch({
+    args: [join(APP, profile.electron.main)],
+    cwd: APP,
+    timeout: 60_000,
+    env: {
+      ...environment,
+      ...(profile.electron.rendererUrlEnv
+        ? { [profile.electron.rendererUrlEnv]: pathToFileURL(join(APP, profile.electron.rendererHtml)).href }
+        : {}),
+    },
+  });
+  page = await app.firstWindow();
+} else {
+  const { chromium } = await import("playwright-core");
+  browser = await chromium.launch();
+  page = await browser.newPage();
+  await page.goto(profile.web.url);
+}
 try {
-  const page = await app.firstWindow();
   page.setDefaultTimeout(30_000);
   await page.waitForLoadState("domcontentloaded");
   const ctx = { page, app, sleep, userData };
@@ -75,7 +97,7 @@ try {
   const elements = recalc.reduce((a, e) => a + (e.args?.elementCount ?? e.args?.data?.elementCount ?? 0), 0);
   console.log(
     `phase ${PHASE}: ${recalc.length} style recalcs, ${ms.toFixed(0)} ms, ${elements} elements ` +
-      `(${(elements / Math.max(1, recalc.length)).toFixed(0)} per recalc)`,
+    `(${(elements / Math.max(1, recalc.length)).toFixed(0)} per recalc)`,
   );
   const layouts = events.filter((e) => e.name === "Layout");
   console.log(`layouts: ${layouts.length}, ${layouts.reduce((a, e) => a + (e.dur ?? 0) / 1000, 0).toFixed(0)} ms`);
@@ -107,5 +129,8 @@ or a sibling :has(~ .x), which the engine can bound.
 
 trace: ${OUT}`);
 } finally {
-  await app.close().catch(() => {});
+  await app?.close().catch(() => { });
+  await browser?.close().catch(() => { });
+  rmSync(userData, { recursive: true, force: true });
+  rmSync(configHome, { recursive: true, force: true });
 }

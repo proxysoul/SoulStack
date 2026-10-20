@@ -37,6 +37,7 @@ export default {
   // web: { url: "http://localhost:5173" },
 
   env: { APP_E2E: "1", APP_LOCALE: "en" },
+  probes: { react: false, sites: false },
   userDataEnv: "APP_USER_DATA_DIR",
 
   // Written into a throwaway home before launch. HOME, USERPROFILE and

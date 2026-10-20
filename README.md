@@ -136,11 +136,11 @@ SoulStack comes from [ProxySoul](https://proxysoul.com), the creator of [Empryo]
   <tr>
     <td width="50%" valign="top">
       <h3><a href="skills/enliven/SKILL.md">enliven</a></h3>
-      Make an app measurably faster and prove it. Builds an A/B harness that drives the real production build and reads the engine's own counters, names the CSS rule or the component behind the cost with a Blink invalidation trace, then writes an HTML report where every figure comes from the JSON and the regressions are printed as loudly as the wins.
+      Make an app measurably faster and prove it. Builds an A/B harness that drives the real production build and reads the engine's own counters, names the CSS rule or the component behind the cost with a Blink invalidation trace, counts the frames, wake-ups and GPU work an idle window should not have, proves a fix leaves every pixel as it was, then writes an HTML report where every figure comes from the JSON and the regressions are printed as loudly as the wins.
     </td>
     <td width="50%" valign="top">
       <h3><a href="skills/enliven/reference/traps.md">Performance traps</a></h3>
-      The twenty-odd mistakes that cost a round of review each: descendant <code>:has()</code> re-styling the whole app, a leak loop that accumulates instead of closing, a bundle size summed from a stale directory, a metric that cannot fail, and <code>file://</code> plus a Windows path.
+      The forty-odd mistakes that cost a round of review each: descendant <code>:has()</code> re-styling the whole app, a leak loop that accumulates instead of closing, a blur hidden under an opaque fill, decoded images the renderer never frees, Playwright's emulated focus, a bundle size summed from a stale directory, a metric that cannot fail, and <code>file://</code> plus a Windows path.
     </td>
   </tr>
   <tr>
