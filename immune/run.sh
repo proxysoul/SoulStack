@@ -45,10 +45,26 @@ if command -v bun >/dev/null 2>&1 && [ -f "$root/site/bun.lock" ]; then
   audit=$(cd "$root/site" && bun audit 2>&1 | tail -1)
   case "$audit" in *"No vulnerabilities"*) add security bun-audit site-deps pass "$audit" $(( ($(date +%s) - s) * 1000 )) ;; *) add security bun-audit site-deps fail "$audit" 0; fail=1 ;; esac
 fi
-add windows ssh setup-windows hole "run immune/setup-windows.ps1 and immune/update-windows.ps1 on a Windows host (see immune/README.md)" 0
+if [ -n "${IMMUNE_WINDOWS:-}" ]; then
+  stage=$(mktemp -d)
+  mkdir "$stage/SoulStack"
+  (cd "$root" && git ls-files -co --exclude-standard -z | xargs -0 tar -cf - 2>/dev/null) | tar -xf - -C "$stage/SoulStack"
+  COPYFILE_DISABLE=1 tar -czf "$stage/ss.tgz" -C "$stage" SoulStack
+  scp -q -o BatchMode=yes ${IMMUNE_WINDOWS_SSH_OPTS:-} "$stage/ss.tgz" "$root/immune/setup-windows.ps1" "$root/immune/update-windows.ps1" "$IMMUNE_WINDOWS:"
+  for t in setup-windows update-windows; do
+    s=$(date +%s)
+    line=$(ssh -o BatchMode=yes ${IMMUNE_WINDOWS_SSH_OPTS:-} "$IMMUNE_WINDOWS" "\$g = \"\$env:USERPROFILE\\MinGit\\cmd\"; if (Test-Path \$g) { \$env:PATH = \"\$g;\$env:PATH\" }; powershell -NoProfile -ExecutionPolicy Bypass -File $t.ps1" 2>/dev/null | tr -d '\r' | tail -1)
+    ms=$(( ($(date +%s) - s) * 1000 ))
+    printf '%-20s %-14s %s\n' "windows" "$t" "$line"
+    case "$line" in "ALL OK") add windows ssh "$t" pass "$line" "$ms" ;; *) add windows ssh "$t" fail "$line" "$ms"; fail=1 ;; esac
+  done
+  rm -rf "$stage"
+else
+  add windows ssh setup-windows hole "set IMMUNE_WINDOWS=user@host to run the Windows scripts over SSH (see immune/README.md)" 0
+fi
 printf '{"commit":"%s","dirty":%s,"started":"%s","finished":"%s","runtime":"%s","results":[%s]}\n' "$commit" "$dirty" "$started" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "${runtime:-none}" "$rows" > "$json"
 cp "$json" "$out/$(date -u +%Y%m%dT%H%M%SZ).json"
-echo "windows: coverage hole unless run on a Windows host (see immune/README.md)"
+if [ -z "${IMMUNE_WINDOWS:-}" ]; then echo "windows: coverage hole, set IMMUNE_WINDOWS=user@host (see immune/README.md)"; fi
 if command -v node >/dev/null 2>&1; then (cd "$root" && node immune/app/server.mjs immune/app/immune.config.json --export site/public/immunity >/dev/null); fi
 echo "dashboard: bun run immune:app, then open http://127.0.0.1:4177"
 exit "$fail"
