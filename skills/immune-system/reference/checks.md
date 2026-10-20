@@ -57,6 +57,24 @@ access, paths outside the workspace (state, logs), `golden(name, text)`, `golden
   decision.
 - **States a screen forgets**: empty, loading, error, one item, a thousand items.
 
+## Weight and speed
+
+A product can pass every behaviour check and still drain the battery or fill memory. Give the
+deep tier a few checks that measure weight, with a budget each, and keep their history so a slow
+creep shows:
+
+- **At rest**: drawn frames, idle wake-ups and CPU per process with the window in front and behind
+  another one. An idle screen that draws frames nobody can see is a failure.
+- **After use**: the process footprint (not the JS heap, not RSS) after a soak with the heavy content
+  users really have, and again after going back to a small state. It must come down.
+- **Interaction**: the worst frame and input delay of the moves people make all day (switching tabs,
+  streaming, typing), as counts and durations from the engine, never a stopwatch.
+- **Look**: any change made for speed passes a pixel comparison against an untouched repeat, in
+  light and dark.
+
+Budgets are per platform; never compare an emulated or remote machine against this one. The
+`enliven` skill has the probes and the traps behind each number.
+
 ## Known bugs and healing
 
 Mark an open bug with `knownIssue: { ref, note }` (and `doors` when only some doors are affected).

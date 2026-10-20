@@ -21,6 +21,14 @@ Check for them before blaming the product.
 | An emulated platform reports slow timings | Emulation is correct but not a timing reference. Keep speed budgets per platform and never compare across them |
 | A check passes on an empty screen | Every count is zero when the panel under test was never opened. Assert the panel is open first |
 | Coverage looked 30 capabilities better than it was | The matcher counted words in check titles. Count only what checks make the product do |
+| A green suite turns red the day a release ships | The tests fetched the live release feed; once notes for the running version were published, a "what's new" dialog covered every screen. Point update and release URLs at a closed local port in every test home |
+| A cross-platform run proved nothing and still looked done | The remote machines held bundles older than the source. Stamp each bundle with the source revision, refuse stale ones, and say "nothing was proven" when no target ran |
+| Streamed output arrives all at once on one Linux | Ubuntu 25.10 and later ship uutils coreutils, whose `split` buffers until 4 MB or the end. Detect it with `--version` and use GNU `split` or plain file output there |
+| Only the Windows runs stop on a setup screen | A one-time card the Mac test home had already dismissed. Seed every one-time flag in the test home, and add each new one the day its card ships |
+| Config tests pass on macOS and fail with ENOENT on Windows | The test isolated `HOME`, but the product reads `USERPROFILE` and `APPDATA` there. One helper sets every home variable for the platform, and every test uses it |
+| A layout check reports overlaps nobody can see | It counted click-through overlays (`pointer-events: none`). Skip what cannot be seen or hit |
+| A slot or queue test fails one run in twenty | It waited a fixed number of event-loop turns. Wait for the state you assert, with a turn cap as the deadline |
+| An idle or battery check reads the same in front and behind | The browser driver emulates focus and keeps a hidden window visible. Switch focus through the product's own signal, and test the hidden state without the driver |
 
 ## Running many agents
 
