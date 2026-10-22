@@ -118,6 +118,20 @@ SoulStack comes from [ProxySoul](https://proxysoul.com), the creator of [Empryo]
 <table>
   <tr>
     <td colspan="2" valign="top">
+      <h3><a href="skills/enshield/SKILL.md">enshield</a></h3>
+      Security audits across products and dependencies, combining Cloudflare's coverage-led review and independent verification with OpenAI Codex Security's threat modelling and source-to-sink analysis. Report-only by default, with recurring-run comparisons and project additions in <code>.security/enshield.md</code>. No scanner install or schedule is enabled.<br><br>
+      With credit to <a href="https://github.com/cloudflare/security-audit-skill">Cloudflare and the security-audit-skill contributors</a> and <a href="https://github.com/openai/codex-security">OpenAI and the Codex Security contributors</a> for the underlying workflows.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top">
+      <h3><a href="skills/enkindle/SKILL.md">enkindle</a></h3>
+      A beat-synced hype edit of any project, set to a song from YouTube, in wide and vertical. Fetches the song with its credits, splits it into stems, measures every kick, drop and sung word, maps the project's story onto the song, and renders it in Rust with fframes: captions land with the voice, text is written on and slammed, features fly out of a laptop, screenshots cut on every downbeat, numbers count up on a receipt. Ships a template that renders as is, the analysis scripts, and the owner feedback that shaped every rule.<br><br>
+      Example song: "Speed is Life" by Blade + Into The Void (feat. Jordan Lindley), from the edit by <a href="https://www.youtube.com/@cowbeans327">CowBeans</a>. Built on <a href="https://fframes.studio">fframes</a>, <a href="https://github.com/adefossez/demucs">Demucs</a>, wav2vec2, librosa and yt-dlp.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top">
       <h3><a href="skills/marketing/SKILL.md">marketing</a></h3>
       Distilled from public LLM Gateway work: turn product evidence and authorized analytics into positioning, launches and measurable learning. Keep claims current, distinguish observation from attribution, and keep reports, slides and videos aligned without exposing private data.<br><br>
       <a href="https://github.com/smakosh"><img src="site/public/contributors/smakosh.jpg" width="20" height="20" alt=""></a> Contributed by <a href="https://github.com/smakosh">Ismail Ghallou</a>
