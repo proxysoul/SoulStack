@@ -16,194 +16,98 @@
   <a href="https://soulstack.proxysoul.com"><b>Website</b></a>&nbsp;&nbsp;&nbsp;
   <a href="https://soulstack.proxysoul.com/docs">Docs</a>&nbsp;&nbsp;&nbsp;
   <a href="https://soulstack.proxysoul.com/immunity/">Immunity</a>&nbsp;&nbsp;&nbsp;
-  <a href="#set-it-up">Set it up</a>&nbsp;&nbsp;&nbsp;
-  <a href="#whats-inside">What's inside</a>&nbsp;&nbsp;&nbsp;
-  <a href="#my-empryo-setup">My Empryo setup</a>&nbsp;&nbsp;&nbsp;
+  <a href="#get-started">Get started</a>&nbsp;&nbsp;&nbsp;
+  <a href="#pick-a-skill">Skills</a>&nbsp;&nbsp;&nbsp;
+  <a href="#also-inside">Also inside</a>&nbsp;&nbsp;&nbsp;
   <a href="LICENSE">MIT</a>
 </p>
 
 <br>
 
-## Set it up
+## Get started
 
-Point your agent at this repo and let it do the work. In Empryo, or any agent that can run commands:
-
-```text
-Set up SoulStack for me from https://github.com/proxysoul/SoulStack and follow its AGENTS.md.
-```
-
-Or pick just the skills you want, for any agent, with the [skills](https://skills.sh) CLI:
-
-```bash
-npx skills add proxysoul/SoulStack
-```
-
-It lists the skills, asks which to install and for which agents. For Empryo, choose **Universal** (it installs into `.agents/skills`, which Empryo reads). Add `-g` for every project, `-s ensoul` to skip the picker, `--list` to only look.
-
-Using GitHub Copilot CLI? SoulStack is also a Copilot plugin, with the skills and the takeaways as rules:
-
-```bash
-copilot plugin marketplace add proxysoul/SoulStack
-copilot plugin install soulstack@soulstack
-```
-
-Or everything, with the setup script. It asks nothing and changes nothing without a backup:
-
-- downloads SoulStack to `~/dev/SoulStack` (or updates it)
-- links the skills into `~/.agents/skills`, and `~/.claude/skills` if you use Claude Code
-- links the ten immune cells into Empryo, Claude Code, Copilot CLI and OpenCode
-- adds the [takeaways](guides/takeaways.md) to the global rules of every agent it finds: `~/.empryo/EMPRYO.md`, `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`, `~/.copilot/copilot-instructions.md`, `~/.pi/agent/AGENTS.md`, `~/.config/opencode/AGENTS.md`, `~/.gemini/GEMINI.md`. It follows `CLAUDE_CONFIG_DIR`, `CODEX_HOME`, `COPILOT_HOME`, `PI_CODING_AGENT_DIR` and `GEMINI_CLI_HOME` when you set them. Your own rules stay; SoulStack's part sits in a marked block that updates in place
-- skips anything Empryo-only when Empryo isn't installed
-
-<table>
-  <tr><td><b>macOS, Linux</b></td><td>
+**macOS, Linux**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/proxysoul/SoulStack/main/scripts/setup.sh | sh
 ```
 
-  </td></tr>
-  <tr><td><b>Windows</b></td><td>
+**Windows**
 
 ```powershell
 irm https://raw.githubusercontent.com/proxysoul/SoulStack/main/scripts/setup.ps1 | iex
 ```
 
-  </td></tr>
-</table>
+That's it. It finds your agents (Empryo, Claude Code, Codex, Copilot CLI, pi, OpenCode, Gemini CLI), links the skills and immune cells, and adds the [rules](guides/takeaways.md). Every file it touches is backed up first, and your own rules stay.
 
-Every file it changes is copied to `<file>.bak-<time>` first.
+Other ways in:
 
-### Staying up to date
+| Want | Run |
+| --- | --- |
+| Let your agent do it | `Set up SoulStack for me from https://github.com/proxysoul/SoulStack and follow its AGENTS.md.` |
+| Only some skills, any agent | `npx skills add proxysoul/SoulStack` (pick **Universal** for Empryo) |
+| Copilot CLI plugin | `copilot plugin marketplace add proxysoul/SoulStack` then `copilot plugin install soulstack@soulstack` |
 
-Setup also adds a `soulstack` command (in `~/.local/bin` on macOS and Linux, in your user apps folder on Windows):
+Stay current:
 
 ```bash
-soulstack check     # is a new version out? changes nothing
-soulstack update    # get it, set everything up again, show what changed
-soulstack remove    # take SoulStack out; your own rules stay
+soulstack update    # get the latest and show what changed
+soulstack check     # is a new version out?
+soulstack remove    # take it out; your own rules stay
 ```
 
-`update` pulls the latest SoulStack, refreshes the skills and the rules block in every agent, and lists what's new. If you changed files in your copy, it keeps them and tells you instead of overwriting. Without the command, running the one-liner again does the same. Copilot plugin users run `copilot plugin update soulstack`.
+## Pick a skill
 
-From a clone you can also pass:
+Just ask your agent. It loads the right skill when the task matches.
 
-| macOS, Linux | Windows | Does |
-| --- | --- | --- |
-| `--presets proxysoul,proxysoul-mcp` | `-Presets proxysoul,proxysoul-mcp` | Also add my Empryo presets (optional) |
-| `--check` | `-Check` | Change nothing, show what is installed |
-| `--remove` | `-Remove` | Take SoulStack out again; your own rules stay |
-| `--skills <folder>` | `-Skills <folder>` | Link the skills somewhere else |
-| `--plain` | `-Plain` | No colour or animation (automatic for agents and pipes) |
+| You want to… | Skill |
+| --- | --- |
+| Make a hype edit of your project, synced to a song | [**enkindle**](skills/enkindle/SKILL.md) |
+| Make your app faster, with before-and-after proof | [**enliven**](skills/enliven/SKILL.md) |
+| Redesign your site with a real design system | [**ensoul**](skills/ensoul/SKILL.md) |
+| Find security holes in your code and dependencies | [**enshield**](skills/enshield/SKILL.md) |
+| Test the real app and never see the same bug twice | [**immune-system**](skills/immune-system/SKILL.md) |
+| Launch and market it with real evidence | [**marketing**](skills/marketing/SKILL.md) |
 
-<br>
+Each skill has a page in the [docs](https://soulstack.proxysoul.com/docs).
+
+## Also inside
+
+| Part | What it is |
+| --- | --- |
+| [Rules](guides/takeaways.md) | How every agent works: finish the job, prove it, report with visuals, use memory |
+| [Ten immune cells](agents/) | Agents that scout, attack, verify and guard your app, led by `tcell-helper` |
+| [Working habits](guides/agent-guidance.md) | Map first, read before editing, check after every change, answer short |
+| [SoulStack's own immune system](immune/) | The worked example; run `bun run immune:app` to see it |
+| [Prompts](prompts/) and [templates](templates/) | The redesign brief in one message, and starting points for your own skills |
+| [Mascot guide](guides/mote-mascot.md) | Draw a calm mascot of your own. Shown with Mote, Empryo's mascot, which is not part of the stack |
+| [Website](site/) | Every layer shown visually, plus `llms.txt` for agents |
+
+<img src="assets/mote/renderings.png" width="100%" alt="Example output of the mascot guide: Mote, Empryo&#39;s mascot, in six styles">
 
 ## Best with Empryo
 
-SoulStack comes from [ProxySoul](https://proxysoul.com), the creator of [Empryo](https://empryo.com). It works in Claude Code, Codex, Copilot CLI, pi, OpenCode and Gemini CLI, and goes further in Empryo:
+SoulStack works in any agent and goes further in [Empryo](https://empryo.com): rules reload live, immune cells ask the code map where a bug lands, memory keeps confirmed bugs and traps, cells drive real apps through browser and computer use, and a nightly routine patrols for you.
 
-| In Empryo | What it changes |
-|---|---|
-| Rules reload live | Edits and `soulstack update` apply on the next message, no restart |
-| The Genome | Immune cells ask the code map where a bug lands before they attack or judge it |
-| `project` tool | Checks run the same way for every agent: `immune`, `immune:smoke` |
-| Background agents | `tcell-helper` runs the other cells in parallel |
-| Memory | Confirmed bugs, disproved claims and traps carry over to the next run |
-| Browser and computer use | Cells drive web and desktop apps through their real front doors |
-| Routines | A nightly `/routine` patrols and wakes the lead on red |
-| `EMPRYO.md` template | Empryo fills it in from the Genome, writing only what the code can't show |
+<details>
+<summary>Setup options</summary>
 
-## What's inside
+From a clone:
 
-<table>
-  <tr>
-    <td colspan="2" valign="top">
-      <h3><a href="skills/enshield/SKILL.md">enshield</a></h3>
-      Security audits across products and dependencies, combining Cloudflare's coverage-led review and independent verification with OpenAI Codex Security's threat modelling and source-to-sink analysis. Report-only by default, with recurring-run comparisons and project additions in <code>.security/enshield.md</code>. No scanner install or schedule is enabled.<br><br>
-      With credit to <a href="https://github.com/cloudflare/security-audit-skill">Cloudflare and the security-audit-skill contributors</a> and <a href="https://github.com/openai/codex-security">OpenAI and the Codex Security contributors</a> for the underlying workflows.
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2" valign="top">
-      <h3><a href="skills/enkindle/SKILL.md">enkindle</a></h3>
-      A beat-synced hype edit of any project, set to a song from YouTube, in wide and vertical. Fetches the song with its credits, splits it into stems, measures every kick, drop and sung word, maps the project's story onto the song, and renders it in Rust with fframes: captions land with the voice, text is written on and slammed, features fly out of a laptop, screenshots cut on every downbeat, numbers count up on a receipt. Ships a template that renders as is, the analysis scripts, and the owner feedback that shaped every rule.<br><br>
-      Example song: "Speed is Life", the mashup of "Blade" by D'Angello &amp; Francis and "Into The Void" by POLTERGST and RØØTZ (feat. Jordan Lindley), from the edit by <a href="https://www.youtube.com/@cowbeans327">CowBeans</a>. Built on <a href="https://fframes.studio">fframes</a>, <a href="https://github.com/adefossez/demucs">Demucs</a>, wav2vec2, librosa and yt-dlp.
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2" valign="top">
-      <h3><a href="skills/marketing/SKILL.md">marketing</a></h3>
-      Distilled from public LLM Gateway work: turn product evidence and authorized analytics into positioning, launches and measurable learning. Keep claims current, distinguish observation from attribution, and keep reports, slides and videos aligned without exposing private data.<br><br>
-      <a href="https://github.com/smakosh"><img src="site/public/contributors/smakosh.jpg" width="20" height="20" alt=""></a> Contributed by <a href="https://github.com/smakosh">Ismail Ghallou</a>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <h3><a href="skills/ensoul/SKILL.md">ensoul</a></h3>
-      A skill that builds a product's design system and redesigns its website: reads the code and your vibe, connects every theme to its logos and screenshots, keeps one spacing scale, and proves it with screenshots.
-    </td>
-    <td width="50%" valign="top">
-      <h3><a href="templates/EMPRYO.md">EMPRYO.md template</a></h3>
-      A rules file that fills itself in. Copy it into a project and Empryo studies the project, then writes down only what its code map can't: rules, traps, commands and how you work.
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <h3><a href="skills/enliven/SKILL.md">enliven</a></h3>
-      Make an app measurably faster and prove it. Builds an A/B harness that drives the real production build and reads the engine's own counters, names the CSS rule or the component behind the cost with a Blink invalidation trace, counts the frames, wake-ups and GPU work an idle window should not have, proves a fix leaves every pixel as it was, then writes an HTML report where every figure comes from the JSON and the regressions are printed as loudly as the wins.
-    </td>
-    <td width="50%" valign="top">
-      <h3><a href="skills/enliven/reference/traps.md">Performance traps</a></h3>
-      The forty-odd mistakes that cost a round of review each: descendant <code>:has()</code> re-styling the whole app, a leak loop that accumulates instead of closing, a blur hidden under an opaque fill, decoded images the renderer never frees, Playwright's emulated focus, a bundle size summed from a stale directory, a metric that cannot fail, and <code>file://</code> plus a Windows path.
-    </td>
-  </tr>
-  <tr>
-    <td valign="top">
-      <h3><a href="guides/takeaways.md">Takeaways</a></h3>
-      Rules every agent here follows: finish the job, reproduce before fixing, prove it before and after, report with visuals, use memory.
-    </td>
-    <td valign="top">
-      <h3><a href="guides/agent-guidance.md">Working habits</a></h3>
-      How Empryo's own agent works: map first, read before editing, check after every change, answer short.
-    </td>
-  </tr>
-  <tr>
-    <td valign="top">
-      <h3><a href="skills/immune-system/SKILL.md">immune-system</a></h3>
-      Testing that works like an immune system, grown for each project by your agent: it studies the product, researches this month's tools, drives the real app on every platform, and turns every confirmed bug into a permanent check. At scale it runs a bug machine of hundreds of agents. It ships a small web app (<code>immune:app</code>) in your project's design system to see health, runs, cells and findings, and to start runs.
-    </td>
-    <td valign="top">
-      <h3><a href="agents/">Ten immune cells</a></h3>
-      <code>tcell-helper</code> leads; <code>dendritic</code> finds what is missing, <code>tcell-hunter</code> attacks, <code>negative-selection</code> kills false alarms, <code>memory-cell</code> makes bugs permanent checks, <code>tcell-patrol</code> runs everything, <code>natural-killer</code> guards security (packages, secrets, installers), plus platform, visual and toolsmith cells. Installed as stem cells; each grows into your project's own version.
-    </td>
-  </tr>
-  <tr>
-    <td valign="top">
-      <h3><a href="immune/">SoulStack's own immune system</a></h3>
-      The worked example: setup and update tests on Linux and Windows, security checks, and the immune app. Run <code>bun run immune:app</code>, or try the console on a sample project on the website under <em>Try the immune console</em>.
-    </td>
-    <td valign="top">
-      <h3><a href="site/">Website and docs</a></h3>
-      Every layer shown visually in Empryo's six worlds, with docs for people and <code>llms.txt</code> plus Markdown pages for agents. <code>bun run dev</code> starts it.
-    </td>
-  </tr>
-  <tr>
-    <td valign="top">
-      <h3><a href="guides/mote-mascot.md">Mascot guide</a></h3>
-      How to draw a calm mascot of your own: one fixed body, a moving eye, a green screen, every frame aligned. Shown with Mote, Empryo&#39;s mascot, which is not part of the stack.
-      <br><br>
-      <img src="assets/mote/renderings.png" width="100%" alt="Example output of the mascot guide: Mote, Empryo&#39;s mascot, in six styles">
-    </td>
-    <td valign="top">
-      <h3><a href="prompts/website-redesign.md">Prompts</a> and <a href="templates/">templates</a></h3>
-      The redesign brief as one message for agents without skills, and starting points for a new skill, preset or prompt.
-    </td>
-  </tr>
-</table>
+| macOS, Linux | Windows | Does |
+| --- | --- | --- |
+| `--presets proxysoul,proxysoul-mcp` | `-Presets proxysoul,proxysoul-mcp` | Also add my Empryo presets |
+| `--check` | `-Check` | Change nothing, show what is installed |
+| `--remove` | `-Remove` | Take SoulStack out again |
+| `--skills <folder>` | `-Skills <folder>` | Link the skills somewhere else |
+| `--plain` | `-Plain` | No colour or animation |
 
-<br>
+Rules go into each agent's global rules file inside a marked block that updates in place. Setup follows `CLAUDE_CONFIG_DIR`, `CODEX_HOME`, `COPILOT_HOME`, `PI_CODING_AGENT_DIR` and `GEMINI_CLI_HOME`.
 
-## My Empryo setup
+</details>
+
+<details>
+<summary>My Empryo setup</summary>
 
 My global config as three presets in [`plugins/presets/`](plugins/presets/):
 
@@ -214,6 +118,14 @@ My global config as three presets in [`plugins/presets/`](plugins/presets/):
 | `proxysoul-mcp` | MCP servers; tokens come from environment variables, never the file |
 
 Add them with `scripts/setup.sh --presets proxysoul,proxysoul-mcp`, or for one launch with `empryo --plugin <path>`. After changing settings in Empryo, refresh them with `bun scripts/export-config.ts`: it drops machine-only state, moves risky switches into the trusted preset, and refuses to write anything that looks like a secret.
+
+</details>
+
+## Credits
+
+- **enshield** builds on [Cloudflare's security-audit-skill](https://github.com/cloudflare/security-audit-skill) and [OpenAI's Codex Security](https://github.com/openai/codex-security).
+- **marketing** was contributed by <a href="https://github.com/smakosh"><img src="site/public/contributors/smakosh.jpg" width="16" height="16" alt=""></a> [Ismail Ghallou](https://github.com/smakosh).
+- **enkindle**'s example song is a mashup of "Blade" by D'Angello &amp; Francis and "Into The Void" by POLTERGST and RØØTZ (feat. Jordan Lindley), from the edit by [CowBeans](https://www.youtube.com/@cowbeans327). It is built on [fframes](https://fframes.studio), [Demucs](https://github.com/adefossez/demucs), wav2vec2, librosa and yt-dlp.
 
 <br>
 
