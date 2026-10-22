@@ -25,7 +25,7 @@ Everything needed is in this folder:
 ## Phase 1: The song and its credits
 
 1. Get it with `scripts/fetch-song.sh <url> [start] [length] [project-dir]`. It runs the latest yt-dlp through `uvx` (an old yt-dlp gets HTTP 403 from YouTube; it also needs `deno` on PATH for YouTube's JS challenge), saves `analysis/source.json`, cuts the window you want, and writes `media/track.mp3`.
-2. **Credits are part of the deliverable.** Name the song, the artists, and the uploader of the edit you took it from, on screen for the whole video and bigger on the end card. YouTube titles of edits usually hold the real credit (`Artist + Artist (feat. Singer) "Song" - Edit name`): read `title`, `uploader`, `uploader_id` and the description lines the script prints, and confirm the artists with a web search when the title is unclear.
+2. **Credits are part of the deliverable.** Name the song, the artists, and the uploader of the edit you took it from, on screen for the whole video and bigger on the end card. YouTube titles of edits usually hold a short credit (`Song + Song (feat. Singer) "Edit name" - Anime`): read `title`, `uploader`, `uploader_id` and the description lines the script prints, then confirm every artist with a web search. Edits are often mashups of two tracks: credit both, with their artists, not only the title.
 3. Say it plainly to the user: using a commercial song is fine for a private edit shared with friends. Posting it publicly can get it muted or taken down. For public use, license the track or pick one from the platform's library.
 4. Pick the window: the edit should be about 60 s and end on the song's own ending or a big hit, never mid-phrase.
 
@@ -105,4 +105,4 @@ The rounds of feedback that shaped these rules, with the fix for each, are in [r
 - Stems: [Demucs](https://github.com/adefossez/demucs) (`htdemucs`) by Alexandre Défossez and Meta AI.
 - Alignment: [wav2vec2](https://huggingface.co/facebook/wav2vec2-large-960h-lv60-self) by Meta AI, through Hugging Face Transformers.
 - Analysis: [librosa](https://librosa.org). Download: [yt-dlp](https://github.com/yt-dlp/yt-dlp). Encoding: [FFmpeg](https://ffmpeg.org).
-- Example song: "Speed is Life" by Blade + Into The Void (feat. Jordan Lindley), from the edit by [CowBeans](https://www.youtube.com/@cowbeans327) ([video](https://www.youtube.com/watch?v=AK7cjOdLVf8)).
+- Example song: "Speed is Life", a mashup of "Blade" by D'Angello & Francis and "Into The Void" by POLTERGST and RØØTZ (feat. Jordan Lindley, Spinnin' Records), from the edit by [CowBeans](https://www.youtube.com/@cowbeans327) ([video](https://www.youtube.com/watch?v=AK7cjOdLVf8)).

@@ -4,7 +4,7 @@ The example song the template is timed to. Measured from demucs `htdemucs` stems
 
 ## Credits
 
-- Song: "Speed is Life" by Blade + Into The Void (feat. Jordan Lindley).
+- Song: a mashup of "Blade" by D'Angello & Francis ([@dangellofrancis](https://x.com/dangellofrancis)) and "Into The Void" by POLTERGST and RØØTZ (feat. Jordan Lindley), released by Spinnin' Records.
 - Taken from the edit by CowBeans ([@cowbeans327](https://www.youtube.com/@cowbeans327), video `AK7cjOdLVf8`, titled `Blade + Into The Void (feat. Jordan Lindley) "Speed is Life" - Naoya JJK`).
 - On-screen credit used: `song: Speed is Life · via @cowbeans327`.
 

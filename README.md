@@ -127,7 +127,7 @@ SoulStack comes from [ProxySoul](https://proxysoul.com), the creator of [Empryo]
     <td colspan="2" valign="top">
       <h3><a href="skills/enkindle/SKILL.md">enkindle</a></h3>
       A beat-synced hype edit of any project, set to a song from YouTube, in wide and vertical. Fetches the song with its credits, splits it into stems, measures every kick, drop and sung word, maps the project's story onto the song, and renders it in Rust with fframes: captions land with the voice, text is written on and slammed, features fly out of a laptop, screenshots cut on every downbeat, numbers count up on a receipt. Ships a template that renders as is, the analysis scripts, and the owner feedback that shaped every rule.<br><br>
-      Example song: "Speed is Life" by Blade + Into The Void (feat. Jordan Lindley), from the edit by <a href="https://www.youtube.com/@cowbeans327">CowBeans</a>. Built on <a href="https://fframes.studio">fframes</a>, <a href="https://github.com/adefossez/demucs">Demucs</a>, wav2vec2, librosa and yt-dlp.
+      Example song: "Speed is Life", the mashup of "Blade" by D'Angello &amp; Francis and "Into The Void" by POLTERGST and RØØTZ (feat. Jordan Lindley), from the edit by <a href="https://www.youtube.com/@cowbeans327">CowBeans</a>. Built on <a href="https://fframes.studio">fframes</a>, <a href="https://github.com/adefossez/demucs">Demucs</a>, wav2vec2, librosa and yt-dlp.
     </td>
   </tr>
   <tr>
