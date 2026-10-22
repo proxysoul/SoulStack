@@ -1,0 +1,7 @@
+target/
+out*.mp4
+*.mp4
+frames/
+strip*.png
+analysis/stems/
+analysis/*.wav

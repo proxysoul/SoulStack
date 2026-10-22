@@ -1,0 +1,79 @@
+uniform float3 iResolution;
+uniform float uT;
+uniform float uKick;
+uniform float uWarp;
+uniform float uCells;
+uniform float uImgMix;
+uniform float uDark;
+uniform float4 uBackdrop;
+uniform float4 uAccent;
+uniform float4 uSpark;
+uniform shader uImg;
+uniform float2 uImgSize;
+
+float hash21(float2 p) {
+    p = fract(p * float2(123.34, 456.21));
+    p += dot(p, p + 45.32);
+    return fract(p.x * p.y);
+}
+
+float2 hash22(float2 p) {
+    float n = hash21(p);
+    return float2(n, hash21(p + n + 17.0));
+}
+
+half4 main(float2 coord) {
+    float2 res = iResolution.xy;
+    float2 c = (coord - 0.5 * res) / res.y;
+    float3 backdrop = uBackdrop.rgb;
+    float3 acc = uAccent.rgb;
+    float3 col = backdrop;
+
+    float2 p = c * 3.4 + float2(uT * 0.06, uT * 0.035);
+    float2 cell = floor(p);
+    float2 f = fract(p);
+    float d1 = 8.0;
+    float d2 = 8.0;
+    float idc = 0.0;
+    for (int j = -1; j <= 1; j++) {
+        for (int i = -1; i <= 1; i++) {
+            float2 g = float2(float(i), float(j));
+            float2 o = hash22(cell + g);
+            o = 0.5 + 0.38 * sin(uT * 0.9 + 6.2831 * o);
+            float2 r = g + o - f;
+            float d = dot(r, r);
+            if (d < d1) {
+                d2 = d1;
+                d1 = d;
+                idc = hash21(cell + g);
+            } else if (d < d2) {
+                d2 = d;
+            }
+        }
+    }
+    float edge = 1.0 - smoothstep(0.0, 0.08, sqrt(d2) - sqrt(d1));
+    float spark = 1.0 - smoothstep(0.0, 0.03 + 0.03 * uKick, d1);
+    float amt = uCells * (0.5 + 0.5 * uKick);
+    col = mix(col, acc, edge * 0.26 * amt);
+    col = mix(col, uSpark.rgb, spark * 0.45 * amt * step(0.55, idc));
+
+    float sc = max(res.x / uImgSize.x, res.y / uImgSize.y) * (1.08 + 0.04 * sin(uT * 0.37));
+    float2 ip = (coord - 0.5 * res) / sc + 0.5 * uImgSize;
+    half4 im = uImg.eval(ip);
+    float lum = dot(float3(im.rgb), float3(0.299, 0.587, 0.114));
+    float3 duo = mix(backdrop * 0.5, acc, smoothstep(0.06, 0.9, lum));
+    col = mix(col, duo, uImgMix * (0.75 + 0.25 * uKick));
+
+    float rad = length(c);
+    float ang = atan(c.y, c.x);
+    float lane = floor(ang * 54.0);
+    float seed = hash21(float2(lane, 3.0));
+    float flow = fract(seed * 7.0 - uT * (1.2 + 7.0 * uWarp) + 0.16 / max(rad, 0.04));
+    float streak = smoothstep(0.9, 1.0, flow) * smoothstep(0.06, 0.55, rad) * step(0.45, seed);
+    col = mix(col, mix(acc, float3(1.0), 0.45), streak * uWarp);
+
+    col += acc * exp(-rad * rad * 3.2) * (0.10 + 0.22 * uKick);
+    col *= mix(0.3, 1.0, 1.0 - smoothstep(0.3, 1.2, rad));
+    col *= 1.0 - uDark;
+    return half4(half3(col), 1.0);
+}

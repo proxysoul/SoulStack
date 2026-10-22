@@ -1,0 +1,88 @@
+uniform float3 iResolution;
+uniform shader uScene;
+uniform float uT;
+uniform float uRgb;
+uniform float uGlitch;
+uniform float uZoom;
+uniform float2 uCenter;
+uniform float uWhip;
+uniform float uInvert;
+uniform float uBarrel;
+uniform float uScan;
+uniform float uGrain;
+uniform float uPix;
+uniform float4 uTint;
+uniform float2 uSize;
+
+float hash21(float2 p) {
+    p = fract(p * float2(123.34, 456.21));
+    p += dot(p, p + 45.32);
+    return fract(p.x * p.y);
+}
+
+half3 split(float2 p, float2 off) {
+    half r = uScene.eval(p + off).r;
+    half g = uScene.eval(p).g;
+    half b = uScene.eval(p - off).b;
+    return half3(r, g, b);
+}
+
+half4 main(float2 coord) {
+    float2 res = uSize;
+    float2 p = coord * (uSize / iResolution.xy);
+    float2 sp = p;
+    float fr = floor(uT * 30.0);
+
+    if (uBarrel > 0.0) {
+        float2 c = (p - 0.5 * res) / res.y;
+        c *= 1.0 - uBarrel * 0.22 * dot(c, c);
+        p = c * res.y + 0.5 * res;
+    }
+
+    float2 off = float2(uRgb, uRgb * 0.18);
+    if (uGlitch > 0.0) {
+        float bandH = 14.0 + 70.0 * hash21(float2(fr, 1.7));
+        float band = floor(p.y / bandH);
+        float h = hash21(float2(band, fr));
+        if (h < uGlitch * 0.6) {
+            float shove = (hash21(float2(band, fr + 7.0)) - 0.5) * 520.0 * uGlitch;
+            p.x += shove;
+            off.x += shove * 0.08;
+        }
+        float blk = hash21(floor(p / 96.0) + float2(fr, fr * 0.37));
+        if (blk < uGlitch * 0.12) {
+            p = floor(p / 24.0) * 24.0;
+        }
+    }
+
+    if (uPix > 1.0) {
+        p = (floor(p / uPix) + 0.5) * uPix;
+    }
+
+    half3 col = half3(0.0);
+    if (uWhip == 0.0 && uZoom == 0.0) {
+        col = split(p, off);
+    } else {
+        for (int i = 0; i < 12; i++) {
+            float k = float(i) / 11.0;
+            float2 q = p + float2(uWhip * (k - 0.5), 0.0);
+            q = mix(q, uCenter, uZoom * 0.16 * k);
+            col += split(q, off);
+        }
+        col /= 12.0;
+    }
+
+    col = mix(col, half3(1.0) - col, half(uInvert));
+    col = mix(col, half3(uTint.rgb), half(uTint.a));
+
+    float scan = step(0.5, fract(sp.y / 4.0));
+    col *= half(1.0 - uScan * 0.22 * scan);
+
+    float2 c = (sp - 0.5 * res) / res.y;
+    col *= half(1.0 - 0.28 * smoothstep(0.55, 1.15, length(c)));
+
+    float n = hash21(floor(sp * 0.75) + float2(mod(fr, 97.0) * 13.1, mod(fr, 89.0) * 7.7));
+    col += half((n - 0.5) * uGrain);
+
+    return half4(clamp(col, half3(0.0), half3(1.0)), 1.0);
+}
